@@ -8,7 +8,10 @@ import { LoginScreen } from '@/features/auth';
 import { DashboardScreen } from '@/features/dashboard';
 import { OrdersScreen, OrderDetailScreen, CreateOrderModal } from '@/features/orders';
 import { TasksScreen, TaskDetailScreen, CreateTaskModal, EditTaskModal } from '@/features/tasks';
-import { InventoryScreen, InventoryDetailScreen, CreateProductModal, EditProductModal } from '@/features/inventory';
+import { InventoryScreen, InventoryDetailScreen, CreateProductModal, EditProductModal, ReceiveGoodsModal } from '@/features/inventory';
+import { StaffScreen, CreateStaffModal, EditStaffModal } from '@/features/staff';
+import { SuppliersScreen, CreateSupplierModal, EditSupplierModal } from '@/features/suppliers';
+import { AnalyticsScreen } from '@/features/analytics';
 import { SettingsScreen } from '@/features/settings';
 import { NotificationsScreen } from '@/features/notifications';
 
@@ -121,6 +124,73 @@ const AppRoutes = () => {
             element={
               <ProtectedRoute>
                 <EditProductModal />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/inventory/receive"
+            element={
+              <ProtectedRoute>
+                <ReceiveGoodsModal />
+              </ProtectedRoute>
+            }
+          />
+          {/* Staff */}
+          <Route
+            path="/staff"
+            element={
+              <ProtectedRoute>
+                <StaffScreen />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/staff/new"
+            element={
+              <ProtectedRoute>
+                <CreateStaffModal />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/staff/:id/edit"
+            element={
+              <ProtectedRoute>
+                <EditStaffModal />
+              </ProtectedRoute>
+            }
+          />
+          {/* Suppliers */}
+          <Route
+            path="/suppliers"
+            element={
+              <ProtectedRoute>
+                <SuppliersScreen />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/suppliers/new"
+            element={
+              <ProtectedRoute>
+                <CreateSupplierModal />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/suppliers/:id/edit"
+            element={
+              <ProtectedRoute>
+                <EditSupplierModal />
+              </ProtectedRoute>
+            }
+          />
+          {/* Analytics */}
+          <Route
+            path="/analytics"
+            element={
+              <ProtectedRoute>
+                <AnalyticsScreen />
               </ProtectedRoute>
             }
           />

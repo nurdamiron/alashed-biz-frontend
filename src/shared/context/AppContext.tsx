@@ -1,7 +1,8 @@
-import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
 import toast from 'react-hot-toast';
 import { api } from '../lib/api';
 import { formatPrice } from '../lib/utils';
+import { wsClient, WebSocketEvent } from '../lib/websocket';
 import Loading from '../components/Loading';
 import type {
   Order,
@@ -13,6 +14,8 @@ import type {
   DashboardStats,
   AuditLog,
   User,
+  Supplier,
+  FiscalReceipt,
 } from '../types';
 
 interface AppContextType {
@@ -21,6 +24,7 @@ interface AppContextType {
   tasks: Task[];
   products: Product[];
   employees: Employee[];
+  suppliers: Supplier[];
   transactions: Transaction[];
   notifications: Notification[];
   stats: DashboardStats;
@@ -30,6 +34,7 @@ interface AppContextType {
   theme: 'light' | 'dark';
   isAuthenticated: boolean;
   user: User | null;
+  isWsConnected: boolean;
 
   // Config
   appName: string;
@@ -46,17 +51,36 @@ interface AppContextType {
   // Orders
   addOrder: (order: Partial<Order>) => Promise<void>;
   updateOrderStatus: (id: string, status: Order['status']) => Promise<void>;
+  cancelOrder: (id: string, reason?: string) => Promise<void>;
 
   // Tasks
   addTask: (task: Partial<Task>) => Promise<void>;
   updateTask: (task: Task) => Promise<void>;
   updateTaskStatus: (id: string, status: Task['status']) => Promise<void>;
+  deleteTask: (id: string) => Promise<void>;
+  addTaskComment: (taskId: string, comment: string) => Promise<void>;
 
   // Products
   addProduct: (product: Partial<Product>) => Promise<void>;
   updateProduct: (product: Product) => Promise<void>;
+  deleteProduct: (id: string) => Promise<void>;
   updateProductStock: (id: string, delta: number) => Promise<void>;
   getProductLogs: (id: string) => Promise<AuditLog[]>;
+  receiveGoods: (productId: string, quantity: number, supplierId: string, documentNumber?: string, notes?: string) => Promise<void>;
+
+  // Employees
+  addEmployee: (employee: Partial<Employee>) => Promise<void>;
+  updateEmployee: (id: string, updates: Partial<Employee>) => Promise<void>;
+  deleteEmployee: (id: string) => Promise<void>;
+
+  // Suppliers
+  addSupplier: (supplier: Partial<Supplier>) => Promise<void>;
+  updateSupplier: (id: string, updates: Partial<Supplier>) => Promise<void>;
+  deleteSupplier: (id: string) => Promise<void>;
+
+  // Fiscal
+  createFiscalReceipt: (orderId: string, cashierId?: string) => Promise<FiscalReceipt>;
+  getFiscalReceipt: (orderId: string) => Promise<FiscalReceipt>;
 
   // Transactions
   addTransaction: (transaction: Transaction) => void;
@@ -84,6 +108,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [tasks, setTasks] = useState<Task[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [employees, setEmployees] = useState<Employee[]>([]);
+  const [suppliers, setSuppliers] = useState<Supplier[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [stats, setStats] = useState<DashboardStats>(defaultStats);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -92,14 +117,14 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [theme, setTheme] = useState<'light' | 'dark'>('dark');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<User | null>(null);
+  const [isWsConnected, setIsWsConnected] = useState(false);
 
   const [appName, setAppName] = useState('ALASHED');
   const [businessDomain, setBusinessDomain] = useState('Склад электроники и робототехники');
 
-  // Refresh all data
   const refreshData = async () => {
     try {
-      const [ordersData, tasksData, productsData, employeesData, notificationsData, statsData] =
+      const [ordersData, tasksData, productsData, employeesData, notificationsData, statsData, suppliersData] =
         await Promise.all([
           api.orders.list(),
           api.tasks.list(),
@@ -107,6 +132,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
           api.staff.list(),
           api.events.list(),
           api.analytics.getDashboardStats(),
+          api.suppliers.list(true).then(res => res.suppliers).catch(() => []),
         ]);
 
       setOrders(ordersData);
@@ -115,12 +141,12 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       setEmployees(employeesData);
       setNotifications(notificationsData);
       setStats(statsData);
+      setSuppliers(suppliersData);
     } catch (e) {
       console.error('Data refresh failed', e);
     }
   };
 
-  // Initialize app
   useEffect(() => {
     const init = async () => {
       const token = localStorage.getItem('alash_token');
@@ -162,7 +188,66 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     init();
   }, []);
 
-  // Theme effect
+  // WebSocket event handlers
+  const handleWebSocketEvent = useCallback((event: WebSocketEvent) => {
+    switch (event.type) {
+      case 'connected':
+        setIsWsConnected(true);
+        break;
+      case 'new_order':
+        toast('Новый заказ!', { icon: '📦' });
+        refreshData();
+        break;
+      case 'new_task':
+        toast('Новая задача!', { icon: '📋' });
+        refreshData();
+        break;
+      case 'low_stock':
+        toast.error(`Низкий остаток: ${event.data?.productName || 'товар'}`);
+        refreshData();
+        break;
+      case 'out_of_stock':
+        toast.error(`Товар закончился: ${event.data?.productName || 'товар'}`);
+        refreshData();
+        break;
+      case 'new_notification':
+        refreshData();
+        break;
+      case 'task_overdue':
+        toast.error(`Задача просрочена: ${event.data?.title || ''}`);
+        refreshData();
+        break;
+      case 'order_status_changed':
+        toast(`Заказ #${event.data?.orderId || ''}: ${event.data?.status || 'обновлен'}`, { icon: '🔄' });
+        refreshData();
+        break;
+    }
+  }, []);
+
+  // WebSocket connection management
+  useEffect(() => {
+    if (isAuthenticated) {
+      const token = localStorage.getItem('alash_token');
+      if (token) {
+        wsClient.connect(token);
+        const unsubscribe = wsClient.on('*', handleWebSocketEvent);
+
+        // Track connection status
+        const checkConnection = setInterval(() => {
+          setIsWsConnected(wsClient.isConnected());
+        }, 2000);
+
+        return () => {
+          unsubscribe();
+          clearInterval(checkConnection);
+        };
+      }
+    } else {
+      wsClient.disconnect();
+      setIsWsConnected(false);
+    }
+  }, [isAuthenticated, handleWebSocketEvent]);
+
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark');
     localStorage.setItem('alash_theme', theme);
@@ -198,14 +283,17 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   };
 
   const logout = () => {
+    wsClient.disconnect();
     localStorage.removeItem('alash_token');
     localStorage.removeItem('alash_auth');
     setIsAuthenticated(false);
     setUser(null);
+    setIsWsConnected(false);
     setOrders([]);
     setTasks([]);
     setProducts([]);
     setEmployees([]);
+    setSuppliers([]);
     setNotifications([]);
     setStats(defaultStats);
     toast('Вы вышли из системы', { icon: '👋' });
@@ -215,7 +303,6 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
   };
 
-  // Action helpers
   const handleAction = async (action: () => Promise<void>, successMessage?: string) => {
     try {
       await action();
@@ -227,6 +314,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
   };
 
+  // Orders
   const addOrder = async (order: Partial<Order>) => {
     await handleAction(async () => {
       await api.orders.create(order);
@@ -241,6 +329,14 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }, 'Статус заказа обновлен');
   };
 
+  const cancelOrder = async (id: string, reason?: string) => {
+    await handleAction(async () => {
+      await api.orders.cancel(id, reason);
+      await refreshData();
+    }, 'Заказ отменен');
+  };
+
+  // Tasks
   const addTask = async (task: Partial<Task>) => {
     await handleAction(async () => {
       await api.tasks.create(task);
@@ -262,6 +358,21 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }, 'Статус задачи обновлен');
   };
 
+  const deleteTask = async (id: string) => {
+    await handleAction(async () => {
+      await api.tasks.delete(id);
+      await refreshData();
+    }, 'Задача удалена');
+  };
+
+  const addTaskComment = async (taskId: string, comment: string) => {
+    await handleAction(async () => {
+      await api.tasks.addComment(taskId, comment);
+      await refreshData();
+    }, 'Комментарий добавлен');
+  };
+
+  // Products
   const addProduct = async (product: Partial<Product>) => {
     await handleAction(async () => {
       await api.inventory.create(product);
@@ -276,6 +387,13 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }, 'Товар обновлен');
   };
 
+  const deleteProduct = async (id: string) => {
+    await handleAction(async () => {
+      await api.inventory.delete(id);
+      await refreshData();
+    }, 'Товар удален');
+  };
+
   const updateProductStock = async (id: string, delta: number) => {
     await handleAction(async () => {
       await api.inventory.adjustStock(id, delta, 'Ручная корректировка');
@@ -287,11 +405,75 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     return api.inventory.getLogs(id);
   };
 
+  const receiveGoods = async (productId: string, quantity: number, supplierId: string, documentNumber?: string, notes?: string) => {
+    await handleAction(async () => {
+      await api.inventory.receiveGoods(productId, quantity, supplierId, documentNumber, notes);
+      await refreshData();
+    }, 'Товар принят на склад');
+  };
+
+  // Employees
+  const addEmployee = async (employee: Partial<Employee>) => {
+    await handleAction(async () => {
+      await api.employees.create(employee);
+      await refreshData();
+    }, 'Сотрудник добавлен');
+  };
+
+  const updateEmployee = async (id: string, updates: Partial<Employee>) => {
+    await handleAction(async () => {
+      await api.employees.update(id, updates);
+      await refreshData();
+    }, 'Данные сотрудника обновлены');
+  };
+
+  const deleteEmployee = async (id: string) => {
+    await handleAction(async () => {
+      await api.employees.delete(id);
+      await refreshData();
+    }, 'Сотрудник деактивирован');
+  };
+
+  // Suppliers
+  const addSupplier = async (supplier: Partial<Supplier>) => {
+    await handleAction(async () => {
+      await api.suppliers.create(supplier);
+      await refreshData();
+    }, 'Поставщик добавлен');
+  };
+
+  const updateSupplier = async (id: string, updates: Partial<Supplier>) => {
+    await handleAction(async () => {
+      await api.suppliers.update(id, updates);
+      await refreshData();
+    }, 'Данные поставщика обновлены');
+  };
+
+  const deleteSupplier = async (id: string) => {
+    await handleAction(async () => {
+      await api.suppliers.delete(id);
+      await refreshData();
+    }, 'Поставщик удален');
+  };
+
+  // Fiscal
+  const createFiscalReceipt = async (orderId: string, cashierId?: string): Promise<FiscalReceipt> => {
+    const receipt = await api.fiscal.createReceipt(orderId, cashierId);
+    toast.success('Фискальный чек создан');
+    return receipt;
+  };
+
+  const getFiscalReceipt = async (orderId: string): Promise<FiscalReceipt> => {
+    return api.fiscal.getReceiptByOrderId(orderId);
+  };
+
+  // Transactions
   const addTransaction = (transaction: Transaction) => {
     setTransactions((prev) => [transaction, ...prev]);
     toast.success('Транзакция добавлена');
   };
 
+  // Notifications
   const clearNotifications = async () => {
     await api.events.markAllRead();
     await refreshData();
@@ -302,6 +484,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     tasks,
     products,
     employees,
+    suppliers,
     transactions,
     notifications,
     stats,
@@ -309,6 +492,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     theme,
     isAuthenticated,
     user,
+    isWsConnected,
     appName,
     businessDomain,
     setAppConfig,
@@ -317,13 +501,26 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     toggleTheme,
     addOrder,
     updateOrderStatus,
+    cancelOrder,
     addTask,
     updateTask,
     updateTaskStatus,
+    deleteTask,
+    addTaskComment,
     addProduct,
     updateProduct,
+    deleteProduct,
     updateProductStock,
     getProductLogs,
+    receiveGoods,
+    addEmployee,
+    updateEmployee,
+    deleteEmployee,
+    addSupplier,
+    updateSupplier,
+    deleteSupplier,
+    createFiscalReceipt,
+    getFiscalReceipt,
     addTransaction,
     clearNotifications,
     formatPrice,

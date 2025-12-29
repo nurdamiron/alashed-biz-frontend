@@ -21,6 +21,14 @@ export interface Order {
 }
 
 // Task Types
+export interface TaskComment {
+  id: string;
+  userId: string;
+  userName: string;
+  comment: string;
+  createdAt: string;
+}
+
 export interface Task {
   id: string;
   title: string;
@@ -28,9 +36,11 @@ export interface Task {
   priority: 'Высокий' | 'Средний' | 'Низкий';
   status: 'К выполнению' | 'В процессе' | 'Готово';
   assignee?: string;
+  assigneeId?: string;
   deadline?: string;
   time?: string;
   tag?: string;
+  comments?: TaskComment[];
 }
 
 // Product Types
@@ -65,10 +75,41 @@ export interface AuditLog {
 // Employee Types
 export interface Employee {
   id: string;
+  userId?: string;
   name: string;
   role: string;
+  department?: string;
+  position?: string;
+  phone?: string;
+  email?: string;
   avatar: string;
   activeTasks: number;
+  isActive?: boolean;
+}
+
+// Supplier Types
+export interface Supplier {
+  id: string;
+  name: string;
+  tin?: string;
+  phone?: string;
+  email?: string;
+  address?: string;
+  contactPerson?: string;
+  notes?: string;
+  isActive: boolean;
+  createdAt?: string;
+}
+
+// Fiscal Types
+export interface FiscalReceipt {
+  id: string;
+  orderId: string;
+  receiptNumber: string;
+  fiscalSign: string;
+  amount: number;
+  createdAt: string;
+  cashierName?: string;
 }
 
 // Transaction Types
