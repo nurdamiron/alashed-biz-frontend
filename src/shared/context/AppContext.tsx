@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
 import toast from 'react-hot-toast';
 import { api } from '../lib/api';
 import { formatPrice } from '../lib/utils';
@@ -53,6 +53,7 @@ interface AppContextType {
   updateTaskStatus: (id: string, status: Task['status']) => Promise<void>;
 
   // Products
+  addProduct: (product: Partial<Product>) => Promise<void>;
   updateProduct: (product: Product) => Promise<void>;
   updateProductStock: (id: string, delta: number) => Promise<void>;
   getProductLogs: (id: string) => Promise<AuditLog[]>;
@@ -261,6 +262,13 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }, 'Статус задачи обновлен');
   };
 
+  const addProduct = async (product: Partial<Product>) => {
+    await handleAction(async () => {
+      await api.inventory.create(product);
+      await refreshData();
+    }, 'Товар добавлен');
+  };
+
   const updateProduct = async (product: Product) => {
     await handleAction(async () => {
       await api.inventory.update(product.id, product);
@@ -312,6 +320,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     addTask,
     updateTask,
     updateTaskStatus,
+    addProduct,
     updateProduct,
     updateProductStock,
     getProductLogs,

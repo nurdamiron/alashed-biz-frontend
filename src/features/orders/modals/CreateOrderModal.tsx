@@ -46,9 +46,9 @@ const CreateOrderModal = () => {
 
   const [clientName, setClientName] = useState('');
   const [phone, setPhone] = useState('');
-  const [address, setAddress] = useState('');
+  const [address] = useState('');
   const [source, setSource] = useState<OrderSource>('Kaspi');
-  const [deliveryType, setDeliveryType] = useState<DeliveryOption>('pickup');
+  const [deliveryType] = useState<DeliveryOption>('pickup');
   const [selectedItems, setSelectedItems] = useState<InternalOrderItem[]>([]);
   const [showProductPicker, setShowProductPicker] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');

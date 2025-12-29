@@ -18,7 +18,7 @@ const SPEC_ICONS: Record<string, string> = {
 const InventoryDetailScreen = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const { products, formatPrice, updateProductStock, getProductLogs } = useAppContext();
+  const { products, updateProductStock, getProductLogs } = useAppContext();
 
   const product = products.find((p) => p.id === id);
   const [logs, setLogs] = useState<AuditLog[]>([]);

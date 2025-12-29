@@ -70,6 +70,25 @@ export const api = {
   inventory: {
     list: () => request<Product[]>('/inventory'),
     getById: (id: string) => request<Product>(`/inventory/${id}`),
+    create: async (product: Partial<Product>) => {
+      const res = await request<{ success: boolean; data: any }>('/inventory', {
+        method: 'POST',
+        body: JSON.stringify({
+          name: product.name,
+          sku: product.sku,
+          price: product.priceSell,
+          cost: product.priceBuy,
+          stock_quantity: product.stock || 0,
+          min_stock_level: product.minStock,
+          specs: product.specs || {},
+          kitComponents: product.kitComponents,
+          category: product.category,
+          unit: product.unit,
+          image_url: product.img,
+        }),
+      });
+      return res.data;
+    },
     search: async (query: string) => {
       const result = await request<{ success: boolean; data: Product[] }>(
         `/products/search?q=${encodeURIComponent(query)}`
