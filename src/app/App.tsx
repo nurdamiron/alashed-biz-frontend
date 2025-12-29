@@ -3,12 +3,12 @@ import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AppProvider, useAppContext } from '@/shared/context/AppContext';
 import { BottomNav } from '@/shared/components';
 
-// Features
+// Features - Screens
 import { LoginScreen } from '@/features/auth';
 import { DashboardScreen } from '@/features/dashboard';
-import { OrdersScreen } from '@/features/orders';
-import { TasksScreen } from '@/features/tasks';
-import { InventoryScreen } from '@/features/inventory';
+import { OrdersScreen, OrderDetailScreen, CreateOrderModal } from '@/features/orders';
+import { TasksScreen, TaskDetailScreen, CreateTaskModal, EditTaskModal } from '@/features/tasks';
+import { InventoryScreen, InventoryDetailScreen, CreateProductModal, EditProductModal } from '@/features/inventory';
 import { SettingsScreen } from '@/features/settings';
 import { NotificationsScreen } from '@/features/notifications';
 
@@ -33,6 +33,7 @@ const AppRoutes = () => {
               </ProtectedRoute>
             }
           />
+          {/* Orders */}
           <Route
             path="/orders"
             element={
@@ -42,6 +43,23 @@ const AppRoutes = () => {
             }
           />
           <Route
+            path="/order/:id"
+            element={
+              <ProtectedRoute>
+                <OrderDetailScreen />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/orders/new"
+            element={
+              <ProtectedRoute>
+                <CreateOrderModal />
+              </ProtectedRoute>
+            }
+          />
+          {/* Tasks */}
+          <Route
             path="/tasks"
             element={
               <ProtectedRoute>
@@ -50,6 +68,31 @@ const AppRoutes = () => {
             }
           />
           <Route
+            path="/task/:id"
+            element={
+              <ProtectedRoute>
+                <TaskDetailScreen />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/tasks/new"
+            element={
+              <ProtectedRoute>
+                <CreateTaskModal />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/task/:id/edit"
+            element={
+              <ProtectedRoute>
+                <EditTaskModal />
+              </ProtectedRoute>
+            }
+          />
+          {/* Inventory */}
+          <Route
             path="/inventory"
             element={
               <ProtectedRoute>
@@ -57,6 +100,31 @@ const AppRoutes = () => {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/inventory/:id"
+            element={
+              <ProtectedRoute>
+                <InventoryDetailScreen />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/inventory/new"
+            element={
+              <ProtectedRoute>
+                <CreateProductModal />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/inventory/:id/edit"
+            element={
+              <ProtectedRoute>
+                <EditProductModal />
+              </ProtectedRoute>
+            }
+          />
+          {/* Settings & Notifications */}
           <Route
             path="/settings"
             element={
