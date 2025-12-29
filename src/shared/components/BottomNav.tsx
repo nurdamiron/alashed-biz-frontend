@@ -1,4 +1,3 @@
-import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 import Icon from './Icon';
@@ -33,12 +32,13 @@ const BottomNav = () => {
             <button
               key={item.name}
               onClick={() => navigate(item.path)}
-              className={`flex flex-col items-center justify-center h-12 flex-1 rounded-2xl transition-all ${active ? 'bg-black text-white dark:bg-white dark:text-black' : 'text-gray-400'
-                }`}
+              className={`flex flex-col items-center justify-center h-12 flex-1 rounded-2xl transition-all ${
+                active ? 'bg-black text-white dark:bg-white dark:text-black' : 'text-gray-400'
+              }`}
             >
               <Icon name={item.icon} filled={active} className="text-[20px]" />
             </button>
-          )
+          );
         })}
       </nav>
     </div>
