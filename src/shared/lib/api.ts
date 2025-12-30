@@ -237,6 +237,20 @@ export const api = {
     },
   },
 
+  warehouse: {
+    getLocations: (isActive?: boolean) => {
+      const params = new URLSearchParams();
+      if (isActive !== undefined) params.append('isActive', String(isActive));
+      return request<any[]>(`/warehouse/locations?${params.toString()}`);
+    },
+    createLocation: (data: { code: string; name?: string; zone?: string; aisle?: string; rack?: string; shelf?: string; capacity?: number; description?: string }) =>
+      request<any>('/warehouse/locations', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      }),
+    getProductLocations: (productId: string) => request<any[]>(`/inventory/${productId}/locations`),
+  },
+
   analytics: {
     getDashboardStats: () => request<DashboardStats>('/analytics/dashboard'),
     getSalesReport: (fromDate?: string, toDate?: string) => {

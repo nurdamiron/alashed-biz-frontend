@@ -12,6 +12,7 @@ import { InventoryScreen, InventoryDetailScreen, CreateProductModal, EditProduct
 import { StaffScreen, CreateStaffModal, EditStaffModal } from '@/features/staff';
 import { SuppliersScreen, CreateSupplierModal, EditSupplierModal } from '@/features/suppliers';
 import { AnalyticsScreen } from '@/features/analytics';
+import { WarehouseScreen, CreateLocationModal } from '@/features/warehouse';
 import { SettingsScreen } from '@/features/settings';
 import { NotificationsScreen } from '@/features/notifications';
 
@@ -191,6 +192,23 @@ const AppRoutes = () => {
             element={
               <ProtectedRoute>
                 <AnalyticsScreen />
+              </ProtectedRoute>
+            }
+          />
+          {/* Warehouse */}
+          <Route
+            path="/warehouse"
+            element={
+              <ProtectedRoute>
+                <WarehouseScreen />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/warehouse/new"
+            element={
+              <ProtectedRoute>
+                <CreateLocationModal />
               </ProtectedRoute>
             }
           />
