@@ -2,7 +2,8 @@ import { createContext, useContext, useState, useEffect, useCallback, type React
 import toast from 'react-hot-toast';
 import { api } from '../lib/api';
 import { formatPrice } from '../lib/utils';
-import { wsClient, WebSocketEvent } from '../lib/websocket';
+import { wsClient } from '../lib/websocket';
+import type { WebSocketEvent } from '../lib/websocket';
 import Loading from '../components/Loading';
 import type {
   Order,

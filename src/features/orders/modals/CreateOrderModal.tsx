@@ -237,7 +237,7 @@ const CreateOrderModal = () => {
         <button
           onClick={handleSave}
           disabled={!clientName || selectedItems.length === 0}
-          className="w-full h-16 bg-primary text-white font-black rounded-2xl shadow-xl shadow-primary/30 disabled:opacity-30"
+          className="w-full h-16 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold rounded-2xl shadow-xl shadow-primary/30 disabled:opacity-30"
         >
           Создать заказ
         </button>

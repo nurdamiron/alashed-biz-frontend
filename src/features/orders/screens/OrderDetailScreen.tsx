@@ -221,7 +221,7 @@ const OrderDetailScreen = () => {
                   : 'Ожидание';
               updateOrderStatus(order.id, next as any);
             }}
-            className="flex-1 h-16 rounded-[1.8rem] bg-primary text-white font-black text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-3 shadow-2xl shadow-primary/40 active:scale-95 transition-all"
+            className="flex-1 h-16 rounded-[1.8rem] bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-3 shadow-2xl shadow-primary/40 active:scale-95 transition-all"
           >
             <span>
               {order.status === 'Ожидание' ? 'Начать доставку' : 'Изменить статус'}

@@ -5,15 +5,18 @@ import Icon from './Icon';
 const BottomNav = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { isAuthenticated } = useAppContext();
+  const { isAuthenticated, theme } = useAppContext();
 
   if (!isAuthenticated) return null;
 
   const hideNavRoutes = ['/notifications', '/create-task', '/create-order', '/create-product', '/login'];
   const isHiddenRoute = hideNavRoutes.some(path => location.pathname.startsWith(path));
-  const isDetailRoute = /^\/(order|inventory|task|edit-product|edit-task)\/.+/.test(location.pathname);
+  const isDetailRoute = /^\/(order|inventory|task|edit-product|edit-task|warehouse|staff|suppliers|analytics)\/.+/.test(location.pathname);
+  const isNewRoute = /\/(new|edit)$/.test(location.pathname);
 
-  if (isHiddenRoute || isDetailRoute) return null;
+  if (isHiddenRoute || isDetailRoute || isNewRoute) return null;
+
+  const isDark = theme === 'dark';
 
   const navItems = [
     { name: 'Home', icon: 'home', path: '/' },
@@ -24,8 +27,12 @@ const BottomNav = () => {
   ];
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 flex justify-center pb-8 px-8">
-      <nav className="w-full max-w-sm bg-white/70 dark:bg-black/70 backdrop-blur-2xl border border-gray-100 dark:border-white/10 rounded-[2rem] shadow-sm flex items-center justify-between p-1.5">
+    <div className="fixed bottom-0 left-0 right-0 z-50 flex justify-center pb-8 px-6">
+      <nav className={`w-full max-w-sm backdrop-blur-2xl border rounded-[2rem] shadow-lg flex items-center justify-between p-1.5 transition-colors ${
+        isDark
+          ? 'bg-slate-900/90 border-white/10'
+          : 'bg-white/90 border-slate-200/50 shadow-slate-200/50'
+      }`}>
         {navItems.map((item) => {
           const active = location.pathname === item.path;
           return (
@@ -33,7 +40,11 @@ const BottomNav = () => {
               key={item.name}
               onClick={() => navigate(item.path)}
               className={`flex flex-col items-center justify-center h-12 flex-1 rounded-2xl transition-all ${
-                active ? 'bg-black text-white dark:bg-white dark:text-black' : 'text-gray-400'
+                active
+                  ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg shadow-blue-500/25'
+                  : isDark
+                    ? 'text-slate-500 hover:text-white'
+                    : 'text-slate-400 hover:text-slate-700'
               }`}
             >
               <Icon name={item.icon} filled={active} className="text-[20px]" />

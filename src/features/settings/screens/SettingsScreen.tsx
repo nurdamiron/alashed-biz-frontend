@@ -5,11 +5,13 @@ import { useAppContext } from '@/shared/context/AppContext';
 
 const SettingsScreen = () => {
   const navigate = useNavigate();
-  const { theme, toggleTheme, logout, appName, businessDomain, setAppConfig } = useAppContext();
+  const { theme, toggleTheme, logout, appName, businessDomain, setAppConfig, user } = useAppContext();
 
   const [localName, setLocalName] = useState(appName);
   const [localDomain, setLocalDomain] = useState(businessDomain);
   const [isEditingConfig, setIsEditingConfig] = useState(false);
+
+  const isDark = theme === 'dark';
 
   const handleLogout = () => {
     logout();
@@ -22,122 +24,235 @@ const SettingsScreen = () => {
   };
 
   return (
-    <div className="flex flex-col h-full bg-background-light dark:bg-background-dark transition-colors duration-500">
-      <header className="sticky top-0 z-30 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-xl px-6 pt-12 pb-4 border-b border-transparent dark:border-white/5">
-        <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tighter uppercase">
-          Settings
+    <div className={`flex flex-col h-full transition-colors duration-300 ${
+      isDark ? 'bg-slate-900' : 'bg-slate-50'
+    }`}>
+      <header className={`sticky top-0 z-30 backdrop-blur-xl px-6 pt-12 pb-4 ${
+        isDark ? 'bg-slate-900/80' : 'bg-slate-50/80'
+      }`}>
+        <h1 className={`text-2xl font-black tracking-tight ${
+          isDark ? 'text-white' : 'text-slate-800'
+        }`}>
+          Настройки
         </h1>
       </header>
 
-      <main className="flex-1 overflow-y-auto no-scrollbar p-6 space-y-10 pb-40">
-        {/* Domain & Branding */}
-        <section className="space-y-4">
-          <div className="flex items-center justify-between px-2">
-            <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">
-              Branding & Domain
-            </h3>
-            <button
-              onClick={() => (isEditingConfig ? saveConfig() : setIsEditingConfig(true))}
-              className="text-primary text-[10px] font-bold uppercase tracking-widest"
-            >
-              {isEditingConfig ? 'Save' : 'Edit'}
-            </button>
-          </div>
-
-          <div className="bg-white dark:bg-surface-dark rounded-[2.5rem] p-6 shadow-sm border border-gray-100 dark:border-white/5 space-y-4">
-            <div className="space-y-1.5">
-              <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest ml-2">
-                App Name
-              </label>
-              <input
-                disabled={!isEditingConfig}
-                value={localName}
-                onChange={(e) => setLocalName(e.target.value)}
-                className="w-full h-12 px-5 rounded-2xl bg-gray-50 dark:bg-background-dark border-none text-sm font-bold disabled:opacity-50"
-              />
+      <main className="flex-1 overflow-y-auto no-scrollbar p-6 space-y-6 pb-40">
+        {/* Profile Section */}
+        <section className={`rounded-2xl p-5 ${
+          isDark
+            ? 'bg-slate-800/50 border border-white/5'
+            : 'bg-white border border-slate-200/50 shadow-sm'
+        }`}>
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-white font-bold text-xl">
+              {user?.name?.charAt(0) || 'A'}
             </div>
-            <div className="space-y-1.5">
-              <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest ml-2">
-                Business Domain
-              </label>
-              <input
-                disabled={!isEditingConfig}
-                value={localDomain}
-                onChange={(e) => setLocalDomain(e.target.value)}
-                placeholder="e.g. Clothing Store, Coffee Shop"
-                className="w-full h-12 px-5 rounded-2xl bg-gray-50 dark:bg-background-dark border-none text-sm font-bold disabled:opacity-50"
-              />
+            <div className="flex-1">
+              <h3 className={`font-bold ${isDark ? 'text-white' : 'text-slate-800'}`}>
+                {user?.name || 'Администратор'}
+              </h3>
+              <p className={`text-sm ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
+                {user?.email || 'admin@alashed.kz'}
+              </p>
+            </div>
+            <div className={`px-3 py-1 rounded-lg text-xs font-semibold ${
+              isDark
+                ? 'bg-blue-500/10 text-blue-400'
+                : 'bg-blue-50 text-blue-600'
+            }`}>
+              {user?.role || 'Admin'}
             </div>
           </div>
         </section>
 
-        {/* Interface */}
-        <section className="space-y-4">
-          <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] px-2">
-            Interface
-          </h3>
-          <div className="bg-white dark:bg-surface-dark rounded-[2.5rem] p-6 shadow-sm border border-gray-100 dark:border-white/5 space-y-8">
+        {/* Theme Section */}
+        <section className={`rounded-2xl overflow-hidden ${
+          isDark
+            ? 'bg-slate-800/50 border border-white/5'
+            : 'bg-white border border-slate-200/50 shadow-sm'
+        }`}>
+          <div className="p-5">
+            <h3 className={`text-xs font-semibold uppercase tracking-wider mb-4 ${
+              isDark ? 'text-slate-500' : 'text-slate-400'
+            }`}>
+              Внешний вид
+            </h3>
+
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <div
-                  className={`h-14 w-14 rounded-[1.4rem] flex items-center justify-center transition-all ${
-                    theme === 'dark'
-                      ? 'bg-indigo-500/10 text-indigo-400'
-                      : 'bg-orange-500/10 text-orange-500'
-                  }`}
-                >
-                  <Icon
-                    name={theme === 'dark' ? 'nights_stay' : 'light_mode'}
-                    className="text-[28px]"
-                  />
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
+                  isDark
+                    ? 'bg-indigo-500/10 text-indigo-400'
+                    : 'bg-amber-500/10 text-amber-500'
+                }`}>
+                  <Icon name={isDark ? 'dark_mode' : 'light_mode'} className="text-2xl" />
                 </div>
                 <div>
-                  <p className="text-sm font-black text-slate-900 dark:text-white">Dark Mode</p>
-                  <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">
-                    {theme === 'dark' ? 'Active' : 'Inactive'}
+                  <p className={`font-semibold ${isDark ? 'text-white' : 'text-slate-800'}`}>
+                    Тёмная тема
+                  </p>
+                  <p className={`text-xs ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
+                    {isDark ? 'Включена' : 'Выключена'}
                   </p>
                 </div>
               </div>
               <button
                 onClick={toggleTheme}
-                className={`w-16 h-9 rounded-full relative transition-all p-1.5 ${
-                  theme === 'dark' ? 'bg-primary' : 'bg-gray-200'
+                className={`w-14 h-8 rounded-full relative transition-all duration-300 ${
+                  isDark
+                    ? 'bg-gradient-to-r from-blue-500 to-cyan-500'
+                    : 'bg-slate-200'
                 }`}
               >
-                <div
-                  className={`h-6 w-6 rounded-full bg-white shadow-xl transition-all duration-500 ${
-                    theme === 'dark' ? 'translate-x-7' : 'translate-x-0'
-                  }`}
-                ></div>
+                <div className={`absolute top-1 w-6 h-6 rounded-full bg-white shadow-lg transition-all duration-300 ${
+                  isDark ? 'left-7' : 'left-1'
+                }`} />
               </button>
-            </div>
-
-            <div
-              onClick={handleLogout}
-              className="flex items-center justify-between group cursor-pointer active:scale-95 transition-all"
-            >
-              <div className="flex items-center gap-4">
-                <div className="h-14 w-14 rounded-[1.4rem] bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-500">
-                  <Icon name="logout" className="text-[26px]" />
-                </div>
-                <div>
-                  <p className="text-sm font-black text-red-500">Logout</p>
-                  <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">
-                    End Session
-                  </p>
-                </div>
-              </div>
-              <Icon name="chevron_right" className="text-gray-300" />
             </div>
           </div>
         </section>
 
-        <div className="text-center py-10 opacity-30">
-          <p className="text-[8px] font-black text-gray-400 uppercase tracking-[0.4em]">
-            SYSTEM CORE
-          </p>
-          <p className="text-[8px] font-black text-primary uppercase tracking-[0.2em] mt-2">
-            v2.5.0-Stable
+        {/* App Config Section */}
+        <section className={`rounded-2xl overflow-hidden ${
+          isDark
+            ? 'bg-slate-800/50 border border-white/5'
+            : 'bg-white border border-slate-200/50 shadow-sm'
+        }`}>
+          <div className="p-5">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className={`text-xs font-semibold uppercase tracking-wider ${
+                isDark ? 'text-slate-500' : 'text-slate-400'
+              }`}>
+                Настройки приложения
+              </h3>
+              <button
+                onClick={() => (isEditingConfig ? saveConfig() : setIsEditingConfig(true))}
+                className="text-blue-500 text-xs font-semibold"
+              >
+                {isEditingConfig ? 'Сохранить' : 'Изменить'}
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className={`block text-xs font-medium mb-2 ${
+                  isDark ? 'text-slate-400' : 'text-slate-500'
+                }`}>
+                  Название
+                </label>
+                <input
+                  disabled={!isEditingConfig}
+                  value={localName}
+                  onChange={(e) => setLocalName(e.target.value)}
+                  className={`w-full h-12 px-4 rounded-xl text-sm font-medium transition-colors disabled:opacity-60 ${
+                    isDark
+                      ? 'bg-slate-900/50 border border-white/5 text-white'
+                      : 'bg-slate-50 border border-slate-200 text-slate-800'
+                  }`}
+                />
+              </div>
+              <div>
+                <label className={`block text-xs font-medium mb-2 ${
+                  isDark ? 'text-slate-400' : 'text-slate-500'
+                }`}>
+                  Описание бизнеса
+                </label>
+                <input
+                  disabled={!isEditingConfig}
+                  value={localDomain}
+                  onChange={(e) => setLocalDomain(e.target.value)}
+                  placeholder="Например: Магазин электроники"
+                  className={`w-full h-12 px-4 rounded-xl text-sm font-medium transition-colors disabled:opacity-60 ${
+                    isDark
+                      ? 'bg-slate-900/50 border border-white/5 text-white placeholder:text-slate-600'
+                      : 'bg-slate-50 border border-slate-200 text-slate-800 placeholder:text-slate-400'
+                  }`}
+                />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Navigation Links */}
+        <section className={`rounded-2xl overflow-hidden ${
+          isDark
+            ? 'bg-slate-800/50 border border-white/5'
+            : 'bg-white border border-slate-200/50 shadow-sm'
+        }`}>
+          <div className="p-5">
+            <h3 className={`text-xs font-semibold uppercase tracking-wider mb-4 ${
+              isDark ? 'text-slate-500' : 'text-slate-400'
+            }`}>
+              Разделы
+            </h3>
+
+            <div className="space-y-2">
+              {[
+                { icon: 'people', label: 'Сотрудники', path: '/staff' },
+                { icon: 'local_shipping', label: 'Поставщики', path: '/suppliers' },
+                { icon: 'warehouse', label: 'Склад', path: '/warehouse' },
+                { icon: 'analytics', label: 'Аналитика', path: '/analytics' },
+              ].map((item) => (
+                <button
+                  key={item.path}
+                  onClick={() => navigate(item.path)}
+                  className={`w-full flex items-center justify-between p-3 rounded-xl transition-all active:scale-[0.98] ${
+                    isDark
+                      ? 'hover:bg-white/5'
+                      : 'hover:bg-slate-50'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                      isDark ? 'bg-white/5' : 'bg-slate-100'
+                    }`}>
+                      <Icon name={item.icon} className={`text-lg ${
+                        isDark ? 'text-slate-400' : 'text-slate-500'
+                      }`} />
+                    </div>
+                    <span className={`font-medium ${isDark ? 'text-white' : 'text-slate-800'}`}>
+                      {item.label}
+                    </span>
+                  </div>
+                  <Icon name="chevron_right" className={isDark ? 'text-slate-600' : 'text-slate-300'} />
+                </button>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Logout Section */}
+        <section className={`rounded-2xl overflow-hidden ${
+          isDark
+            ? 'bg-slate-800/50 border border-white/5'
+            : 'bg-white border border-slate-200/50 shadow-sm'
+        }`}>
+          <button
+            onClick={handleLogout}
+            className={`w-full flex items-center justify-between p-5 transition-all active:scale-[0.98] ${
+              isDark ? 'hover:bg-red-500/5' : 'hover:bg-red-50'
+            }`}
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-red-500/10 flex items-center justify-center">
+                <Icon name="logout" className="text-red-500 text-2xl" />
+              </div>
+              <div className="text-left">
+                <p className="font-semibold text-red-500">Выйти</p>
+                <p className={`text-xs ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
+                  Завершить сессию
+                </p>
+              </div>
+            </div>
+            <Icon name="chevron_right" className="text-red-300" />
+          </button>
+        </section>
+
+        {/* Version */}
+        <div className="text-center py-6">
+          <p className={`text-xs ${isDark ? 'text-slate-700' : 'text-slate-300'}`}>
+            Alashed Business v2.5.0
           </p>
         </div>
       </main>

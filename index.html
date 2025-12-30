@@ -8,8 +8,8 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="ALASHED" />
-  <link rel="manifest" href="/manifest.json" />
-  <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/logo-dark.png" />
   <title>ALASHED Business</title>
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -23,19 +23,6 @@
 <body class="dark">
   <div id="root"></div>
   <script type="module" src="/src/main.tsx"></script>
-  <script>
-    // Register Service Worker
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', async () => {
-        try {
-          const reg = await navigator.serviceWorker.register('/sw.js');
-          console.log('SW registered:', reg.scope);
-        } catch (e) {
-          console.error('SW registration failed:', e);
-        }
-      });
-    }
-  </script>
-</body>
+  </body>
 
 </html>

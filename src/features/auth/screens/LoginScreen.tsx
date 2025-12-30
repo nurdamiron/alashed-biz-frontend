@@ -5,10 +5,11 @@ import { useAppContext } from '@/shared/context/AppContext';
 
 const LoginScreen = () => {
   const navigate = useNavigate();
-  const { login } = useAppContext();
+  const { login, theme, toggleTheme } = useAppContext();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -16,135 +17,226 @@ const LoginScreen = () => {
     if (!password || !email) return;
 
     setIsLoading(true);
-    setError(false);
+    setError('');
 
     try {
       const success = await login(email, password);
       if (success) {
         navigate('/');
       } else {
-        setError(true);
+        setError('Неверный email или пароль');
       }
     } catch (err) {
-      setError(true);
+      setError('Ошибка подключения к серверу');
     } finally {
       setIsLoading(false);
     }
   };
 
+  const isDark = theme === 'dark';
+
   return (
-    <div className="flex flex-col h-screen bg-[#000000] text-white relative overflow-hidden font-display selection:bg-primary/30">
-      {/* Animated Background */}
-      <div className="absolute inset-0 z-0 overflow-hidden">
-        <div className="absolute top-[-20%] left-[-10%] w-[70%] h-[70%] bg-primary/20 rounded-full blur-[120px] animate-float"></div>
-        <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-indigo-600/10 rounded-full blur-[100px] animate-float-delay"></div>
-        <div className="absolute top-[40%] left-[30%] w-[40%] h-[40%] bg-blue-500/10 rounded-full blur-[80px] animate-pulse"></div>
+    <div className={`min-h-screen flex flex-col relative overflow-hidden transition-colors duration-300 ${
+      isDark
+        ? 'bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900'
+        : 'bg-gradient-to-br from-slate-50 via-white to-slate-100'
+    }`}>
+      {/* Theme Toggle Button */}
+      <button
+        onClick={toggleTheme}
+        className={`absolute top-6 right-6 z-20 w-12 h-12 rounded-2xl flex items-center justify-center transition-all active:scale-90 ${
+          isDark
+            ? 'bg-white/10 hover:bg-white/20 text-white'
+            : 'bg-black/5 hover:bg-black/10 text-slate-700'
+        }`}
+      >
+        <Icon name={isDark ? 'light_mode' : 'dark_mode'} className="text-2xl" />
+      </button>
+
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className={`absolute top-0 left-0 w-96 h-96 rounded-full blur-[128px] -translate-x-1/2 -translate-y-1/2 ${
+          isDark ? 'bg-blue-500/20' : 'bg-blue-500/30'
+        }`} />
+        <div className={`absolute bottom-0 right-0 w-96 h-96 rounded-full blur-[128px] translate-x-1/2 translate-y-1/2 ${
+          isDark ? 'bg-cyan-500/15' : 'bg-cyan-500/20'
+        }`} />
+        <div className={`absolute top-1/2 left-1/2 w-64 h-64 rounded-full blur-[100px] -translate-x-1/2 -translate-y-1/2 animate-pulse ${
+          isDark ? 'bg-indigo-500/10' : 'bg-indigo-500/15'
+        }`} />
       </div>
 
-      <main className="relative z-10 flex-1 flex flex-col items-center justify-center p-6">
-        <div className="w-full max-w-[400px] flex flex-col items-center">
-          {/* Logo Section */}
-          <div className="mb-12 flex flex-col items-center relative group">
-            <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-            <span className="text-4xl font-black tracking-tight text-primary mb-6 relative z-10 animate-breathe drop-shadow-[0_0_15px_rgba(19,91,236,0.5)]">
-              ALASHED
-            </span>
-            <div className="flex flex-col items-center space-y-2">
-              <h1 className="text-2xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white to-white/70">
-                Alashed Business
-              </h1>
-              <p className="text-[11px] font-bold text-primary/80 uppercase tracking-[0.4em] border border-primary/20 px-3 py-1 rounded-full bg-primary/5 backdrop-blur-sm">
-                Авторизация
-              </p>
-            </div>
+      {/* Grid Pattern */}
+      <div
+        className={`absolute inset-0 ${isDark ? 'opacity-[0.02]' : 'opacity-[0.03]'}`}
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='${isDark ? '%23ffffff' : '%23000000'}' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+        }}
+      />
+
+      <main className="relative z-10 flex-1 flex items-center justify-center p-6">
+        <div className="w-full max-w-md">
+          {/* Logo */}
+          <div className="flex flex-col items-center mb-10">
+            <img
+              src={isDark ? '/logo-dark.png' : '/logo-light.png'}
+              alt="Alashed"
+              className="h-20 w-auto mb-6 drop-shadow-2xl"
+            />
+            <h1 className={`text-3xl font-black tracking-tight mb-2 ${
+              isDark ? 'text-white' : 'text-slate-800'
+            }`}>
+              Добро пожаловать
+            </h1>
+            <p className={isDark ? 'text-slate-400' : 'text-slate-500'}>
+              Войдите в систему управления бизнесом
+            </p>
           </div>
 
-          {/* Login Form Card */}
-          <div className="w-full bg-white/5 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] p-8 shadow-2xl shadow-black/50 relative overflow-hidden group">
-            {/* Glossy overlay */}
-            <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-50 pointer-events-none"></div>
-
-            <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
-              <div className="space-y-2">
-                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-4">
+          {/* Login Card */}
+          <div className={`backdrop-blur-xl border rounded-3xl p-8 shadow-2xl ${
+            isDark
+              ? 'bg-white/[0.03] border-white/10'
+              : 'bg-white/80 border-slate-200/50 shadow-slate-200/50'
+          }`}>
+            <form onSubmit={handleSubmit} className="space-y-5">
+              {/* Email Field */}
+              <div>
+                <label className={`block text-xs font-semibold uppercase tracking-wider mb-2 ml-1 ${
+                  isDark ? 'text-slate-400' : 'text-slate-500'
+                }`}>
                   Email
                 </label>
-                <div className="relative group/input">
-                  <div className="absolute inset-y-0 left-5 flex items-center text-gray-500 group-focus-within/input:text-primary transition-colors">
-                    <Icon name="mail" className="text-[20px]" />
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <Icon name="mail" className={`text-xl ${isDark ? 'text-slate-500' : 'text-slate-400'}`} />
                   </div>
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="name@company.com"
-                    className="w-full h-16 pl-14 pr-6 bg-black/20 border border-white/10 rounded-2xl font-medium text-white placeholder-white/20 focus:outline-none focus:border-primary/50 focus:bg-white/5 focus:shadow-[0_0_20px_rgba(19,91,236,0.1)] transition-all duration-300"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <div className="flex justify-between items-center px-4">
-                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-                    Пароль
-                  </label>
-                </div>
-                <div className="relative group/input">
-                  <div className="absolute inset-y-0 left-5 flex items-center text-gray-500 group-focus-within/input:text-primary transition-colors">
-                    <Icon
-                      name={error ? 'gpp_bad' : 'lock'}
-                      className={`text-[20px] ${error ? 'text-red-500' : ''}`}
-                    />
-                  </div>
-                  <input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••"
-                    className={`w-full h-16 pl-14 pr-6 bg-black/20 border rounded-2xl font-medium text-white placeholder-white/20 focus:outline-none transition-all duration-300 ${
-                      error
-                        ? 'border-red-500/50 shadow-[0_0_20px_rgba(239,68,68,0.1)]'
-                        : 'border-white/10 focus:border-primary/50 focus:bg-white/5 focus:shadow-[0_0_20px_rgba(19,91,236,0.1)]'
+                    placeholder="example@alashed.kz"
+                    autoComplete="email"
+                    className={`w-full h-14 pl-12 pr-4 border rounded-xl transition-all focus:outline-none focus:ring-2 ${
+                      isDark
+                        ? 'bg-white/5 border-white/10 text-white placeholder:text-slate-500 focus:border-blue-500/50 focus:ring-blue-500/20'
+                        : 'bg-white border-slate-200 text-slate-800 placeholder:text-slate-400 focus:border-blue-500 focus:ring-blue-500/20'
                     }`}
                   />
                 </div>
-                {error && (
-                  <div className="flex items-center justify-center gap-2 mt-2 animate-in fade-in slide-in-from-top-1">
-                    <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></div>
-                    <p className="text-red-400 text-[11px] font-medium">
-                      Неверный email или пароль
-                    </p>
-                  </div>
-                )}
               </div>
 
+              {/* Password Field */}
+              <div>
+                <label className={`block text-xs font-semibold uppercase tracking-wider mb-2 ml-1 ${
+                  isDark ? 'text-slate-400' : 'text-slate-500'
+                }`}>
+                  Пароль
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <Icon name="lock" className={`text-xl ${isDark ? 'text-slate-500' : 'text-slate-400'}`} />
+                  </div>
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    autoComplete="current-password"
+                    className={`w-full h-14 pl-12 pr-12 border rounded-xl transition-all focus:outline-none focus:ring-2 ${
+                      isDark
+                        ? 'bg-white/5 border-white/10 text-white placeholder:text-slate-500 focus:border-blue-500/50 focus:ring-blue-500/20'
+                        : 'bg-white border-slate-200 text-slate-800 placeholder:text-slate-400 focus:border-blue-500 focus:ring-blue-500/20'
+                    }`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className={`absolute inset-y-0 right-0 pr-4 flex items-center transition-colors ${
+                      isDark ? 'text-slate-500 hover:text-white' : 'text-slate-400 hover:text-slate-700'
+                    }`}
+                  >
+                    <Icon name={showPassword ? 'visibility_off' : 'visibility'} className="text-xl" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Error Message */}
+              {error && (
+                <div className="flex items-center gap-2 p-3 bg-red-500/10 border border-red-500/20 rounded-xl">
+                  <Icon name="error" className="text-red-400 text-lg" />
+                  <span className="text-red-400 text-sm font-medium">{error}</span>
+                </div>
+              )}
+
+              {/* Submit Button */}
               <button
                 type="submit"
                 disabled={isLoading || !password || !email}
-                className="group/btn relative w-full h-16 mt-4 rounded-2xl bg-gradient-to-r from-primary to-indigo-600 overflow-hidden shadow-lg shadow-primary/25 hover:shadow-primary/40 active:scale-[0.98] transition-all duration-300 disabled:opacity-50 disabled:shadow-none disabled:active:scale-100"
+                className="w-full h-14 mt-2 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 disabled:from-blue-500/50 disabled:to-cyan-500/50 rounded-xl text-white font-bold text-sm uppercase tracking-wider shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 active:scale-[0.98] transition-all disabled:cursor-not-allowed disabled:active:scale-100 flex items-center justify-center gap-2"
               >
-                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300 rounded-2xl"></div>
-                <div className="relative flex items-center justify-center gap-3">
-                  {isLoading ? (
-                    <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                  ) : (
-                    <>
-                      <span className="text-sm font-bold uppercase tracking-widest text-white">
-                        Войти
-                      </span>
-                      <Icon
-                        name="arrow_forward"
-                        className="text-[18px] group-hover/btn:translate-x-1 transition-transform"
-                      />
-                    </>
-                  )}
-                </div>
+                {isLoading ? (
+                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                ) : (
+                  <>
+                    Войти
+                    <Icon name="login" className="text-lg" />
+                  </>
+                )}
               </button>
             </form>
+
+            {/* Divider */}
+            <div className="flex items-center gap-4 my-6">
+              <div className={`flex-1 h-px ${isDark ? 'bg-white/10' : 'bg-slate-200'}`} />
+              <span className={`text-xs uppercase tracking-wider ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
+                или
+              </span>
+              <div className={`flex-1 h-px ${isDark ? 'bg-white/10' : 'bg-slate-200'}`} />
+            </div>
+
+            {/* Demo Credentials */}
+            <div className={`border rounded-xl p-4 ${
+              isDark
+                ? 'bg-white/5 border-white/10'
+                : 'bg-slate-50 border-slate-200'
+            }`}>
+              <div className="flex items-center gap-2 mb-3">
+                <Icon name="info" className="text-blue-500 text-lg" />
+                <span className={`text-xs font-semibold uppercase tracking-wider ${
+                  isDark ? 'text-slate-400' : 'text-slate-500'
+                }`}>
+                  Демо доступ
+                </span>
+              </div>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className={isDark ? 'text-slate-500' : 'text-slate-400'}>Email:</span>
+                  <button
+                    type="button"
+                    onClick={() => setEmail('admin@alashed.kz')}
+                    className="text-blue-500 hover:text-blue-400 font-medium transition-colors"
+                  >
+                    admin@alashed.kz
+                  </button>
+                </div>
+                <div className="flex justify-between">
+                  <span className={isDark ? 'text-slate-500' : 'text-slate-400'}>Пароль:</span>
+                  <button
+                    type="button"
+                    onClick={() => setPassword('admin123')}
+                    className="text-blue-500 hover:text-blue-400 font-medium transition-colors"
+                  >
+                    admin123
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <p className="mt-8 text-white/20 text-xs font-medium tracking-wide">
-            © 2024 Alashed Business
+          {/* Footer */}
+          <p className={`text-center text-xs mt-8 ${isDark ? 'text-slate-600' : 'text-slate-400'}`}>
+            © 2024 Alashed Business. Все права защищены.
           </p>
         </div>
       </main>

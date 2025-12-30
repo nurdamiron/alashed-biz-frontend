@@ -222,7 +222,7 @@ const InventoryDetailScreen = () => {
           </button>
           <button
             onClick={() => setModalType('in')}
-            className="flex-1 h-16 rounded-[1.8rem] bg-primary text-white font-black text-base shadow-xl flex items-center justify-center gap-2 active:scale-95 transition-all"
+            className="flex-1 h-16 rounded-[1.8rem] bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold text-base shadow-xl flex items-center justify-center gap-2 active:scale-95 transition-all"
           >
             <Icon name="add_circle" className="text-[22px]" />
             <span>Приход</span>

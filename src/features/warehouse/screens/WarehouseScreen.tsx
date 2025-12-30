@@ -152,7 +152,7 @@ const WarehouseScreen = () => {
       {/* FAB */}
       <button
         onClick={() => navigate('/warehouse/new')}
-        className="fixed bottom-32 right-6 h-16 w-16 rounded-[2rem] bg-primary text-white shadow-2xl shadow-primary/40 flex items-center justify-center hover:scale-110 active:scale-90 transition-all z-40 border-4 border-white dark:border-background-dark"
+        className="fixed bottom-32 right-6 h-16 w-16 rounded-[2rem] bg-gradient-to-br from-blue-500 to-cyan-500 text-white shadow-lg shadow-blue-500/30 flex items-center justify-center hover:scale-110 active:scale-90 transition-all z-40 ring-4 ring-white dark:ring-slate-900"
       >
         <Icon name="add_location" className="text-[32px]" />
       </button>
