@@ -9,7 +9,7 @@ const BottomNav = () => {
 
   if (!isAuthenticated) return null;
 
-  const hideNavRoutes = ['/notifications', '/create-task', '/create-order', '/create-product', '/login'];
+  const hideNavRoutes = ['/notifications', '/login'];
   const isHiddenRoute = hideNavRoutes.some(path => location.pathname.startsWith(path));
   const isDetailRoute = /^\/(order|inventory|task|edit-product|edit-task|warehouse|staff|suppliers|analytics)\/.+/.test(location.pathname);
   const isNewRoute = /\/(new|edit)$/.test(location.pathname);
