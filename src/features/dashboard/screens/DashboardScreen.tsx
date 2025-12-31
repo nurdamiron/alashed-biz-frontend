@@ -6,11 +6,11 @@ import { AIHubModal } from '@/features/ai';
 
 const DashboardScreen = () => {
   const navigate = useNavigate();
-  const { stats, formatPrice, appName, theme, notifications } = useAppContext();
+  const { stats, formatPrice, theme, notifications } = useAppContext();
   const [showAIHub, setShowAIHub] = useState(false);
 
   const isDark = theme === 'dark';
-  const unreadCount = notifications.filter(n => !n.isRead).length;
+  const unreadCount = notifications.filter(n => !n.read).length;
 
   return (
     <div className={`flex-1 overflow-y-auto no-scrollbar pb-32 transition-colors duration-300 ${

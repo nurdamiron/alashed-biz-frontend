@@ -1,5 +1,6 @@
 import { useEffect, useCallback, useState } from 'react';
-import { wsClient, WebSocketEvent, WebSocketEventType } from '../lib/websocket';
+import { wsClient } from '../lib/websocket';
+import type { WebSocketEvent, WebSocketEventType } from '../lib/websocket';
 
 export function useWebSocket() {
   const [isConnected, setIsConnected] = useState(wsClient.isConnected());

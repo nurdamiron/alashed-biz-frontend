@@ -3,7 +3,7 @@ import { Icon } from '@/shared/components';
 import { api } from '@/shared/lib/api';
 import {
   LineChart, Line, BarChart, Bar, PieChart, Pie, Cell,
-  XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend
+  XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from 'recharts';
 
 type Period = 'daily' | 'weekly' | 'monthly';
@@ -116,7 +116,7 @@ const AnalyticsScreen = () => {
                   <YAxis tick={{ fontSize: 10 }} stroke="#9ca3af" tickFormatter={(v) => `${(v/1000).toFixed(0)}K`} />
                   <Tooltip
                     contentStyle={{ background: '#1f2937', border: 'none', borderRadius: '0.5rem' }}
-                    formatter={(value: number) => [formatCurrency(value), 'Выручка']}
+                    formatter={(value: number | undefined) => [formatCurrency(value || 0), 'Выручка']}
                   />
                   <Line type="monotone" dataKey="revenue" stroke="#135bec" strokeWidth={3} dot={{ fill: '#135bec' }} />
                 </LineChart>
@@ -138,7 +138,7 @@ const AnalyticsScreen = () => {
                   <YAxis dataKey="name" type="category" tick={{ fontSize: 10 }} stroke="#9ca3af" width={100} />
                   <Tooltip
                     contentStyle={{ background: '#1f2937', border: 'none', borderRadius: '0.5rem' }}
-                    formatter={(value: number) => [value, 'Продано']}
+                    formatter={(value: number | undefined) => [value || 0, 'Продано']}
                   />
                   <Bar dataKey="soldQuantity" fill="#22c55e" radius={[0, 4, 4, 0]} />
                 </BarChart>
@@ -162,7 +162,7 @@ const AnalyticsScreen = () => {
                     cx="50%"
                     cy="50%"
                     outerRadius={80}
-                    label={({ category, percent }) => `${category}: ${(percent * 100).toFixed(0)}%`}
+                    label={({ name, percent }: any) => `${name}: ${((percent || 0) * 100).toFixed(0)}%`}
                     labelLine={false}
                   >
                     {categoryData.map((_, index) => (
@@ -171,7 +171,7 @@ const AnalyticsScreen = () => {
                   </Pie>
                   <Tooltip
                     contentStyle={{ background: '#1f2937', border: 'none', borderRadius: '0.5rem' }}
-                    formatter={(value: number) => [formatCurrency(value), 'Выручка']}
+                    formatter={(value: number | undefined) => [formatCurrency(value || 0), 'Выручка']}
                   />
                 </PieChart>
               </ResponsiveContainer>

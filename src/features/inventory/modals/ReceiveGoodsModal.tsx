@@ -22,7 +22,7 @@ const ReceiveGoodsModal = () => {
   const [productSearch, setProductSearch] = useState('');
   const [supplierSearch, setSupplierSearch] = useState('');
 
-  const activeProducts = products.filter(p => p.isActive !== false);
+  const activeProducts = products;
   const activeSuppliers = suppliers.filter(s => s.isActive !== false);
 
   const filteredProducts = activeProducts.filter(p =>
@@ -101,7 +101,7 @@ const ReceiveGoodsModal = () => {
                 <div className="flex-1">
                   <p className="font-bold text-slate-900 dark:text-white">{selectedProduct.name}</p>
                   <p className="text-xs text-gray-500">
-                    SKU: {selectedProduct.sku} | Остаток: {selectedProduct.quantity} {selectedProduct.unit}
+                    SKU: {selectedProduct.sku} | Остаток: {selectedProduct.stock} {selectedProduct.unit}
                   </p>
                 </div>
                 <button
@@ -142,7 +142,7 @@ const ReceiveGoodsModal = () => {
                         <p className="text-sm font-bold text-slate-900 dark:text-white">{product.name}</p>
                         <p className="text-xs text-gray-500">SKU: {product.sku}</p>
                       </div>
-                      <p className="text-xs font-bold text-gray-400">{product.quantity} {product.unit}</p>
+                      <p className="text-xs font-bold text-gray-400">{product.stock} {product.unit}</p>
                     </button>
                   ))}
                   {filteredProducts.length === 0 && (
@@ -283,11 +283,11 @@ const ReceiveGoodsModal = () => {
                   {selectedProduct.name}
                 </p>
                 <p className="text-xl font-black text-emerald-600 dark:text-emerald-400">
-                  {selectedProduct.quantity + parseInt(formData.quantity)} {selectedProduct.unit}
+                  {selectedProduct.stock + parseInt(formData.quantity)} {selectedProduct.unit}
                 </p>
               </div>
               <p className="text-xs text-emerald-600/70 dark:text-emerald-400/70 mt-1">
-                Было: {selectedProduct.quantity} + Приход: {formData.quantity}
+                Было: {selectedProduct.stock} + Приход: {formData.quantity}
               </p>
             </div>
           )}
