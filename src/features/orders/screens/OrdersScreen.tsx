@@ -27,7 +27,12 @@ const OrdersScreen = () => {
   return (
     <div className="flex flex-col h-full bg-background-light dark:bg-background-dark transition-colors duration-300">
       <header className="sticky top-0 z-20 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-800/50 transition-colors">
-        <div className="flex items-center justify-between px-5 pt-5 pb-2">
+        <div
+          className="flex items-center justify-between px-5 pb-2"
+          style={{
+            paddingTop: 'max(1.25rem, calc(1.25rem + env(safe-area-inset-top)))'
+          }}
+        >
           <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
             Заказы
           </h1>
@@ -129,7 +134,12 @@ const OrdersScreen = () => {
         </div>
       </header>
 
-      <main className="flex-1 overflow-y-auto no-scrollbar pb-28 px-5 pt-4 space-y-4">
+      <main
+        className="flex-1 overflow-y-auto no-scrollbar px-5 pt-4 space-y-4"
+        style={{
+          paddingBottom: 'calc(7rem + env(safe-area-inset-bottom))'
+        }}
+      >
         {filteredOrders.map((order) => {
           const isCancelled = order.status === 'Отменено';
           return (
@@ -192,7 +202,10 @@ const OrdersScreen = () => {
 
       <button
         onClick={() => navigate('/orders/new')}
-        className="fixed bottom-32 right-6 h-16 w-16 rounded-[2rem] bg-blue-500 text-white shadow-lg shadow-blue-500/30 flex items-center justify-center hover:scale-110 active:scale-90 transition-all z-40 ring-4 ring-white dark:ring-slate-900"
+        className="fixed right-6 h-16 w-16 rounded-[2rem] bg-blue-500 text-white shadow-lg shadow-blue-500/30 flex items-center justify-center hover:scale-110 active:scale-90 transition-all z-40 ring-4 ring-white dark:ring-slate-900"
+        style={{
+          bottom: 'calc(8rem + env(safe-area-inset-bottom))'
+        }}
       >
         <Icon name="add_shopping_cart" className="text-[32px]" />
       </button>

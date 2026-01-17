@@ -13,13 +13,23 @@ const DashboardScreen = () => {
   const unreadCount = Array.isArray(notifications) ? notifications.filter(n => !n.read).length : 0;
 
   return (
-    <div className={`flex-1 overflow-y-auto no-scrollbar pb-32 transition-colors duration-300 ${
-      isDark ? 'bg-slate-900' : 'bg-slate-50'
-    }`}>
+    <div
+      className={`flex-1 overflow-y-auto no-scrollbar transition-colors duration-300 ${
+        isDark ? 'bg-slate-900' : 'bg-slate-50'
+      }`}
+      style={{
+        paddingBottom: 'calc(8rem + env(safe-area-inset-bottom))'
+      }}
+    >
       {/* Header */}
-      <header className={`sticky top-0 z-30 backdrop-blur-xl px-6 pt-12 pb-6 transition-colors ${
-        isDark ? 'bg-slate-900/80' : 'bg-slate-50/80'
-      }`}>
+      <header
+        className={`sticky top-0 z-30 backdrop-blur-xl px-6 pb-6 transition-colors ${
+          isDark ? 'bg-slate-900/80' : 'bg-slate-50/80'
+        }`}
+        style={{
+          paddingTop: 'max(3rem, calc(3rem + env(safe-area-inset-top)))'
+        }}
+      >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <img

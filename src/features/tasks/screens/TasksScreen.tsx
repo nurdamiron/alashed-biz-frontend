@@ -101,6 +101,15 @@ const TasksScreen = () => {
     return true;
   }) : [];
 
+  // DEBUG: Показываем что именно в задачах
+  if (filteredTasks.length > 0 && filteredTasks[0]) {
+    console.log('🐛 DEBUG: First task:', {
+      status: filteredTasks[0].status,
+      priority: filteredTasks[0].priority,
+      title: filteredTasks[0].title
+    });
+  }
+
   const urgentTasks = filteredTasks.filter((t) => t.priority === 'Высокий' && t.status !== 'Готово');
   const inProgressTasks = filteredTasks.filter((t) => t.status === 'В процессе');
   const todoTasks = filteredTasks.filter((t) => t.status === 'К выполнению');
@@ -108,7 +117,12 @@ const TasksScreen = () => {
 
   return (
     <div className="flex flex-col h-full bg-background-light dark:bg-background-dark transition-colors duration-300">
-      <header className="sticky top-0 z-20 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-xl pt-8 px-6 pb-4 transition-colors">
+      <header
+        className="sticky top-0 z-20 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-xl px-6 pb-4 transition-colors"
+        style={{
+          paddingTop: 'max(2rem, calc(2rem + env(safe-area-inset-top)))'
+        }}
+      >
         <div className="flex items-center justify-between mb-4">
           <div className="flex flex-col">
             <span className="text-[10px] font-black text-primary uppercase tracking-[0.3em] mb-1">
@@ -420,7 +434,10 @@ const TasksScreen = () => {
       {/* FAB */}
       <button
         onClick={() => navigate('/tasks/new')}
-        className="fixed bottom-32 right-6 h-16 w-16 rounded-[2rem] bg-blue-500 text-white shadow-lg shadow-blue-500/30 flex items-center justify-center hover:scale-110 active:scale-90 transition-all z-40 ring-4 ring-white dark:ring-slate-900"
+        className="fixed right-6 h-16 w-16 rounded-[2rem] bg-blue-500 text-white shadow-lg shadow-blue-500/30 flex items-center justify-center hover:scale-110 active:scale-90 transition-all z-40 ring-4 ring-white dark:ring-slate-900"
+        style={{
+          bottom: 'calc(8rem + env(safe-area-inset-bottom))'
+        }}
       >
         <Icon name="add_task" className="text-[32px]" />
       </button>

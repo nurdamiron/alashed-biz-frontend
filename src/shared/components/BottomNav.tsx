@@ -27,7 +27,12 @@ const BottomNav = () => {
   ];
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 flex justify-center pb-8 px-6">
+    <div
+      className="fixed bottom-0 left-0 right-0 z-50 flex justify-center px-6"
+      style={{
+        paddingBottom: 'max(2rem, calc(2rem + env(safe-area-inset-bottom)))'
+      }}
+    >
       <nav className={`w-full max-w-sm backdrop-blur-2xl border rounded-[2rem] shadow-lg flex items-center justify-between p-1.5 transition-colors ${
         isDark
           ? 'bg-slate-900/90 border-white/10'

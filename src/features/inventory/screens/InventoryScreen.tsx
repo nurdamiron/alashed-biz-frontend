@@ -33,7 +33,12 @@ const InventoryScreen = () => {
   return (
     <div className="flex flex-col h-full bg-background-light dark:bg-background-dark transition-colors duration-300">
       <header className="sticky top-0 z-30 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-xl border-b border-transparent dark:border-white/5 transition-colors">
-        <div className="flex items-center justify-between px-6 pt-8 pb-4">
+        <div
+          className="flex items-center justify-between px-6 pb-4"
+          style={{
+            paddingTop: 'max(2rem, calc(2rem + env(safe-area-inset-top)))'
+          }}
+        >
           <div className="flex flex-col">
             <span className="text-[10px] font-black text-primary uppercase tracking-[0.3em] mb-1">
               Складской хаб
@@ -80,7 +85,12 @@ const InventoryScreen = () => {
         </div>
       </header>
 
-      <main className="flex-1 overflow-y-auto no-scrollbar pb-40 p-6 space-y-4">
+      <main
+        className="flex-1 overflow-y-auto no-scrollbar p-6 space-y-4"
+        style={{
+          paddingBottom: 'calc(10rem + env(safe-area-inset-bottom))'
+        }}
+      >
         <div className="flex items-center justify-between px-1 mb-2">
           <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">
             Список Товаров
@@ -160,7 +170,10 @@ const InventoryScreen = () => {
 
       <button
         onClick={() => navigate('/inventory/new')}
-        className="fixed bottom-32 right-6 h-16 w-16 rounded-[2rem] bg-blue-500 text-white shadow-lg shadow-blue-500/30 flex items-center justify-center hover:scale-110 active:scale-90 transition-all z-40 ring-4 ring-white dark:ring-slate-900"
+        className="fixed right-6 h-16 w-16 rounded-[2rem] bg-blue-500 text-white shadow-lg shadow-blue-500/30 flex items-center justify-center hover:scale-110 active:scale-90 transition-all z-40 ring-4 ring-white dark:ring-slate-900"
+        style={{
+          bottom: 'calc(8rem + env(safe-area-inset-bottom))'
+        }}
       >
         <Icon name="add_box" className="text-[32px]" />
       </button>

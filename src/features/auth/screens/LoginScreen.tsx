@@ -36,19 +36,29 @@ const LoginScreen = () => {
   const isDark = theme === 'dark';
 
   return (
-    <div className={`min-h-screen flex flex-col relative overflow-hidden transition-colors duration-300 ${
-      isDark
-        ? 'bg-slate-900'
-        : 'bg-slate-50'
-    }`}>
+    <div
+      className={`flex flex-col relative overflow-hidden transition-colors duration-300 ${
+        isDark
+          ? 'bg-slate-900'
+          : 'bg-slate-50'
+      }`}
+      style={{
+        height: '100vh',
+        height: '100dvh',
+      }}
+    >
       {/* Theme Toggle Button */}
       <button
         onClick={toggleTheme}
-        className={`absolute top-6 right-6 z-20 w-12 h-12 rounded-2xl flex items-center justify-center transition-all active:scale-90 ${
+        className={`absolute z-20 w-12 h-12 rounded-2xl flex items-center justify-center transition-all active:scale-90 ${
           isDark
             ? 'bg-white/10 hover:bg-white/20 text-white'
             : 'bg-black/5 hover:bg-black/10 text-slate-700'
         }`}
+        style={{
+          top: 'max(1.5rem, calc(1.5rem + env(safe-area-inset-top)))',
+          right: '1.5rem'
+        }}
       >
         <Icon name={isDark ? 'light_mode' : 'dark_mode'} className="text-2xl" />
       </button>

@@ -25,7 +25,13 @@ const ProtectedRoute = ({ children }: { children?: React.ReactNode }) => {
 
 const AppRoutes = () => {
   return (
-    <div className="bg-background-light dark:bg-black min-h-screen text-slate-900 dark:text-zinc-100 font-sans flex flex-col overflow-hidden transition-colors duration-300">
+    <div
+      className="bg-background-light dark:bg-black text-slate-900 dark:text-zinc-100 font-sans flex flex-col overflow-hidden transition-colors duration-300"
+      style={{
+        height: '100vh',
+        height: '100dvh', // Dynamic viewport height for modern browsers
+      }}
+    >
       <div className="flex-1 overflow-hidden relative">
         <Routes>
           <Route path="/login" element={<LoginScreen />} />
