@@ -2,41 +2,68 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Icon } from '@/shared/components';
 import { useAppContext } from '@/shared/context/AppContext';
+import type { Employee } from '@/shared/types';
 
 const EditTaskModal = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const { tasks, updateTask } = useAppContext();
+  const { tasks, updateTask, employees, deleteTask } = useAppContext();
 
   const task = tasks.find((t) => t.id === id);
 
   const [title, setTitle] = useState('');
   const [desc, setDesc] = useState('');
   const [priority, setPriority] = useState<'Высокий' | 'Средний' | 'Низкий'>('Средний');
-  const [deadline, setDeadline] = useState('');
+  const [selectedAssignee, setSelectedAssignee] = useState<Employee | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [selectedTime, setSelectedTime] = useState('18:00');
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   useEffect(() => {
     if (task) {
       setTitle(task.title);
       setDesc(task.description || '');
       setPriority(task.priority);
-      setDeadline(task.deadline || '');
+
+      if (task.assigneeId) {
+        const assignee = employees.find(e => e.id === task.assigneeId);
+        if (assignee) setSelectedAssignee(assignee);
+      }
+
+      if (task.deadline) {
+        const deadlineDate = new Date(task.deadline);
+        setSelectedDate(deadlineDate);
+        setSelectedTime(deadlineDate.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', hour12: false }));
+      }
     }
-  }, [task]);
+  }, [task, employees]);
 
   if (!task) return null;
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!title) return;
 
-    updateTask({
+    const [hours, minutes] = selectedTime.split(':').map(Number);
+    const year = selectedDate.getFullYear();
+    const month = selectedDate.getMonth();
+    const day = selectedDate.getDate();
+    const deadlineDate = new Date(year, month, day, hours, minutes, 0, 0);
+
+    await updateTask({
       ...task,
       title,
       description: desc,
       priority,
-      deadline: deadline || task.deadline,
+      assigneeId: selectedAssignee?.id,
+      assignee: selectedAssignee?.name,
+      deadline: deadlineDate.toISOString(),
     });
     navigate(-1);
+  };
+
+  const handleDelete = async () => {
+    await deleteTask(task.id);
+    navigate('/tasks');
   };
 
   return (
@@ -102,42 +129,64 @@ const EditTaskModal = () => {
           </div>
         </div>
 
-        <div className="flex flex-col overflow-hidden rounded-xl border border-gray-200 dark:border-border-dark bg-white dark:bg-surface-dark divide-y divide-gray-100 dark:divide-border-dark/50">
-          <button className="flex w-full items-center justify-between p-4 active:bg-gray-50 dark:active:bg-[#252f44] transition-colors group">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30 text-primary">
-                <Icon name="person" className="text-[20px]" />
-              </div>
-              <div className="flex flex-col items-start">
-                <span className="text-sm font-medium text-gray-900 dark:text-white">Исполнитель</span>
-                <span className="text-xs text-gray-500 dark:text-text-secondary">
-                  {task.assignee || 'Не назначен'}
-                </span>
-              </div>
-            </div>
-            <Icon
-              name="chevron_right"
-              className="text-gray-400 dark:text-gray-600 group-hover:text-primary transition-colors"
-            />
-          </button>
-          <button className="flex w-full items-center justify-between p-4 active:bg-gray-50 dark:active:bg-[#252f44] transition-colors group">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400">
-                <Icon name="calendar_today" className="text-[20px]" />
-              </div>
-              <div className="flex flex-col items-start">
-                <span className="text-sm font-medium text-gray-900 dark:text-white">Срок</span>
-                <span className="text-xs text-gray-500 dark:text-text-secondary">
-                  {deadline || 'Без срока'}
-                </span>
-              </div>
-            </div>
-            <Icon
-              name="chevron_right"
-              className="text-gray-400 dark:text-gray-600 group-hover:text-purple-500 transition-colors"
-            />
-          </button>
+        {/* Исполнитель */}
+        <div className="space-y-3">
+          <label className="text-gray-900 dark:text-white text-sm font-medium leading-normal">Исполнитель</label>
+          <div className="flex gap-3 overflow-x-auto no-scrollbar py-1">
+            {employees.map((emp) => {
+              const isSelected = selectedAssignee?.id === emp.id;
+              return (
+                <button
+                  key={emp.id}
+                  onClick={() => setSelectedAssignee(emp)}
+                  className={`flex flex-col items-center gap-2 p-3 rounded-2xl border min-w-[100px] transition-all ${
+                    isSelected
+                      ? 'bg-primary text-white border-primary shadow-lg'
+                      : 'bg-white dark:bg-surface-dark border-gray-200 dark:border-border-dark'
+                  }`}
+                >
+                  <img
+                    src={emp.avatar}
+                    alt={emp.name}
+                    className="h-10 w-10 rounded-xl object-cover"
+                  />
+                  <span className={`text-xs font-bold ${isSelected ? 'text-white' : 'text-gray-900 dark:text-white'}`}>
+                    {emp.name.split(' ')[0]}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
         </div>
+
+        {/* Дедлайн */}
+        <div className="space-y-3">
+          <label className="text-gray-900 dark:text-white text-sm font-medium leading-normal">Дедлайн</label>
+          <div className="flex gap-3">
+            <input
+              type="date"
+              value={selectedDate.toISOString().split('T')[0]}
+              onChange={(e) => setSelectedDate(new Date(e.target.value))}
+              className="flex-1 rounded-xl border border-gray-200 dark:border-border-dark bg-white dark:bg-surface-dark px-4 py-3 text-sm font-medium text-gray-900 dark:text-white"
+            />
+            <input
+              type="time"
+              value={selectedTime}
+              onChange={(e) => setSelectedTime(e.target.value)}
+              className="w-32 rounded-xl border border-gray-200 dark:border-border-dark bg-white dark:bg-surface-dark px-4 py-3 text-sm font-medium text-gray-900 dark:text-white"
+            />
+          </div>
+        </div>
+
+        {/* Кнопка удаления */}
+        <button
+          onClick={() => setShowDeleteConfirm(true)}
+          className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-red-500/10 text-red-500 font-bold text-sm active:scale-95 transition-all"
+        >
+          <Icon name="delete" className="text-[20px]" />
+          Удалить задачу
+        </button>
+
         <div className="h-6"></div>
       </div>
 
@@ -146,9 +195,42 @@ const EditTaskModal = () => {
           onClick={handleSave}
           className="flex w-full items-center justify-center rounded-xl bg-primary py-3.5 text-base font-semibold text-white shadow-lg shadow-primary/20 hover:bg-primary/90 active:scale-[0.98] transition-all"
         >
-          Сохранить
+          Сохранить изменения
         </button>
       </div>
+
+      {/* Модалка подтверждения удаления */}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="mx-4 w-full max-w-sm rounded-3xl bg-white dark:bg-surface-dark p-6 shadow-2xl">
+            <div className="mb-4 flex items-center justify-center">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-500/10">
+                <Icon name="delete" className="text-[32px] text-red-500" />
+              </div>
+            </div>
+            <h3 className="mb-2 text-center text-xl font-black text-gray-900 dark:text-white">
+              Удалить задачу?
+            </h3>
+            <p className="mb-6 text-center text-sm text-gray-500 dark:text-text-secondary">
+              Это действие нельзя отменить. Задача будет удалена навсегда.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowDeleteConfirm(false)}
+                className="flex-1 rounded-xl bg-gray-100 dark:bg-gray-800 py-3 font-bold text-gray-900 dark:text-white active:scale-95 transition-all"
+              >
+                Отмена
+              </button>
+              <button
+                onClick={handleDelete}
+                className="flex-1 rounded-xl bg-red-500 py-3 font-bold text-white shadow-lg shadow-red-500/30 active:scale-95 transition-all"
+              >
+                Удалить
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

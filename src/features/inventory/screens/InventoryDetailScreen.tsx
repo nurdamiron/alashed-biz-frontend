@@ -87,7 +87,7 @@ const InventoryDetailScreen = () => {
           </div>
         </div>
 
-        <section className="rounded-[2.5rem] bg-gradient-to-br from-primary via-blue-600 to-indigo-700 p-8 text-white shadow-2xl shadow-primary/30 relative overflow-hidden group">
+        <section className="rounded-[2.5rem] bg-primary p-8 text-white shadow-2xl shadow-primary/30 relative overflow-hidden group">
           <div className="absolute top-0 right-0 p-10 opacity-10">
             <Icon name="robot_2" className="text-[120px]" />
           </div>
@@ -222,7 +222,7 @@ const InventoryDetailScreen = () => {
           </button>
           <button
             onClick={() => setModalType('in')}
-            className="flex-1 h-16 rounded-[1.8rem] bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold text-base shadow-xl flex items-center justify-center gap-2 active:scale-95 transition-all"
+            className="flex-1 h-16 rounded-[1.8rem] bg-blue-500 text-white font-bold text-base shadow-xl flex items-center justify-center gap-2 active:scale-95 transition-all"
           >
             <Icon name="add_circle" className="text-[22px]" />
             <span>Приход</span>

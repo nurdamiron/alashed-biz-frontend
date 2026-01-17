@@ -45,7 +45,7 @@ const SettingsScreen = () => {
             : 'bg-white border border-slate-200/50 shadow-sm'
         }`}>
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-white font-bold text-xl">
+            <div className="w-14 h-14 rounded-2xl bg-blue-500 flex items-center justify-center text-white font-bold text-xl">
               {user?.name?.charAt(0) || 'A'}
             </div>
             <div className="flex-1">
@@ -101,7 +101,7 @@ const SettingsScreen = () => {
                 onClick={toggleTheme}
                 className={`w-14 h-8 rounded-full relative transition-all duration-300 ${
                   isDark
-                    ? 'bg-gradient-to-r from-blue-500 to-cyan-500'
+                    ? 'bg-blue-500'
                     : 'bg-slate-200'
                 }`}
               >

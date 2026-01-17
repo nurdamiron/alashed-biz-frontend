@@ -24,7 +24,7 @@ const SOURCES: { id: OrderSource; label: string; img: string; color: string }[] 
     id: 'Instagram',
     label: 'Insta',
     img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Instagram_icon.png/600px-Instagram_icon.png',
-    color: 'bg-gradient-to-tr from-[#FFB347] via-[#FF3366] to-[#8E37D7]',
+    color: 'bg-[#E4405F]',
   },
   {
     id: 'WhatsApp',
@@ -237,7 +237,7 @@ const CreateOrderModal = () => {
         <button
           onClick={handleSave}
           disabled={!clientName || selectedItems.length === 0}
-          className="w-full h-16 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold rounded-2xl shadow-xl shadow-primary/30 disabled:opacity-30"
+          className="w-full h-16 bg-blue-500 text-white font-bold rounded-2xl shadow-xl shadow-primary/30 disabled:opacity-30"
         >
           Создать заказ
         </button>

@@ -41,6 +41,11 @@ export const api = {
         method: 'POST',
         body: JSON.stringify({ refreshToken }),
       }),
+    updatePreferences: async (theme: 'light' | 'dark') =>
+      request<{ success: boolean }>('/auth/preferences', {
+        method: 'PUT',
+        body: JSON.stringify({ theme }),
+      }),
   },
 
   orders: {
@@ -132,19 +137,36 @@ export const api = {
   },
 
   tasks: {
-    list: () => request<Task[]>('/tasks'),
+    list: async () => {
+      const result = await request<{ tasks: Task[]; total: number }>('/tasks');
+      return result.tasks;
+    },
     getById: (id: string) => request<Task>(`/tasks/${id}`),
     create: async (task: Partial<Task>) => {
       const res = await request<{ success: boolean; data: any }>('/tasks', {
         method: 'POST',
-        body: JSON.stringify(task),
+        body: JSON.stringify({
+          title: task.title,
+          description: task.description,
+          priority: task.priority,
+          assigneeId: task.assigneeId ? Number(task.assigneeId) : undefined,
+          deadline: task.deadline,
+          checklist: task.checklist || [],
+        }),
       });
       return res.data;
     },
     update: async (id: string, updates: Partial<Task>) => {
       await request(`/tasks/${id}`, {
         method: 'PUT',
-        body: JSON.stringify(updates),
+        body: JSON.stringify({
+          title: updates.title,
+          description: updates.description,
+          priority: updates.priority,
+          assigneeId: updates.assigneeId ? Number(updates.assigneeId) : undefined,
+          deadline: updates.deadline,
+          checklist: updates.checklist,
+        }),
       });
     },
     updateStatus: async (id: string, status: Task['status']) => {

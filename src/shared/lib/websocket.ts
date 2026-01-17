@@ -17,6 +17,10 @@ export interface WebSocketEvent {
 
 type EventCallback = (event: WebSocketEvent) => void;
 
+// WebSocket ready state constants
+const WS_OPEN = 1;
+const WS_CLOSED = 3;
+
 class WebSocketClient {
   private socket: WebSocket | null = null;
   private reconnectAttempts = 0;
@@ -28,7 +32,7 @@ class WebSocketClient {
   private token: string = '';
 
   connect(token: string): void {
-    if (this.socket?.readyState === WebSocket.OPEN) {
+    if (this.socket?.readyState === WS_OPEN) {
       return;
     }
 
@@ -105,7 +109,7 @@ class WebSocketClient {
   }
 
   send(data: object): void {
-    if (this.socket?.readyState === WebSocket.OPEN) {
+    if (this.socket?.readyState === WS_OPEN) {
       this.socket.send(JSON.stringify(data));
     }
   }
@@ -147,11 +151,11 @@ class WebSocketClient {
   }
 
   isConnected(): boolean {
-    return this.socket?.readyState === WebSocket.OPEN;
+    return this.socket?.readyState === WS_OPEN;
   }
 
   getState(): number {
-    return this.socket?.readyState ?? WebSocket.CLOSED;
+    return this.socket?.readyState ?? WS_CLOSED;
   }
 }
 

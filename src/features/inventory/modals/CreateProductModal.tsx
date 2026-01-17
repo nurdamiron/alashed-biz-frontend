@@ -404,13 +404,12 @@ const CreateProductModal = () => {
         </section>
       </main>
 
-      <div className="flex-none p-6 pb-12 bg-gradient-to-t from-background-light dark:from-background-dark via-background-light dark:via-background-dark to-transparent z-40">
+      <div className="flex-none p-6 pb-12  z-40">
         <button
           onClick={handleSave}
           disabled={!name || !priceSell}
           className="group relative flex w-full items-center justify-center h-16 rounded-[2.2rem] bg-primary overflow-hidden shadow-2xl shadow-primary/40 active:scale-95 transition-all disabled:opacity-30 disabled:grayscale"
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
           <div className="relative flex items-center gap-3">
             <span className="text-base font-black text-white uppercase tracking-widest">
               Добавить в базу

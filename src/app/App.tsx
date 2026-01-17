@@ -88,7 +88,7 @@ const AppRoutes = () => {
             }
           />
           <Route
-            path="/task/:id/edit"
+            path="/tasks/:id/edit"
             element={
               <ProtectedRoute>
                 <EditTaskModal />

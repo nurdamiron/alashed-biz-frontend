@@ -21,14 +21,14 @@ const InventoryScreen = () => {
 
   const categories = ['Все', 'Наборы', 'Контроллеры', 'Датчики', 'Моторы', 'Корпуса'];
 
-  const filteredProducts = products.filter((p) => {
+  const filteredProducts = Array.isArray(products) ? products.filter((p) => {
     const matchesSearch =
       p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       p.sku.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = activeCategory === 'Все' || p.category === activeCategory;
     const matchesLowStock = !showOnlyLowStock || p.stock <= p.minStock;
     return matchesSearch && matchesCategory && matchesLowStock;
-  });
+  }) : [];
 
   return (
     <div className="flex flex-col h-full bg-background-light dark:bg-background-dark transition-colors duration-300">
@@ -160,7 +160,7 @@ const InventoryScreen = () => {
 
       <button
         onClick={() => navigate('/inventory/new')}
-        className="fixed bottom-32 right-6 h-16 w-16 rounded-[2rem] bg-gradient-to-br from-blue-500 to-cyan-500 text-white shadow-lg shadow-blue-500/30 flex items-center justify-center hover:scale-110 active:scale-90 transition-all z-40 ring-4 ring-white dark:ring-slate-900"
+        className="fixed bottom-32 right-6 h-16 w-16 rounded-[2rem] bg-blue-500 text-white shadow-lg shadow-blue-500/30 flex items-center justify-center hover:scale-110 active:scale-90 transition-all z-40 ring-4 ring-white dark:ring-slate-900"
       >
         <Icon name="add_box" className="text-[32px]" />
       </button>

@@ -15,14 +15,14 @@ const OrdersScreen = () => {
   });
   const [sourceFilter, setSourceFilter] = useState('Все');
 
-  const filteredOrders = orders.filter((o) => {
+  const filteredOrders = Array.isArray(orders) ? orders.filter((o) => {
     const matchStatus = activeFilter === 'Все' || o.status === activeFilter;
     const matchSource = sourceFilter === 'Все' || o.source === sourceFilter;
     const matchDate =
       (!dateRange.start || o.date >= dateRange.start) &&
       (!dateRange.end || o.date <= dateRange.end);
     return matchStatus && matchSource && matchDate;
-  });
+  }) : [];
 
   return (
     <div className="flex flex-col h-full bg-background-light dark:bg-background-dark transition-colors duration-300">
@@ -119,7 +119,7 @@ const OrdersScreen = () => {
               onClick={() => setActiveFilter(filter)}
               className={`flex h-9 shrink-0 items-center justify-center rounded-xl px-4 text-sm font-medium transition-all ${
                 activeFilter === filter
-                  ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg shadow-blue-500/25'
+                  ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/25'
                   : 'bg-white dark:bg-slate-800/50 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-white/5'
               }`}
             >
@@ -192,7 +192,7 @@ const OrdersScreen = () => {
 
       <button
         onClick={() => navigate('/orders/new')}
-        className="fixed bottom-32 right-6 h-16 w-16 rounded-[2rem] bg-gradient-to-br from-blue-500 to-cyan-500 text-white shadow-lg shadow-blue-500/30 flex items-center justify-center hover:scale-110 active:scale-90 transition-all z-40 ring-4 ring-white dark:ring-slate-900"
+        className="fixed bottom-32 right-6 h-16 w-16 rounded-[2rem] bg-blue-500 text-white shadow-lg shadow-blue-500/30 flex items-center justify-center hover:scale-110 active:scale-90 transition-all z-40 ring-4 ring-white dark:ring-slate-900"
       >
         <Icon name="add_shopping_cart" className="text-[32px]" />
       </button>

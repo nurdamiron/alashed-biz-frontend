@@ -10,13 +10,13 @@ const SuppliersScreen = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showInactive, setShowInactive] = useState(false);
 
-  const filteredSuppliers = suppliers.filter((sup) => {
+  const filteredSuppliers = Array.isArray(suppliers) ? suppliers.filter((sup) => {
     const matchesSearch = sup.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       sup.contactPerson?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       sup.tin?.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesActive = showInactive ? true : sup.isActive !== false;
     return matchesSearch && matchesActive;
-  });
+  }) : [];
 
   const handleDelete = async (id: string, name: string) => {
     if (confirm(`Деактивировать поставщика "${name}"?`)) {
@@ -63,11 +63,11 @@ const SuppliersScreen = () => {
         {/* Stats */}
         <div className="grid grid-cols-2 gap-3">
           <div className="bg-white dark:bg-surface-dark rounded-2xl p-4 border border-gray-100 dark:border-white/5">
-            <p className="text-2xl font-black text-slate-900 dark:text-white">{suppliers.filter(s => s.isActive !== false).length}</p>
+            <p className="text-2xl font-black text-slate-900 dark:text-white">{Array.isArray(suppliers) ? suppliers.filter(s => s.isActive !== false).length : 0}</p>
             <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Активных</p>
           </div>
           <div className="bg-white dark:bg-surface-dark rounded-2xl p-4 border border-gray-100 dark:border-white/5">
-            <p className="text-2xl font-black text-gray-400">{suppliers.filter(s => s.isActive === false).length}</p>
+            <p className="text-2xl font-black text-gray-400">{Array.isArray(suppliers) ? suppliers.filter(s => s.isActive === false).length : 0}</p>
             <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Неактивных</p>
           </div>
         </div>
@@ -95,7 +95,7 @@ const SuppliersScreen = () => {
       {/* FAB */}
       <button
         onClick={() => navigate('/suppliers/new')}
-        className="fixed bottom-32 right-6 h-16 w-16 rounded-[2rem] bg-gradient-to-br from-blue-500 to-cyan-500 text-white shadow-lg shadow-blue-500/30 flex items-center justify-center hover:scale-110 active:scale-90 transition-all z-40 ring-4 ring-white dark:ring-slate-900"
+        className="fixed bottom-32 right-6 h-16 w-16 rounded-[2rem] bg-blue-500 text-white shadow-lg shadow-blue-500/30 flex items-center justify-center hover:scale-110 active:scale-90 transition-all z-40 ring-4 ring-white dark:ring-slate-900"
       >
         <Icon name="add_business" className="text-[32px]" />
       </button>

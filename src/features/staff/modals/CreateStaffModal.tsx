@@ -196,7 +196,7 @@ const CreateStaffModal = () => {
         <button
           onClick={handleSubmit}
           disabled={!formData.name.trim() || isSubmitting}
-          className="w-full h-14 rounded-2xl bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold text-base shadow-xl shadow-primary/30 active:scale-[0.98] transition-all disabled:opacity-50 disabled:shadow-none flex items-center justify-center gap-2"
+          className="w-full h-14 rounded-2xl bg-blue-500 text-white font-bold text-base shadow-xl shadow-primary/30 active:scale-[0.98] transition-all disabled:opacity-50 disabled:shadow-none flex items-center justify-center gap-2"
         >
           {isSubmitting ? (
             <div className="h-5 w-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />

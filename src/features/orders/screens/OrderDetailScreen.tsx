@@ -209,7 +209,7 @@ const OrderDetailScreen = () => {
         </section>
       </main>
 
-      <div className="fixed bottom-0 left-0 w-full p-6 pb-12 bg-gradient-to-t from-background-light dark:from-background-dark via-background-light/95 dark:via-background-dark/95 to-transparent z-40">
+      <div className="fixed bottom-0 left-0 w-full p-6 pb-12 bg-background-light dark:bg-background-dark z-40">
         <div className="flex gap-4 max-w-sm mx-auto">
           <button
             onClick={() => {
@@ -221,7 +221,7 @@ const OrderDetailScreen = () => {
                   : 'Ожидание';
               updateOrderStatus(order.id, next as any);
             }}
-            className="flex-1 h-16 rounded-[1.8rem] bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-3 shadow-2xl shadow-primary/40 active:scale-95 transition-all"
+            className="flex-1 h-16 rounded-[1.8rem] bg-blue-500 text-white font-bold text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-3 shadow-2xl shadow-primary/40 active:scale-95 transition-all"
           >
             <span>
               {order.status === 'Ожидание' ? 'Начать доставку' : 'Изменить статус'}

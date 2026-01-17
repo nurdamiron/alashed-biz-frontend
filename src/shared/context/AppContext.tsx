@@ -125,7 +125,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
   const refreshData = async () => {
     try {
-      const [ordersData, tasksData, productsData, employeesData, notificationsData, statsData, suppliersData] =
+      const [ordersData, tasksData, productsData, staffResponse, notificationsData, statsData, suppliersData] =
         await Promise.all([
           api.orders.list(),
           api.tasks.list(),
@@ -137,8 +137,40 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         ]);
 
       setOrders(ordersData);
-      setTasks(tasksData);
+
+      // Преобразуем задачи из формата бэкенда в формат фронтенда
+      const tasksFormatted = tasksData.map((task: any) => ({
+        id: String(task.id),
+        title: task.title,
+        description: task.description,
+        priority: task.priority,
+        status: task.status,
+        assignee: task.assigneeName,
+        assigneeId: task.assigneeId ? String(task.assigneeId) : undefined,
+        deadline: task.deadline,
+        comments: task.comments || [],
+      }));
+
+      setTasks(tasksFormatted);
       setProducts(productsData);
+
+      // Преобразуем ответ от API в формат Employee[]
+      const employeesData = Array.isArray(staffResponse)
+        ? staffResponse
+        : (staffResponse?.employees || []).map((emp: any) => ({
+            id: String(emp.id),
+            userId: emp.userId ? String(emp.userId) : undefined,
+            name: emp.name,
+            role: emp.role || emp.position || 'Сотрудник',
+            department: emp.department,
+            position: emp.position,
+            phone: emp.phone,
+            email: emp.email,
+            avatar: emp.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(emp.name)}&background=6366F1&color=fff`,
+            activeTasks: emp.activeTasksCount || 0,
+            isActive: emp.isActive,
+          }));
+
       setEmployees(employeesData);
       setNotifications(notificationsData);
       setStats(statsData);
@@ -155,9 +187,14 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       const config = localStorage.getItem('alash_config');
       const savedTheme = localStorage.getItem('alash_theme') as 'light' | 'dark' | null;
 
+      // Приоритет у локального сохранения темы
       if (savedTheme) {
         setTheme(savedTheme);
         document.documentElement.classList.toggle('dark', savedTheme === 'dark');
+      } else {
+        // Если локально не сохранено, используем 'dark' по умолчанию
+        setTheme('dark');
+        document.documentElement.classList.add('dark');
       }
 
       if (token && auth) {
@@ -165,12 +202,20 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
           const userData = JSON.parse(auth);
           setIsAuthenticated(true);
           setUser(userData);
-          await refreshData();
+
+          // Сразу убираем глобальный Loading, показываем UI с локальными скелетонами
+          setIsLoading(false);
+
+          // Загружаем данные асинхронно в фоне
+          refreshData().catch(console.error);
         } catch (e) {
           console.error('Init error:', e);
           localStorage.removeItem('alash_token');
           localStorage.removeItem('alash_auth');
+          setIsLoading(false);
         }
+      } else {
+        setIsLoading(false);
       }
 
       if (config) {
@@ -182,8 +227,6 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
           console.error('Config parse error:', e);
         }
       }
-
-      setIsLoading(false);
     };
 
     init();
@@ -270,7 +313,13 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         localStorage.setItem('alash_auth', JSON.stringify(userData));
         setIsAuthenticated(true);
         setUser(userData);
-        await refreshData();
+
+        // Не перезаписываем тему при логине - используем сохраненную локально
+        // Тема пользователя уже загружена из localStorage при инициализации
+
+        // Загружаем данные асинхронно в фоне, не ждем завершения
+        refreshData().catch(console.error);
+
         toast.success(`Добро пожаловать, ${userData.name}!`);
         return true;
       }
@@ -300,8 +349,18 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     toast('Вы вышли из системы', { icon: '👋' });
   };
 
-  const toggleTheme = () => {
-    setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
+  const toggleTheme = async () => {
+    const newTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(newTheme);
+
+    // Save to backend if authenticated
+    if (isAuthenticated) {
+      try {
+        await api.auth.updatePreferences(newTheme);
+      } catch (error) {
+        console.error('Failed to update theme preference:', error);
+      }
+    }
   };
 
   const handleAction = async (action: () => Promise<void>, successMessage?: string) => {

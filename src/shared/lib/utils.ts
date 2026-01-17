@@ -5,12 +5,16 @@ export const formatPrice = (price: number, currency: string = 'KZT'): string => 
   return `${symbol}${new Intl.NumberFormat('ru-RU').format(val)}`;
 };
 
+// Часовой пояс GMT+5 (Казахстан)
+const TIMEZONE = 'Asia/Almaty'; // GMT+5
+
 // Format date
 export const formatDate = (date: string | Date): string => {
   return new Intl.DateTimeFormat('ru-RU', {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',
+    timeZone: TIMEZONE,
   }).format(new Date(date));
 };
 
@@ -22,7 +26,41 @@ export const formatDateTime = (date: string | Date): string => {
     year: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
+    timeZone: TIMEZONE,
   }).format(new Date(date));
+};
+
+// Format deadline - показывает дату и время для задач
+export const formatDeadline = (date: string | Date | undefined): string => {
+  if (!date) return '';
+
+  const deadlineDate = new Date(date);
+  const now = new Date();
+
+  // Форматируем дату с учетом часового пояса
+  const dateFormatter = new Intl.DateTimeFormat('ru-RU', {
+    day: 'numeric',
+    month: 'short',
+    timeZone: TIMEZONE,
+  });
+
+  const timeFormatter = new Intl.DateTimeFormat('ru-RU', {
+    hour: '2-digit',
+    minute: '2-digit',
+    timeZone: TIMEZONE,
+  });
+
+  const formattedDate = dateFormatter.format(deadlineDate);
+  const formattedTime = timeFormatter.format(deadlineDate);
+
+  // Проверяем, сегодня ли deadline
+  const isToday = deadlineDate.toDateString() === now.toDateString();
+
+  if (isToday) {
+    return `Сегодня, ${formattedTime}`;
+  }
+
+  return `${formattedDate}, ${formattedTime}`;
 };
 
 // Get status color classes
@@ -64,6 +102,20 @@ export const getPriorityColor = (priority: string): string => {
       return 'text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-500/10';
     default:
       return 'text-gray-500 bg-gray-50';
+  }
+};
+
+// Get priority icon badge style
+export const getPriorityIconBadge = (priority: string) => {
+  switch (priority) {
+    case 'Высокий':
+      return { icon: 'error', color: 'bg-red-500', ringColor: 'ring-red-500/20', label: 'Высокий' };
+    case 'Средний':
+      return { icon: 'warning', color: 'bg-orange-500', ringColor: 'ring-orange-500/20', label: 'Средний' };
+    case 'Низкий':
+      return { icon: 'info', color: 'bg-emerald-500', ringColor: 'ring-emerald-500/20', label: 'Низкий' };
+    default:
+      return { icon: 'remove', color: 'bg-gray-400', ringColor: 'ring-gray-400/20', label: 'Неизвестен' };
   }
 };
 

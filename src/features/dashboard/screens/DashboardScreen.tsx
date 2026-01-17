@@ -10,7 +10,7 @@ const DashboardScreen = () => {
   const [showAIHub, setShowAIHub] = useState(false);
 
   const isDark = theme === 'dark';
-  const unreadCount = notifications.filter(n => !n.read).length;
+  const unreadCount = Array.isArray(notifications) ? notifications.filter(n => !n.read).length : 0;
 
   return (
     <div className={`flex-1 overflow-y-auto no-scrollbar pb-32 transition-colors duration-300 ${
@@ -62,8 +62,8 @@ const DashboardScreen = () => {
         {/* Main Revenue Card */}
         <section className={`rounded-3xl p-6 ${
           isDark
-            ? 'bg-gradient-to-br from-blue-600 to-cyan-600'
-            : 'bg-gradient-to-br from-blue-500 to-cyan-500'
+            ? 'bg-blue-600'
+            : 'bg-blue-500'
         }`}>
           <p className="text-sm font-medium text-white/70 mb-1">Общая выручка</p>
           <h2 className="text-4xl font-black text-white tracking-tight mb-4">
@@ -203,7 +203,7 @@ const DashboardScreen = () => {
                     : 'bg-white border border-slate-200/50 shadow-sm hover:shadow-md'
                 }`}
               >
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-xl bg-blue-500 flex items-center justify-center">
                   <Icon name={action.icon} className="text-white text-lg" />
                 </div>
                 <span className={`text-[10px] font-semibold ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
@@ -219,12 +219,12 @@ const DashboardScreen = () => {
           onClick={() => setShowAIHub(true)}
           className={`rounded-2xl p-5 cursor-pointer active:scale-[0.98] transition-all ${
             isDark
-              ? 'bg-gradient-to-r from-slate-800 to-slate-800/50 border border-white/5'
-              : 'bg-gradient-to-r from-slate-100 to-white border border-slate-200/50'
+              ? 'bg-slate-800 border border-white/5'
+              : 'bg-slate-100 border border-slate-200/50'
           }`}
         >
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
+            <div className="w-12 h-12 rounded-2xl bg-blue-500 flex items-center justify-center">
               <Icon name="auto_awesome" className="text-white text-2xl" />
             </div>
             <div className="flex-1">

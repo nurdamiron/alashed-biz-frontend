@@ -29,6 +29,12 @@ export interface TaskComment {
   createdAt: string;
 }
 
+export interface ChecklistItem {
+  id: string;
+  text: string;
+  done: boolean;
+}
+
 export interface Task {
   id: string;
   title: string;
@@ -41,6 +47,7 @@ export interface Task {
   time?: string;
   tag?: string;
   comments?: TaskComment[];
+  checklist?: ChecklistItem[];
 }
 
 // Product Types

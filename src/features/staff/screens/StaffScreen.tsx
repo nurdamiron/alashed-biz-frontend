@@ -10,15 +10,15 @@ const StaffScreen = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showInactive, setShowInactive] = useState(false);
 
-  const filteredEmployees = employees.filter((emp) => {
+  const filteredEmployees = Array.isArray(employees) ? employees.filter((emp) => {
     const matchesSearch = emp.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       emp.position?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       emp.department?.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesActive = showInactive ? true : emp.isActive !== false;
     return matchesSearch && matchesActive;
-  });
+  }) : [];
 
-  const departments = [...new Set(employees.map(e => e.department).filter(Boolean))];
+  const departments = Array.isArray(employees) ? [...new Set(employees.map(e => e.department).filter(Boolean))] : [];
 
   const handleDelete = async (id: string, name: string) => {
     if (confirm(`Деактивировать сотрудника "${name}"?`)) {
@@ -65,7 +65,7 @@ const StaffScreen = () => {
         {/* Stats */}
         <div className="grid grid-cols-3 gap-3">
           <div className="bg-white dark:bg-surface-dark rounded-2xl p-4 border border-gray-100 dark:border-white/5">
-            <p className="text-2xl font-black text-slate-900 dark:text-white">{employees.filter(e => e.isActive !== false).length}</p>
+            <p className="text-2xl font-black text-slate-900 dark:text-white">{Array.isArray(employees) ? employees.filter(e => e.isActive !== false).length : 0}</p>
             <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Активных</p>
           </div>
           <div className="bg-white dark:bg-surface-dark rounded-2xl p-4 border border-gray-100 dark:border-white/5">
@@ -73,7 +73,7 @@ const StaffScreen = () => {
             <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Отделов</p>
           </div>
           <div className="bg-white dark:bg-surface-dark rounded-2xl p-4 border border-gray-100 dark:border-white/5">
-            <p className="text-2xl font-black text-emerald-500">{employees.reduce((sum, e) => sum + e.activeTasks, 0)}</p>
+            <p className="text-2xl font-black text-emerald-500">{Array.isArray(employees) ? employees.reduce((sum, e) => sum + e.activeTasks, 0) : 0}</p>
             <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Задач</p>
           </div>
         </div>
@@ -101,7 +101,7 @@ const StaffScreen = () => {
       {/* FAB */}
       <button
         onClick={() => navigate('/staff/new')}
-        className="fixed bottom-32 right-6 h-16 w-16 rounded-[2rem] bg-gradient-to-br from-blue-500 to-cyan-500 text-white shadow-lg shadow-blue-500/30 flex items-center justify-center hover:scale-110 active:scale-90 transition-all z-40 ring-4 ring-white dark:ring-slate-900"
+        className="fixed bottom-32 right-6 h-16 w-16 rounded-[2rem] bg-blue-500 text-white shadow-lg shadow-blue-500/30 flex items-center justify-center hover:scale-110 active:scale-90 transition-all z-40 ring-4 ring-white dark:ring-slate-900"
       >
         <Icon name="person_add" className="text-[32px]" />
       </button>
