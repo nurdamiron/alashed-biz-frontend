@@ -71,14 +71,15 @@ const TaskDetailScreen = () => {
       </div>
     );
 
-  const handleStatusChange = () => {
+  const handleStatusChange = async () => {
     const nextStatus =
       task.status === 'К выполнению'
         ? 'В процессе'
         : task.status === 'В процессе'
         ? 'Готово'
         : 'К выполнению';
-    updateTaskStatus(task.id, nextStatus as any);
+
+    await updateTaskStatus(task.id, nextStatus as any);
 
     if (nextStatus === 'В процессе') {
       setIsTimerRunning(true);
@@ -88,6 +89,9 @@ const TaskDetailScreen = () => {
       setIsTimerRunning(false);
       setTimerSeconds(0);
     }
+
+    // Возвращаемся к списку задач после обновления статуса
+    navigate('/tasks');
   };
 
   return (

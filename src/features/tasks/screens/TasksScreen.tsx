@@ -6,7 +6,11 @@ import { formatDeadline, getPriorityIconBadge } from '@/shared/lib/utils';
 import type { Task } from '@/shared/types';
 
 const TasksScreen = () => {
-  const [view, setView] = useState<'List' | 'Kanban'>('Kanban');
+  // Загружаем сохраненный вид из localStorage или используем List по умолчанию
+  const [view, setView] = useState<'List' | 'Kanban'>(() => {
+    const saved = localStorage.getItem('alash_tasks_view');
+    return (saved as 'List' | 'Kanban') || 'List';
+  });
   const [showFilters, setShowFilters] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedPriority, setSelectedPriority] = useState<string | null>(null);
@@ -17,6 +21,12 @@ const TasksScreen = () => {
 
   const navigate = useNavigate();
   const { tasks, updateTaskStatus, employees, refreshData } = useAppContext();
+
+  // Сохраняем выбранный вид в localStorage
+  const handleViewChange = (newView: 'List' | 'Kanban') => {
+    setView(newView);
+    localStorage.setItem('alash_tasks_view', newView);
+  };
 
   // Локальное состояние загрузки для этой страницы
   const isLoading = !tasks || tasks.length === 0;
@@ -279,10 +289,57 @@ const TasksScreen = () => {
           </div>
         </div>
 
+        {/* Быстрые фильтры */}
+        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2">
+          <button
+            onClick={() => setSelectedPriority(null)}
+            className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all shrink-0 ${
+              selectedPriority === null
+                ? 'bg-primary text-white shadow-md'
+                : 'bg-gray-100 dark:bg-white/5 text-gray-500 border border-gray-200 dark:border-white/10'
+            }`}
+          >
+            Все
+          </button>
+          <button
+            onClick={() => setSelectedPriority('Высокий')}
+            className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all shrink-0 flex items-center gap-1 ${
+              selectedPriority === 'Высокий'
+                ? 'bg-red-500 text-white shadow-md'
+                : 'bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-500/20'
+            }`}
+          >
+            <Icon name="priority_high" className="text-[14px]" />
+            Срочно
+          </button>
+          <button
+            onClick={() => setSelectedPriority('Средний')}
+            className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all shrink-0 flex items-center gap-1 ${
+              selectedPriority === 'Средний'
+                ? 'bg-orange-500 text-white shadow-md'
+                : 'bg-orange-50 dark:bg-orange-500/10 text-orange-600 dark:text-orange-400 border border-orange-200 dark:border-orange-500/20'
+            }`}
+          >
+            <Icon name="trending_up" className="text-[14px]" />
+            Средний
+          </button>
+          <button
+            onClick={() => setSelectedPriority('Низкий')}
+            className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all shrink-0 flex items-center gap-1 ${
+              selectedPriority === 'Низкий'
+                ? 'bg-blue-500 text-white shadow-md'
+                : 'bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-500/20'
+            }`}
+          >
+            <Icon name="trending_down" className="text-[14px]" />
+            Низкий
+          </button>
+        </div>
+
         {/* View Toggler */}
         <div className="bg-gray-200/50 dark:bg-surface-dark p-1.5 rounded-2xl flex relative border border-white dark:border-white/5 shadow-inner">
           <button
-            onClick={() => setView('List')}
+            onClick={() => handleViewChange('List')}
             className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 ${
               view === 'List'
                 ? 'bg-white dark:bg-primary shadow-lg text-slate-900 dark:text-white'
@@ -292,7 +349,7 @@ const TasksScreen = () => {
             <Icon name="reorder" className="text-[18px]" /> Список
           </button>
           <button
-            onClick={() => setView('Kanban')}
+            onClick={() => handleViewChange('Kanban')}
             className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 ${
               view === 'Kanban'
                 ? 'bg-white dark:bg-primary shadow-lg text-slate-900 dark:text-white'
