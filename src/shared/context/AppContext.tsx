@@ -155,9 +155,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       setProducts(productsData);
 
       // Преобразуем ответ от API в формат Employee[]
-      const employeesData = Array.isArray(staffResponse)
+      const employeesData: Employee[] = Array.isArray(staffResponse)
         ? staffResponse
-        : (staffResponse?.employees || []).map((emp: any) => ({
+        : ((staffResponse as any)?.employees || []).map((emp: any) => ({
             id: String(emp.id),
             userId: emp.userId ? String(emp.userId) : undefined,
             name: emp.name,

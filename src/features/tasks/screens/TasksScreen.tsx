@@ -523,7 +523,7 @@ const TaskCard: React.FC<{ task: Task; navigate: any }> = ({ task, navigate }) =
             />
           </div>
           <span className="text-[8px] font-black text-gray-400 uppercase mt-1 block">
-            {task.checklist.filter((i) => i.done).length}/{task.checklist.length} задач
+            {task.checklist?.filter((i) => i.done).length}/{task.checklist?.length} задач
           </span>
         </div>
       )}
@@ -734,7 +734,7 @@ const KanbanColumn = ({ title, tasks, updateStatus, nextStatus, navigate, color 
                 />
               </div>
               <span className="text-[8px] font-black text-gray-400 uppercase mt-0.5 block">
-                {t.checklist.filter((i) => i.done).length}/{t.checklist.length} задач
+                {t.checklist?.filter((i) => i.done).length}/{t.checklist?.length} задач
               </span>
             </div>
           )}

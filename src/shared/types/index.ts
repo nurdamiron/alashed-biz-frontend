@@ -48,6 +48,8 @@ export interface Task {
   tag?: string;
   comments?: TaskComment[];
   checklist?: ChecklistItem[];
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 // Product Types

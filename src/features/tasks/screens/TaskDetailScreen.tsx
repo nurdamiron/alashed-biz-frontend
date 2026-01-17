@@ -143,7 +143,6 @@ const TaskDetailScreen = () => {
           <div className="flex items-center justify-between mb-6">
             {(() => {
               const priorityStyle = getPriorityIconBadge(task.priority);
-              const isOverdue = task.deadline && task.status !== 'Готово' && new Date(task.deadline) < new Date();
               return (
                 <div className="flex items-center gap-3">
                   <div className={`h-10 w-10 rounded-xl ${priorityStyle.color} text-white flex items-center justify-center ring-4 ${priorityStyle.ringColor} shadow-lg`}>
