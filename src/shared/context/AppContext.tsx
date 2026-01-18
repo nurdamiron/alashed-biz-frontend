@@ -115,7 +115,11 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [transactions, setTransactions] = useState<Transaction[]>([]);
 
   const [isLoading, setIsLoading] = useState(true);
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    // Читаем тему из localStorage при инициализации
+    const savedTheme = localStorage.getItem('alash_theme') as 'light' | 'dark' | null;
+    return savedTheme || 'light';
+  });
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [isWsConnected, setIsWsConnected] = useState(false);
@@ -185,17 +189,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       const token = localStorage.getItem('alash_token');
       const auth = localStorage.getItem('alash_auth');
       const config = localStorage.getItem('alash_config');
-      const savedTheme = localStorage.getItem('alash_theme') as 'light' | 'dark' | null;
 
-      // Приоритет у локального сохранения темы
-      if (savedTheme) {
-        setTheme(savedTheme);
-        document.documentElement.classList.toggle('dark', savedTheme === 'dark');
-      } else {
-        // Если локально не сохранено, используем 'light' по умолчанию
-        setTheme('light');
-        document.documentElement.classList.remove('dark');
-      }
+      // Применяем тему к DOM (тема уже загружена в useState)
+      document.documentElement.classList.toggle('dark', theme === 'dark');
 
       if (token && auth) {
         try {
