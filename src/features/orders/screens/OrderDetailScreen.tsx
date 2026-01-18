@@ -65,7 +65,7 @@ const OrderDetailScreen = () => {
       </header>
 
       <main className="flex-1 p-6 space-y-8 pb-48">
-        <section className="bg-slate-900 dark:bg-indigo-950 rounded-[2.5rem] p-8 text-white shadow-2xl relative overflow-hidden group">
+        <section className="bg-gradient-to-br from-blue-500 to-blue-600 dark:from-slate-900 dark:to-indigo-950 rounded-[2.5rem] p-8 text-white shadow-2xl relative overflow-hidden group">
           <div className="relative z-10">
             <div className="flex items-center justify-between mb-8">
               <div>
@@ -139,7 +139,7 @@ const OrderDetailScreen = () => {
             </div>
 
             <div className="flex gap-4">
-              <button className="flex-1 h-14 rounded-2xl bg-slate-900 dark:bg-white/10 text-white font-black text-[10px] uppercase tracking-[0.2em] flex items-center justify-center gap-2 active:scale-95 transition-all">
+              <button className="flex-1 h-14 rounded-2xl bg-slate-700 dark:bg-white/10 text-white font-black text-[10px] uppercase tracking-[0.2em] flex items-center justify-center gap-2 active:scale-95 transition-all">
                 <Icon name="call" className="text-[18px]" /> Вызов
               </button>
               <button
