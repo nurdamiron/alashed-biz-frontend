@@ -43,7 +43,6 @@ const LoginScreen = () => {
           : 'bg-slate-50'
       }`}
       style={{
-        height: '100vh',
         height: '100dvh',
       }}
     >

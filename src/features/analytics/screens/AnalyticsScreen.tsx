@@ -175,11 +175,7 @@ const AnalyticsScreen = () => {
                     cx="50%"
                     cy="50%"
                     outerRadius={80}
-                    label={({ name, percent }: any) => ({
-                      ...{name, percent},
-                      fill: isDark ? '#fff' : '#000',
-                      children: `${name}: ${((percent || 0) * 100).toFixed(0)}%`
-                    })}
+                    label={(entry: any) => `${entry.name}: ${((entry.percent || 0) * 100).toFixed(0)}%`}
                     labelLine={false}
                   >
                     {categoryData.map((_, index) => (

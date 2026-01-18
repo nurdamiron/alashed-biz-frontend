@@ -30,7 +30,6 @@ const AppRoutes = () => {
     <div
       className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-zinc-100 font-sans flex flex-col overflow-hidden transition-colors duration-300"
       style={{
-        height: '100vh',
         height: '100dvh', // Dynamic viewport height for modern browsers
         backgroundColor: theme === 'dark' ? '#000000' : '#fcfcfd', // Force inline style for debugging
       }}
