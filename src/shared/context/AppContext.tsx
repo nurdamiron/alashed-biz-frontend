@@ -115,7 +115,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [transactions, setTransactions] = useState<Transaction[]>([]);
 
   const [isLoading, setIsLoading] = useState(true);
-  const [theme, setTheme] = useState<'light' | 'dark'>('dark');
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [isWsConnected, setIsWsConnected] = useState(false);
@@ -192,9 +192,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         setTheme(savedTheme);
         document.documentElement.classList.toggle('dark', savedTheme === 'dark');
       } else {
-        // Если локально не сохранено, используем 'dark' по умолчанию
-        setTheme('dark');
-        document.documentElement.classList.add('dark');
+        // Если локально не сохранено, используем 'light' по умолчанию
+        setTheme('light');
+        document.documentElement.classList.remove('dark');
       }
 
       if (token && auth) {
