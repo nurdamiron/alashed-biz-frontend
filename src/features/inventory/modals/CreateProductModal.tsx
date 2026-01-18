@@ -121,12 +121,12 @@ const CreateProductModal = () => {
   };
 
   const filteredProducts = useMemo(() => {
-    return products.filter(
+    return Array.isArray(products) ? products.filter(
       (p) =>
         p.category !== 'Наборы' &&
         (p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
           p.sku.toLowerCase().includes(searchQuery.toLowerCase()))
-    );
+    ) : [];
   }, [products, searchQuery]);
 
   const currentConfig: CategoryConfig = CATEGORY_SPECS_CONFIG[category] || { inputs: [] };

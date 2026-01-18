@@ -11,6 +11,31 @@
   <link rel="icon" type="image/png" href="/favicon.png" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <title>ALASHED Business</title>
+
+  <!-- FOUC Prevention: Apply theme BEFORE any rendering -->
+  <script>
+    (function() {
+      try {
+        var theme = localStorage.getItem('alash_theme');
+        var isDark = theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+        if (isDark) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+
+        // Update meta theme-color for mobile browsers
+        var metaThemeColor = document.querySelector('meta[name="theme-color"]');
+        if (metaThemeColor) {
+          metaThemeColor.setAttribute('content', isDark ? '#000000' : '#fcfcfd');
+        }
+      } catch (e) {
+        console.error('Theme initialization error:', e);
+      }
+    })();
+  </script>
+
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,7 +45,7 @@
     rel="stylesheet" />
 </head>
 
-<body class="dark">
+<body>
   <div id="root"></div>
   <script type="module" src="/src/main.tsx"></script>
   </body>

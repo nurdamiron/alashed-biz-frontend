@@ -112,12 +112,12 @@ const EditProductModal = () => {
     navigate(-1);
   };
 
-  const filteredProducts = products.filter(
+  const filteredProducts = Array.isArray(products) ? products.filter(
     (p) =>
       p.category !== 'Наборы' &&
       (p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         p.sku.toLowerCase().includes(searchQuery.toLowerCase()))
-  );
+  ) : [];
 
   const currentSpecs = CATEGORY_SPECS[category] || [];
 

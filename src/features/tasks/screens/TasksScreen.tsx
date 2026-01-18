@@ -134,11 +134,10 @@ const TasksScreen = () => {
           </div>
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className={`flex items-center justify-center w-12 h-12 rounded-2xl border shadow-sm active:scale-90 transition-all ${
-              showFilters
+            className={`flex items-center justify-center w-12 h-12 rounded-2xl border shadow-sm active:scale-90 transition-all ${showFilters
                 ? 'bg-primary text-white border-primary'
                 : 'bg-white dark:bg-surface-dark border-gray-100 dark:border-white/5 text-slate-900 dark:text-white'
-            }`}
+              }`}
           >
             <Icon name="filter_list" className="text-[22px]" />
           </button>
@@ -200,11 +199,10 @@ const TasksScreen = () => {
               <div className="flex gap-2">
                 <button
                   onClick={() => setSelectedPriority(null)}
-                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
-                    selectedPriority === null
+                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${selectedPriority === null
                       ? 'bg-primary text-white'
                       : 'bg-gray-100 dark:bg-white/5 text-gray-500'
-                  }`}
+                    }`}
                 >
                   Все
                 </button>
@@ -212,11 +210,10 @@ const TasksScreen = () => {
                   <button
                     key={priority}
                     onClick={() => setSelectedPriority(priority)}
-                    className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
-                      selectedPriority === priority
+                    className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${selectedPriority === priority
                         ? 'bg-primary text-white'
                         : 'bg-gray-100 dark:bg-white/5 text-gray-500'
-                    }`}
+                      }`}
                   >
                     {priority}
                   </button>
@@ -230,11 +227,10 @@ const TasksScreen = () => {
               <div className="flex gap-2 overflow-x-auto no-scrollbar">
                 <button
                   onClick={() => setSelectedAssignee(null)}
-                  className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
-                    selectedAssignee === null
+                  className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${selectedAssignee === null
                       ? 'bg-primary text-white'
                       : 'bg-gray-100 dark:bg-white/5 text-gray-500'
-                  }`}
+                    }`}
                 >
                   Все
                 </button>
@@ -242,11 +238,10 @@ const TasksScreen = () => {
                   <button
                     key={emp.id}
                     onClick={() => setSelectedAssignee(emp.id)}
-                    className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
-                      selectedAssignee === emp.id
+                    className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${selectedAssignee === emp.id
                         ? 'bg-primary text-white'
                         : 'bg-gray-100 dark:bg-white/5 text-gray-500'
-                    }`}
+                      }`}
                   >
                     {emp.name.split(' ')[0]}
                   </button>
@@ -271,34 +266,33 @@ const TasksScreen = () => {
 
         {/* Workload Heatmap */}
         <div className="mb-6 overflow-x-auto no-scrollbar py-1">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             {Array.isArray(employees) && employees.map((emp) => (
               <div key={emp.id} className="flex flex-col items-center gap-2 shrink-0">
                 <div
-                  className={`relative h-12 w-12 rounded-2xl p-0.5 border-2 ${
-                    emp.activeTasks > 4
+                  className={`relative h-14 w-14 rounded-xl overflow-hidden border-2 ${emp.activeTasks > 4
                       ? 'border-red-500'
                       : emp.activeTasks > 2
-                      ? 'border-orange-500'
-                      : 'border-emerald-500'
-                  }`}
+                        ? 'border-orange-500'
+                        : 'border-emerald-500'
+                    }`}
                 >
                   <img
                     src={emp.avatar}
-                    className="h-full w-full rounded-[0.85rem] object-cover"
-                    alt=""
+                    className="h-full w-full object-cover"
+                    alt={emp.name}
                   />
-                  <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-slate-900 border-2 border-white dark:border-surface-dark text-[9px] font-black text-white flex items-center justify-center">
+                  <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-slate-900 dark:bg-slate-800 border-2 border-white dark:border-surface-dark text-[9px] font-black text-white flex items-center justify-center shadow-md">
                     {emp.activeTasks}
                   </span>
                 </div>
-                <span className="text-[8px] font-black text-gray-400 uppercase tracking-widest">
+                <span className="text-[10px] font-bold text-slate-700 dark:text-slate-300">
                   {emp.name.split(' ')[0]}
                 </span>
               </div>
             ))}
-            <button className="h-12 w-12 rounded-2xl bg-gray-100 dark:bg-white/5 border border-dashed border-gray-300 dark:border-gray-800 flex items-center justify-center text-gray-400 shrink-0">
-              <Icon name="add" />
+            <button className="h-14 w-14 rounded-xl bg-slate-100 dark:bg-white/5 border-2 border-dashed border-slate-300 dark:border-slate-700 flex items-center justify-center text-slate-400 shrink-0 hover:bg-slate-200 dark:hover:bg-white/10 transition-colors">
+              <Icon name="add" className="text-[20px]" />
             </button>
           </div>
         </div>
@@ -307,43 +301,39 @@ const TasksScreen = () => {
         <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2">
           <button
             onClick={() => setSelectedPriority(null)}
-            className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all shrink-0 ${
-              selectedPriority === null
+            className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all shrink-0 ${selectedPriority === null
                 ? 'bg-primary text-white shadow-md'
                 : 'bg-gray-100 dark:bg-white/5 text-gray-500 border border-gray-200 dark:border-white/10'
-            }`}
+              }`}
           >
             Все
           </button>
           <button
             onClick={() => setSelectedPriority('Высокий')}
-            className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all shrink-0 flex items-center gap-1 ${
-              selectedPriority === 'Высокий'
+            className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all shrink-0 flex items-center gap-1 ${selectedPriority === 'Высокий'
                 ? 'bg-red-500 text-white shadow-md'
                 : 'bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-500/20'
-            }`}
+              }`}
           >
             <Icon name="priority_high" className="text-[14px]" />
             Срочно
           </button>
           <button
             onClick={() => setSelectedPriority('Средний')}
-            className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all shrink-0 flex items-center gap-1 ${
-              selectedPriority === 'Средний'
+            className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all shrink-0 flex items-center gap-1 ${selectedPriority === 'Средний'
                 ? 'bg-orange-500 text-white shadow-md'
                 : 'bg-orange-50 dark:bg-orange-500/10 text-orange-600 dark:text-orange-400 border border-orange-200 dark:border-orange-500/20'
-            }`}
+              }`}
           >
             <Icon name="trending_up" className="text-[14px]" />
             Средний
           </button>
           <button
             onClick={() => setSelectedPriority('Низкий')}
-            className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all shrink-0 flex items-center gap-1 ${
-              selectedPriority === 'Низкий'
+            className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all shrink-0 flex items-center gap-1 ${selectedPriority === 'Низкий'
                 ? 'bg-blue-500 text-white shadow-md'
                 : 'bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-500/20'
-            }`}
+              }`}
           >
             <Icon name="trending_down" className="text-[14px]" />
             Низкий
@@ -354,21 +344,19 @@ const TasksScreen = () => {
         <div className="bg-gray-200/50 dark:bg-surface-dark p-1.5 rounded-2xl flex relative border border-white dark:border-white/5 shadow-inner">
           <button
             onClick={() => handleViewChange('List')}
-            className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 ${
-              view === 'List'
+            className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 ${view === 'List'
                 ? 'bg-white dark:bg-primary shadow-lg text-slate-900 dark:text-white'
                 : 'text-gray-500 dark:text-text-secondary'
-            }`}
+              }`}
           >
             <Icon name="reorder" className="text-[18px]" /> Список
           </button>
           <button
             onClick={() => handleViewChange('Kanban')}
-            className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 ${
-              view === 'Kanban'
+            className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 ${view === 'Kanban'
                 ? 'bg-white dark:bg-primary shadow-lg text-slate-900 dark:text-white'
                 : 'text-gray-500 dark:text-text-secondary'
-            }`}
+              }`}
           >
             <Icon name="dashboard_customize" className="text-[18px]" /> Канбан
           </button>
@@ -392,7 +380,7 @@ const TasksScreen = () => {
           >
             <div className="flex flex-col items-center gap-2 bg-white dark:bg-slate-800 px-6 py-3 rounded-2xl shadow-lg border border-gray-200 dark:border-white/10">
               <div className={`h-10 w-10 rounded-full border-4 border-primary/20 border-t-primary transition-transform ${pullDistance > 80 ? 'animate-spin' : ''}`}
-                   style={{ transform: `rotate(${pullDistance * 3}deg)` }} />
+                style={{ transform: `rotate(${pullDistance * 3}deg)` }} />
               <span className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider">
                 {pullDistance > 80 ? '🎉 Отпустите!' : '👇 Тяните вниз'}
               </span>
@@ -470,11 +458,10 @@ const TaskCard: React.FC<{ task: Task; navigate: any }> = ({ task, navigate }) =
   return (
     <div
       onClick={() => navigate(`/task/${task.id}`)}
-      className={`flex flex-col gap-3 rounded-xl p-4 shadow-md border-2 active:scale-[0.98] transition-all cursor-pointer group hover:shadow-xl ${
-        isOverdue
+      className={`flex flex-col gap-3 rounded-xl p-4 shadow-md border-2 active:scale-[0.98] transition-all cursor-pointer group hover:shadow-xl ${isOverdue
           ? 'bg-red-50 dark:bg-red-900/20 border-red-300 dark:border-red-500/30'
-          : 'bg-white dark:bg-slate-900 border-gray-200 dark:border-white/10'
-      }`}
+          : 'bg-white dark:bg-surface-dark border-gray-200 dark:border-white/10'
+        }`}
     >
       {/* Заголовок и приоритет */}
       <div className="flex items-start gap-3">
@@ -485,19 +472,12 @@ const TaskCard: React.FC<{ task: Task; navigate: any }> = ({ task, navigate }) =
           <h3 className="text-base font-black text-slate-900 dark:text-white leading-tight tracking-tight group-hover:text-primary transition-colors line-clamp-2">
             {task.title}
           </h3>
-          {/* Статус badge */}
-          <div className="flex items-center gap-2 mt-1.5">
-            <div className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-gray-100 dark:bg-slate-800 border border-gray-200 dark:border-white/10 w-fit">
-              <Icon name="flag" className="text-[12px] text-gray-400" />
-              <span className="text-[9px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider">{task.status}</span>
+          {isOverdue && (
+            <div className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-red-500 text-white shadow-sm mt-1.5 w-fit">
+              <Icon name="schedule" className="text-[12px]" />
+              <span className="text-[9px] font-black uppercase">Просрочено</span>
             </div>
-            {isOverdue && (
-              <div className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-red-500 text-white shadow-sm">
-                <Icon name="schedule" className="text-[12px]" />
-                <span className="text-[9px] font-black uppercase">Просрочено</span>
-              </div>
-            )}
-          </div>
+          )}
         </div>
       </div>
 
@@ -654,131 +634,123 @@ const ListView = ({ urgent, todo, inProgress, completed, navigate }: any) => (
 );
 
 const KanbanColumn = ({ title, tasks, updateStatus, nextStatus, navigate, color }: any) => (
-    <div className="flex flex-col w-[85vw] h-full shrink-0 snap-center first:pl-6 last:pr-6">
-      <div className="flex items-center justify-between mb-4 px-2">
-        <div className="flex items-center gap-2">
-          <h3 className="font-black text-slate-900 dark:text-white text-lg tracking-tighter uppercase">
-            {title}
-          </h3>
-          <span className="h-6 px-2 flex items-center justify-center bg-white dark:bg-slate-800 border border-gray-200 dark:border-white/10 rounded-lg text-[10px] font-black text-slate-900 dark:text-white shadow-sm">
-            {tasks.length}
-          </span>
-        </div>
-        <div className={`h-2 w-2 rounded-full ${color} animate-pulse`}></div>
+  <div className="flex flex-col w-[85vw] h-full shrink-0 snap-center first:pl-6 last:pr-6">
+    <div className="flex items-center justify-between mb-4 px-2">
+      <div className="flex items-center gap-2">
+        <h3 className="font-black text-slate-900 dark:text-white text-lg tracking-tighter uppercase">
+          {title}
+        </h3>
+        <span className="h-6 px-2 flex items-center justify-center bg-white dark:bg-slate-800 border border-gray-200 dark:border-white/10 rounded-lg text-[10px] font-black text-slate-900 dark:text-white shadow-sm">
+          {tasks.length}
+        </span>
       </div>
-      <div className="flex-1 overflow-y-auto no-scrollbar space-y-3 pb-40 rounded-2xl bg-gray-50 dark:bg-slate-800/50 p-3 border border-gray-200 dark:border-white/10">
-        {tasks.map((t: Task) => {
-          const priorityStyle = getPriorityIconBadge(t.priority);
-          const isOverdue = t.deadline && t.status !== 'Готово' && new Date(t.deadline) < new Date();
-          const checklistProgress = t.checklist && t.checklist.length > 0
-            ? Math.round((t.checklist.filter((item) => item.done).length / t.checklist.length) * 100)
-            : null;
-          const commentsCount = t.comments?.length || 0;
-          const deadlineText = t.deadline ? formatDeadline(t.deadline) : null;
-          const createdAt = t.createdAt ? new Date(t.createdAt).toLocaleDateString('ru-RU', {
-            day: 'numeric',
-            month: 'short'
-          }) : null;
+      <div className={`h-2 w-2 rounded-full ${color} animate-pulse`}></div>
+    </div>
+    <div className="flex-1 overflow-y-auto no-scrollbar space-y-3 pb-40 rounded-2xl bg-gray-50 dark:bg-slate-800/50 p-3 border border-gray-200 dark:border-white/10">
+      {tasks.map((t: Task) => {
+        const priorityStyle = getPriorityIconBadge(t.priority);
+        const isOverdue = t.deadline && t.status !== 'Готово' && new Date(t.deadline) < new Date();
+        const checklistProgress = t.checklist && t.checklist.length > 0
+          ? Math.round((t.checklist.filter((item) => item.done).length / t.checklist.length) * 100)
+          : null;
+        const commentsCount = t.comments?.length || 0;
+        const deadlineText = t.deadline ? formatDeadline(t.deadline) : null;
+        const createdAt = t.createdAt ? new Date(t.createdAt).toLocaleDateString('ru-RU', {
+          day: 'numeric',
+          month: 'short'
+        }) : null;
 
-          return (
-            <div
-              key={t.id}
-              onClick={() => navigate(`/task/${t.id}`)}
-              className={`p-3 rounded-xl shadow-md border-2 active:scale-[0.98] transition-all cursor-pointer group hover:shadow-xl ${
-                isOverdue
-                  ? 'bg-red-50 dark:bg-red-900/20 border-red-300 dark:border-red-500/30'
-                  : 'bg-white dark:bg-slate-900 border-gray-200 dark:border-white/10'
+        return (
+          <div
+            key={t.id}
+            onClick={() => navigate(`/task/${t.id}`)}
+            className={`p-3 rounded-xl shadow-md border-2 active:scale-[0.98] transition-all cursor-pointer group hover:shadow-xl ${isOverdue
+                ? 'bg-red-50 dark:bg-red-900/20 border-red-300 dark:border-red-500/30'
+                : 'bg-white dark:bg-surface-dark border-gray-200 dark:border-white/10'
               }`}
-            >
-              {/* Заголовок и приоритет */}
-              <div className="flex items-start gap-2 mb-2">
-                <div className={`h-7 w-7 rounded-lg ${priorityStyle.color} text-white flex items-center justify-center shadow-md shrink-0`}>
-                  <Icon name={priorityStyle.icon} className="text-[16px]" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-black text-slate-900 dark:text-white leading-tight group-hover:text-primary transition-colors line-clamp-2">
-                    {t.title}
-                  </p>
-                  {/* Статус badge */}
-                  <div className="flex items-center gap-1.5 mt-1">
-                    <div className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-gray-100 dark:bg-slate-800 border border-gray-200 dark:border-white/10">
-                      <Icon name="flag" className="text-[10px] text-gray-400" />
-                      <span className="text-[8px] font-black text-gray-500 dark:text-gray-400 uppercase">{t.status}</span>
-                    </div>
-                    {isOverdue && (
-                      <div className="flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-red-500 text-white shadow-sm">
-                        <Icon name="schedule" className="text-[10px]" />
-                        <span className="text-[8px] font-black uppercase">Просрочено</span>
-                      </div>
-                    )}
+          >
+            {/* Заголовок и приоритет */}
+            <div className="flex items-start gap-2 mb-2">
+              <div className={`h-7 w-7 rounded-lg ${priorityStyle.color} text-white flex items-center justify-center shadow-md shrink-0`}>
+                <Icon name={priorityStyle.icon} className="text-[16px]" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-black text-slate-900 dark:text-white leading-tight group-hover:text-primary transition-colors line-clamp-2">
+                  {t.title}
+                </p>
+                {isOverdue && (
+                  <div className="flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-red-500 text-white shadow-sm mt-1 w-fit">
+                    <Icon name="schedule" className="text-[10px]" />
+                    <span className="text-[8px] font-black uppercase">Просрочено</span>
                   </div>
+                )}
+              </div>
+            </div>
+
+            {/* Информационные блоки */}
+            <div className="flex items-center gap-1.5 flex-wrap mb-2">
+              {deadlineText && !isOverdue && (
+                <div className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/20">
+                  <Icon name="schedule" className="text-[10px] text-blue-500" />
+                  <span className="text-[8px] font-black text-blue-600 dark:text-blue-400">{deadlineText}</span>
+                </div>
+              )}
+              {commentsCount > 0 && (
+                <div className="flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20">
+                  <Icon name="chat_bubble" className="text-[10px] text-amber-500" />
+                  <span className="text-[8px] font-black text-amber-600 dark:text-amber-400">{commentsCount}</span>
+                </div>
+              )}
+              {createdAt && (
+                <div className="flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-gray-100 dark:bg-slate-800 border border-gray-200 dark:border-white/10">
+                  <Icon name="today" className="text-[10px] text-gray-400" />
+                  <span className="text-[8px] font-black text-gray-500 dark:text-gray-400">{createdAt}</span>
+                </div>
+              )}
+            </div>
+
+            {/* Прогресс чеклиста */}
+            {checklistProgress !== null && (
+              <div className="mb-2 p-2 rounded-lg bg-gray-50 dark:bg-slate-800/50 border border-gray-200 dark:border-white/10">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-[8px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider">Прогресс</span>
+                  <span className="text-[8px] font-black text-primary">{checklistProgress}%</span>
+                </div>
+                <div className="h-1.5 bg-gray-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-gradient-to-r from-primary to-blue-500 transition-all duration-300"
+                    style={{ width: `${checklistProgress}%` }}
+                  />
+                </div>
+                <span className="text-[8px] font-black text-gray-400 uppercase mt-0.5 block">
+                  {t.checklist?.filter((i) => i.done).length}/{t.checklist?.length} задач
+                </span>
+              </div>
+            )}
+
+            <div className="flex justify-between items-center pt-2 border-t border-gray-100 dark:border-white/10">
+              <div className="flex items-center gap-1.5">
+                <div className="h-6 w-6 rounded-lg bg-gradient-to-br from-primary to-blue-500 text-white flex items-center justify-center text-[9px] font-black shadow-md">
+                  {t.assignee ? t.assignee[0] : 'A'}
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-black text-slate-900 dark:text-white">{t.assignee || 'Админ'}</span>
+                  <span className="text-[7px] font-bold text-gray-400 uppercase">Исполнитель</span>
                 </div>
               </div>
-
-          {/* Информационные блоки */}
-          <div className="flex items-center gap-1.5 flex-wrap mb-2">
-            {deadlineText && !isOverdue && (
-              <div className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/20">
-                <Icon name="schedule" className="text-[10px] text-blue-500" />
-                <span className="text-[8px] font-black text-blue-600 dark:text-blue-400">{deadlineText}</span>
-              </div>
-            )}
-            {commentsCount > 0 && (
-              <div className="flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20">
-                <Icon name="chat_bubble" className="text-[10px] text-amber-500" />
-                <span className="text-[8px] font-black text-amber-600 dark:text-amber-400">{commentsCount}</span>
-              </div>
-            )}
-            {createdAt && (
-              <div className="flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-gray-100 dark:bg-slate-800 border border-gray-200 dark:border-white/10">
-                <Icon name="today" className="text-[10px] text-gray-400" />
-                <span className="text-[8px] font-black text-gray-500 dark:text-gray-400">{createdAt}</span>
-              </div>
-            )}
-          </div>
-
-          {/* Прогресс чеклиста */}
-          {checklistProgress !== null && (
-            <div className="mb-2 p-2 rounded-lg bg-gray-50 dark:bg-slate-800/50 border border-gray-200 dark:border-white/10">
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-[8px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider">Прогресс</span>
-                <span className="text-[8px] font-black text-primary">{checklistProgress}%</span>
-              </div>
-              <div className="h-1.5 bg-gray-200 dark:bg-slate-700 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-gradient-to-r from-primary to-blue-500 transition-all duration-300"
-                  style={{ width: `${checklistProgress}%` }}
-                />
-              </div>
-              <span className="text-[8px] font-black text-gray-400 uppercase mt-0.5 block">
-                {t.checklist?.filter((i) => i.done).length}/{t.checklist?.length} задач
-              </span>
+              {nextStatus && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    updateStatus(t.id, nextStatus);
+                  }}
+                  className="h-7 px-3 rounded-lg bg-gradient-to-r from-primary to-blue-500 text-white text-[8px] font-black uppercase tracking-wider shadow-md shadow-primary/30 active:scale-90 transition-all"
+                >
+                  Далее →
+                </button>
+              )}
             </div>
-          )}
-
-          <div className="flex justify-between items-center pt-2 border-t border-gray-100 dark:border-white/10">
-            <div className="flex items-center gap-1.5">
-              <div className="h-6 w-6 rounded-lg bg-gradient-to-br from-primary to-blue-500 text-white flex items-center justify-center text-[9px] font-black shadow-md">
-                {t.assignee ? t.assignee[0] : 'A'}
-              </div>
-              <div className="flex flex-col">
-                <span className="text-[10px] font-black text-slate-900 dark:text-white">{t.assignee || 'Админ'}</span>
-                <span className="text-[7px] font-bold text-gray-400 uppercase">Исполнитель</span>
-              </div>
-            </div>
-            {nextStatus && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  updateStatus(t.id, nextStatus);
-                }}
-                className="h-7 px-3 rounded-lg bg-gradient-to-r from-primary to-blue-500 text-white text-[8px] font-black uppercase tracking-wider shadow-md shadow-primary/30 active:scale-90 transition-all"
-              >
-                Далее →
-              </button>
-            )}
           </div>
-        </div>
         );
       })}
 

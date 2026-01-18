@@ -12,7 +12,6 @@ const StaffScreen = () => {
 
   const filteredEmployees = Array.isArray(employees) ? employees.filter((emp) => {
     const matchesSearch = emp.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      emp.position?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       emp.department?.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesActive = showInactive ? true : emp.isActive !== false;
     return matchesSearch && matchesActive;
@@ -57,7 +56,7 @@ const StaffScreen = () => {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Поиск по имени, должности..."
+            placeholder="Поиск по имени, отделу..."
             className="w-full h-12 pl-12 pr-4 rounded-2xl bg-white dark:bg-surface-dark border border-gray-100 dark:border-white/5 text-sm font-medium placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/20"
           />
         </div>
@@ -115,56 +114,66 @@ const EmployeeCard: React.FC<{
   onDelete: () => void;
 }> = ({ employee, onEdit, onDelete }) => {
   return (
-    <div className={`bg-white dark:bg-surface-dark rounded-[2rem] p-5 border border-gray-100 dark:border-white/5 shadow-sm ${employee.isActive === false ? 'opacity-50' : ''}`}>
-      <div className="flex items-start gap-4">
-        <div className="relative">
-          <img
-            src={employee.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(employee.name)}&background=135bec&color=fff`}
-            alt={employee.name}
-            className="h-16 w-16 rounded-2xl object-cover"
-          />
+    <div className={`bg-white dark:bg-surface-dark rounded-xl p-4 border border-gray-200 dark:border-white/10 hover:shadow-md transition-all ${employee.isActive === false ? 'opacity-50' : ''}`}>
+      <div className="flex items-center gap-4">
+        {/* Avatar */}
+        <div className="relative flex-shrink-0">
+          <div className="h-14 w-14 rounded-xl overflow-hidden bg-gradient-to-br from-blue-500 to-blue-600">
+            <img
+              src={employee.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(employee.name)}&background=135bec&color=fff`}
+              alt={employee.name}
+              className="h-full w-full object-cover"
+            />
+          </div>
           {employee.isActive !== false && (
-            <div className="absolute -bottom-1 -right-1 h-5 w-5 rounded-full bg-emerald-500 border-2 border-white dark:border-surface-dark" />
+            <div className="absolute -bottom-0.5 -right-0.5 h-4 w-4 rounded-full bg-emerald-500 border-2 border-white dark:border-surface-dark" />
           )}
         </div>
 
+        {/* Info Section */}
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-1">
-            <h3 className="text-base font-black text-slate-900 dark:text-white truncate">
+          <div className="flex items-center gap-2 mb-1.5">
+            <h3 className="text-base font-bold text-slate-900 dark:text-white truncate">
               {employee.name}
             </h3>
             {employee.isActive === false && (
-              <span className="px-2 py-0.5 rounded-md bg-gray-100 dark:bg-white/5 text-[8px] font-bold text-gray-400 uppercase">
+              <span className="px-2 py-0.5 rounded-md bg-gray-100 dark:bg-white/5 text-[9px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                 Неактивен
               </span>
             )}
           </div>
-          <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
-            {employee.position || employee.role}
-          </p>
-          <div className="flex items-center gap-3 text-xs">
+
+          {/* Department and Tasks */}
+          <div className="flex items-center gap-2.5 flex-wrap">
             {employee.department && (
-              <span className="px-2 py-1 rounded-lg bg-primary/10 text-primary font-bold">
-                {employee.department}
-              </span>
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-500/10">
+                <Icon name="business" className="text-[14px] text-blue-600 dark:text-blue-400" />
+                <span className="text-xs font-semibold text-blue-700 dark:text-blue-400">
+                  {employee.department}
+                </span>
+              </div>
             )}
-            <span className="text-gray-400">
-              <Icon name="task" className="text-[14px] inline mr-1" />
-              {employee.activeTasks} задач
-            </span>
+
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-white/5">
+              <Icon name="task_alt" className="text-[14px] text-slate-600 dark:text-slate-400" />
+              <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                {employee.activeTasks} {employee.activeTasks === 1 ? 'задача' : 'задач'}
+              </span>
+            </div>
           </div>
         </div>
 
-        <div className="flex flex-col gap-2">
+        {/* Action Buttons */}
+        <div className="flex items-center gap-2">
           <button
             onClick={onEdit}
-            className="h-10 w-10 rounded-xl bg-gray-100 dark:bg-white/5 flex items-center justify-center text-gray-500 hover:text-primary active:scale-90 transition-all"
+            className="h-9 w-9 rounded-lg bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10 hover:text-blue-600 dark:hover:text-blue-400 active:scale-95 transition-all"
           >
             <Icon name="edit" className="text-[18px]" />
           </button>
           <button
             onClick={onDelete}
-            className="h-10 w-10 rounded-xl bg-red-50 dark:bg-red-500/10 flex items-center justify-center text-red-500 hover:bg-red-100 active:scale-90 transition-all"
+            className="h-9 w-9 rounded-lg bg-red-50 dark:bg-red-500/10 flex items-center justify-center text-red-500 hover:bg-red-100 dark:hover:bg-red-500/20 active:scale-95 transition-all"
           >
             <Icon name="person_off" className="text-[18px]" />
           </button>
@@ -173,17 +182,17 @@ const EmployeeCard: React.FC<{
 
       {/* Contact Info */}
       {(employee.phone || employee.email) && (
-        <div className="flex items-center gap-4 mt-4 pt-4 border-t border-gray-100 dark:border-white/5">
+        <div className="flex items-center gap-4 mt-3.5 pt-3.5 border-t border-gray-100 dark:border-white/5">
           {employee.phone && (
-            <a href={`tel:${employee.phone}`} className="flex items-center gap-2 text-xs text-gray-500 hover:text-primary">
-              <Icon name="phone" className="text-[16px]" />
-              {employee.phone}
+            <a href={`tel:${employee.phone}`} className="flex items-center gap-2 text-xs font-medium text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+              <Icon name="phone" className="text-[15px]" />
+              <span>{employee.phone}</span>
             </a>
           )}
           {employee.email && (
-            <a href={`mailto:${employee.email}`} className="flex items-center gap-2 text-xs text-gray-500 hover:text-primary truncate">
-              <Icon name="mail" className="text-[16px]" />
-              {employee.email}
+            <a href={`mailto:${employee.email}`} className="flex items-center gap-2 text-xs font-medium text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 truncate transition-colors">
+              <Icon name="mail" className="text-[15px]" />
+              <span className="truncate">{employee.email}</span>
             </a>
           )}
         </div>

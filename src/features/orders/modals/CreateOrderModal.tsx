@@ -62,7 +62,7 @@ const CreateOrderModal = () => {
 
   useEffect(() => {
     if (searchQuery.length < 2) {
-      setSearchResults(products.slice(0, 20));
+      setSearchResults(Array.isArray(products) ? products.slice(0, 20) : []);
       return;
     }
 
@@ -74,11 +74,11 @@ const CreateOrderModal = () => {
       } catch (e) {
         console.error('Search failed', e);
         setSearchResults(
-          products.filter(
+          Array.isArray(products) ? products.filter(
             (p) =>
               p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
               p.sku.toLowerCase().includes(searchQuery.toLowerCase())
-          )
+          ) : []
         );
       } finally {
         setIsSearching(false);

@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Icon } from '@/shared/components';
+import { Icon, ThemeToggle } from '@/shared/components';
 import { useAppContext } from '@/shared/context/AppContext';
 
 const SettingsScreen = () => {
   const navigate = useNavigate();
-  const { theme, toggleTheme, logout, appName, businessDomain, setAppConfig, user } = useAppContext();
+  const { theme, logout, appName, businessDomain, setAppConfig, user } = useAppContext();
 
   const [localName, setLocalName] = useState(appName);
   const [localDomain, setLocalDomain] = useState(businessDomain);
@@ -67,51 +67,7 @@ const SettingsScreen = () => {
         </section>
 
         {/* Theme Section */}
-        <section className={`rounded-2xl overflow-hidden ${
-          isDark
-            ? 'bg-slate-800/50 border border-white/5'
-            : 'bg-white border border-slate-200/50 shadow-sm'
-        }`}>
-          <div className="p-5">
-            <h3 className={`text-xs font-semibold uppercase tracking-wider mb-4 ${
-              isDark ? 'text-slate-500' : 'text-slate-400'
-            }`}>
-              Внешний вид
-            </h3>
-
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                  isDark
-                    ? 'bg-indigo-500/10 text-indigo-400'
-                    : 'bg-amber-500/10 text-amber-500'
-                }`}>
-                  <Icon name={isDark ? 'dark_mode' : 'light_mode'} className="text-2xl" />
-                </div>
-                <div>
-                  <p className={`font-semibold ${isDark ? 'text-white' : 'text-slate-800'}`}>
-                    Тёмная тема
-                  </p>
-                  <p className={`text-xs ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
-                    {isDark ? 'Включена' : 'Выключена'}
-                  </p>
-                </div>
-              </div>
-              <button
-                onClick={toggleTheme}
-                className={`w-14 h-8 rounded-full relative transition-all duration-300 ${
-                  isDark
-                    ? 'bg-blue-500'
-                    : 'bg-slate-200'
-                }`}
-              >
-                <div className={`absolute top-1 w-6 h-6 rounded-full bg-white shadow-lg transition-all duration-300 ${
-                  isDark ? 'left-7' : 'left-1'
-                }`} />
-              </button>
-            </div>
-          </div>
-        </section>
+        <ThemeToggle variant="card" />
 
         {/* App Config Section */}
         <section className={`rounded-2xl overflow-hidden ${

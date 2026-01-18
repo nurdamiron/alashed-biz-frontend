@@ -24,12 +24,15 @@ const ProtectedRoute = ({ children }: { children?: React.ReactNode }) => {
 };
 
 const AppRoutes = () => {
+  const { theme } = useAppContext();
+
   return (
     <div
-      className="bg-background-light dark:bg-black text-slate-900 dark:text-zinc-100 font-sans flex flex-col overflow-hidden transition-colors duration-300"
+      className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-zinc-100 font-sans flex flex-col overflow-hidden transition-colors duration-300"
       style={{
         height: '100vh',
         height: '100dvh', // Dynamic viewport height for modern browsers
+        backgroundColor: theme === 'dark' ? '#000000' : '#fcfcfd', // Force inline style for debugging
       }}
     >
       <div className="flex-1 overflow-hidden relative">
@@ -251,8 +254,6 @@ const App = () => {
         toastOptions={{
           className: 'text-sm font-bold',
           style: {
-            background: '#0f172a',
-            color: '#fff',
             borderRadius: '1rem',
             padding: '1rem',
           },

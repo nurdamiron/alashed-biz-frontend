@@ -71,11 +71,10 @@ const InventoryScreen = () => {
               <button
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
-                className={`flex items-center gap-2 h-11 shrink-0 rounded-xl px-5 text-[10px] font-black uppercase tracking-widest transition-all border ${
-                  activeCategory === cat
+                className={`flex items-center gap-2 h-11 shrink-0 rounded-xl px-5 text-[10px] font-black uppercase tracking-widest transition-all border ${activeCategory === cat
                     ? 'bg-primary text-white border-primary shadow-lg shadow-primary/25'
                     : 'bg-white dark:bg-surface-dark text-gray-400 border-gray-100 dark:border-white/5'
-                }`}
+                  }`}
               >
                 <Icon name={CATEGORY_ICONS[cat] || 'category'} className="text-[18px]" />
                 <span>{cat}</span>
@@ -97,11 +96,10 @@ const InventoryScreen = () => {
           </h3>
           <button
             onClick={() => setShowOnlyLowStock(!showOnlyLowStock)}
-            className={`flex items-center gap-2 px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${
-              showOnlyLowStock
+            className={`flex items-center gap-2 px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${showOnlyLowStock
                 ? 'bg-red-500 text-white shadow-lg'
                 : 'bg-gray-100 dark:bg-white/5 text-gray-400'
-            }`}
+              }`}
           >
             <Icon name="warning" className="text-[14px]" />
             Дефицит: {stats.lowStockCount}
@@ -131,9 +129,8 @@ const InventoryScreen = () => {
                       {product.name}
                     </h4>
                     <div
-                      className={`px-2 py-1 rounded-lg text-[8px] font-black uppercase tracking-tighter ${
-                        isLow ? 'bg-red-500/10 text-red-500' : 'bg-emerald-500/10 text-emerald-500'
-                      }`}
+                      className={`px-2 py-1 rounded-lg text-[8px] font-black uppercase tracking-tighter ${isLow ? 'bg-red-500/10 text-red-500' : 'bg-emerald-500/10 text-emerald-500'
+                        }`}
                     >
                       {isLow ? 'Дефицит' : 'ОК'}
                     </div>
@@ -153,9 +150,8 @@ const InventoryScreen = () => {
                         На Складе
                       </p>
                       <p
-                        className={`text-sm font-black ${
-                          isLow ? 'text-red-500' : 'text-slate-900 dark:text-white'
-                        }`}
+                        className={`text-sm font-black ${isLow ? 'text-red-500' : 'text-slate-900 dark:text-white'
+                          }`}
                       >
                         {product.stock} {product.unit}
                       </p>

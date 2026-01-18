@@ -9,7 +9,6 @@ const CreateStaffModal = () => {
 
   const [formData, setFormData] = useState({
     name: '',
-    position: '',
     department: '',
     phone: '',
     email: '',
@@ -33,7 +32,6 @@ const CreateStaffModal = () => {
     try {
       await addEmployee({
         name: formData.name,
-        position: formData.position,
         department: formData.department,
         phone: formData.phone,
         email: formData.email,
@@ -98,20 +96,6 @@ const CreateStaffModal = () => {
               placeholder="Иванов Иван Иванович"
               className="w-full h-14 px-5 rounded-2xl bg-white dark:bg-surface-dark border border-gray-100 dark:border-white/5 text-base font-medium focus:outline-none focus:ring-2 focus:ring-primary/20"
               required
-            />
-          </div>
-
-          {/* Position */}
-          <div>
-            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">
-              Должность
-            </label>
-            <input
-              type="text"
-              value={formData.position}
-              onChange={(e) => setFormData({ ...formData, position: e.target.value })}
-              placeholder="Менеджер по продажам"
-              className="w-full h-14 px-5 rounded-2xl bg-white dark:bg-surface-dark border border-gray-100 dark:border-white/5 text-base font-medium focus:outline-none focus:ring-2 focus:ring-primary/20"
             />
           </div>
 

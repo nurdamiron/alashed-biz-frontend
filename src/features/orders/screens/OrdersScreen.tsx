@@ -39,9 +39,8 @@ const OrdersScreen = () => {
           <div className="flex items-center gap-3">
             <button
               onClick={() => setShowFilters(true)}
-              className={`flex items-center justify-center w-10 h-10 rounded-full bg-white dark:bg-surface-dark border border-gray-100 dark:border-gray-800 shadow-sm text-slate-900 dark:text-white ${
-                showFilters ? 'ring-2 ring-primary' : ''
-              }`}
+              className={`flex items-center justify-center w-10 h-10 rounded-full bg-white dark:bg-surface-dark border border-gray-100 dark:border-gray-800 shadow-sm text-slate-900 dark:text-white ${showFilters ? 'ring-2 ring-primary' : ''
+                }`}
             >
               <Icon name="filter_list" />
             </button>
@@ -122,11 +121,10 @@ const OrdersScreen = () => {
             <button
               key={filter}
               onClick={() => setActiveFilter(filter)}
-              className={`flex h-9 shrink-0 items-center justify-center rounded-xl px-4 text-sm font-medium transition-all ${
-                activeFilter === filter
+              className={`flex h-9 shrink-0 items-center justify-center rounded-xl px-4 text-sm font-medium transition-all ${activeFilter === filter
                   ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/25'
-                  : 'bg-white dark:bg-slate-800/50 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-white/5'
-              }`}
+                  : 'bg-white dark:bg-surface-dark text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-white/5'
+                }`}
             >
               {filter}
             </button>
@@ -145,7 +143,7 @@ const OrdersScreen = () => {
           return (
             <div
               key={order.id}
-              className="group relative flex flex-col rounded-3xl bg-white dark:bg-surface-dark p-1 shadow-sm border border-gray-100 dark:border-gray-800 cursor-pointer active:scale-[0.98] transition-all hover:shadow-md"
+              className="group relative flex flex-col rounded-3xl bg-white dark:bg-surface-dark p-1 shadow-sm border border-gray-100 dark:border-white/5 cursor-pointer active:scale-[0.98] transition-all hover:shadow-md"
               onClick={() => navigate(`/order/${order.id}`)}
             >
               <div className="flex gap-4 p-3">
@@ -153,16 +151,14 @@ const OrdersScreen = () => {
                   <img
                     src={order.img || 'https://cdn-icons-png.flaticon.com/512/1006/1006771.png'}
                     alt=""
-                    className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 ${
-                      isCancelled ? 'grayscale opacity-70' : ''
-                    }`}
+                    className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 ${isCancelled ? 'grayscale opacity-70' : ''
+                      }`}
                   />
                 </div>
 
                 <div
-                  className={`flex flex-col flex-1 min-w-0 justify-center ${
-                    isCancelled ? 'opacity-60' : ''
-                  }`}
+                  className={`flex flex-col flex-1 min-w-0 justify-center ${isCancelled ? 'opacity-60' : ''
+                    }`}
                 >
                   <div className="flex justify-between items-start mb-1">
                     <h3 className="text-base font-bold text-slate-900 dark:text-white truncate pr-2">

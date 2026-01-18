@@ -65,7 +65,7 @@ const OrderDetailScreen = () => {
       </header>
 
       <main className="flex-1 p-6 space-y-8 pb-48">
-        <section className="bg-gradient-to-br from-blue-500 to-blue-600 dark:from-slate-900 dark:to-indigo-950 rounded-[2.5rem] p-8 text-white shadow-2xl relative overflow-hidden group">
+        <section className="bg-gradient-to-br from-blue-500 to-blue-600 dark:from-surface-dark dark:to-background-dark rounded-[2.5rem] p-8 text-white shadow-2xl relative overflow-hidden group border border-transparent dark:border-white/10">
           <div className="relative z-10">
             <div className="flex items-center justify-between mb-8">
               <div>
@@ -91,18 +91,16 @@ const OrderDetailScreen = () => {
               {timelineSteps.map((step) => (
                 <div key={step.id} className="relative z-10 flex flex-col items-center">
                   <div
-                    className={`h-10 w-10 rounded-2xl flex items-center justify-center transition-all duration-500 border-2 ${
-                      step.active
+                    className={`h-10 w-10 rounded-2xl flex items-center justify-center transition-all duration-500 border-2 ${step.active
                         ? 'bg-primary border-primary text-white shadow-lg shadow-primary/30 scale-110'
-                        : 'bg-slate-800 border-white/10 text-white/20'
-                    }`}
+                        : 'bg-slate-800 dark:bg-white/5 border-white/10 text-white/20'
+                      }`}
                   >
                     <Icon name={step.icon} className="text-[18px]" />
                   </div>
                   <span
-                    className={`absolute -bottom-6 whitespace-nowrap text-[8px] font-black uppercase tracking-widest transition-opacity ${
-                      step.active ? 'opacity-100 text-blue-300' : 'opacity-30'
-                    }`}
+                    className={`absolute -bottom-6 whitespace-nowrap text-[8px] font-black uppercase tracking-widest transition-opacity ${step.active ? 'opacity-100 text-blue-300' : 'opacity-30'
+                      }`}
                   >
                     {step.label}
                   </span>
@@ -217,8 +215,8 @@ const OrderDetailScreen = () => {
                 order.status === 'Ожидание'
                   ? 'Отправлено'
                   : order.status === 'Отправлено'
-                  ? 'Доставлено'
-                  : 'Ожидание';
+                    ? 'Доставлено'
+                    : 'Ожидание';
               updateOrderStatus(order.id, next as any);
             }}
             className="flex-1 h-16 rounded-[1.8rem] bg-blue-500 text-white font-bold text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-3 shadow-2xl shadow-primary/40 active:scale-95 transition-all"

@@ -32,9 +32,8 @@ const TaskDetailScreen = () => {
     const hrs = Math.floor(totalSeconds / 3600);
     const mins = Math.floor((totalSeconds % 3600) / 60);
     const secs = totalSeconds % 60;
-    return `${hrs > 0 ? hrs + ':' : ''}${mins < 10 && hrs > 0 ? '0' : ''}${mins}:${
-      secs < 10 ? '0' : ''
-    }${secs}`;
+    return `${hrs > 0 ? hrs + ':' : ''}${mins < 10 && hrs > 0 ? '0' : ''}${mins}:${secs < 10 ? '0' : ''
+      }${secs}`;
   };
 
   const [checklist, setChecklist] = useState(task?.checklist || []);
@@ -76,8 +75,8 @@ const TaskDetailScreen = () => {
       task.status === 'К выполнению'
         ? 'В процессе'
         : task.status === 'В процессе'
-        ? 'Готово'
-        : 'К выполнению';
+          ? 'Готово'
+          : 'К выполнению';
 
     await updateTaskStatus(task.id, nextStatus as any);
 
@@ -121,19 +120,17 @@ const TaskDetailScreen = () => {
       <main className="flex-1 px-5 pt-6 space-y-8">
         {/* Статус бейдж */}
         <div className="flex items-center justify-center">
-          <div className={`px-4 py-2 rounded-2xl border-2 ${
-            task.status === 'К выполнению'
+          <div className={`px-4 py-2 rounded-2xl border-2 ${task.status === 'К выполнению'
               ? 'bg-orange-50 dark:bg-orange-500/10 border-orange-500 text-orange-600 dark:text-orange-400'
               : task.status === 'В процессе'
-              ? 'bg-blue-50 dark:bg-blue-500/10 border-blue-500 text-blue-600 dark:text-blue-400'
-              : 'bg-emerald-50 dark:bg-emerald-500/10 border-emerald-500 text-emerald-600 dark:text-emerald-400'
-          }`}>
+                ? 'bg-blue-50 dark:bg-blue-500/10 border-blue-500 text-blue-600 dark:text-blue-400'
+                : 'bg-emerald-50 dark:bg-emerald-500/10 border-emerald-500 text-emerald-600 dark:text-emerald-400'
+            }`}>
             <div className="flex items-center gap-2">
-              <div className={`h-2 w-2 rounded-full ${
-                task.status === 'К выполнению' ? 'bg-orange-500 animate-pulse'
-                : task.status === 'В процессе' ? 'bg-blue-500 animate-pulse'
-                : 'bg-emerald-500'
-              }`} />
+              <div className={`h-2 w-2 rounded-full ${task.status === 'К выполнению' ? 'bg-orange-500 animate-pulse'
+                  : task.status === 'В процессе' ? 'bg-blue-500 animate-pulse'
+                    : 'bg-emerald-500'
+                }`} />
               <span className="text-xs font-black uppercase tracking-wider">{task.status}</span>
             </div>
           </div>
@@ -157,11 +154,10 @@ const TaskDetailScreen = () => {
             {(() => {
               const isOverdue = task.deadline && task.status !== 'Готово' && new Date(task.deadline) < new Date();
               return (
-                <div className={`flex items-center gap-1.5 px-3 py-1 rounded-xl ${
-                  isOverdue
+                <div className={`flex items-center gap-1.5 px-3 py-1 rounded-xl ${isOverdue
                     ? 'bg-red-500 text-white'
                     : 'text-gray-400 bg-gray-50 dark:bg-white/5'
-                }`}>
+                  }`}>
                   <Icon name={isOverdue ? "schedule" : "history"} className="text-[16px]" />
                   <span className="text-[10px] font-black uppercase tracking-widest">
                     {formatDeadline(task.deadline)}
@@ -228,11 +224,10 @@ const TaskDetailScreen = () => {
               </span>
               <div className="flex items-center gap-3">
                 <div
-                  className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-all ${
-                    isTimerRunning
+                  className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-all ${isTimerRunning
                       ? 'bg-emerald-500 text-white shadow-[0_0_15px_rgba(16,185,129,0.5)]'
                       : 'bg-gray-100 dark:bg-white/5 text-gray-400'
-                  }`}
+                    }`}
                 >
                   <Icon
                     name="timer"
@@ -240,9 +235,8 @@ const TaskDetailScreen = () => {
                   />
                 </div>
                 <span
-                  className={`text-base font-black tracking-tight ${
-                    isTimerRunning ? 'text-emerald-500' : 'text-slate-800 dark:text-white'
-                  }`}
+                  className={`text-base font-black tracking-tight ${isTimerRunning ? 'text-emerald-500' : 'text-slate-800 dark:text-white'
+                    }`}
                 >
                   {formatTime(timerSeconds)}
                 </span>
@@ -288,28 +282,25 @@ const TaskDetailScreen = () => {
                 <div
                   key={item.id}
                   onClick={() => toggleCheck(item.id)}
-                  className={`flex items-center gap-4 p-4 rounded-[1.5rem] transition-all cursor-pointer relative ${
-                    item.done ? 'bg-emerald-500/5' : 'hover:bg-gray-50 dark:hover:bg-white/5'
-                  }`}
+                  className={`flex items-center gap-4 p-4 rounded-[1.5rem] transition-all cursor-pointer relative ${item.done ? 'bg-emerald-500/5' : 'hover:bg-gray-50 dark:hover:bg-white/5'
+                    }`}
                 >
                   <div className="flex items-center justify-center w-6 h-6 rounded-lg bg-gray-100 dark:bg-gray-800 text-[10px] font-black text-gray-400">
                     {index + 1}
                   </div>
                   <div
-                    className={`h-8 w-8 rounded-xl border-2 flex items-center justify-center transition-all ${
-                      item.done
+                    className={`h-8 w-8 rounded-xl border-2 flex items-center justify-center transition-all ${item.done
                         ? 'bg-emerald-500 border-emerald-500 text-white shadow-lg shadow-emerald-500/20'
                         : 'border-gray-200 dark:border-gray-700'
-                    }`}
+                      }`}
                   >
                     {item.done && <Icon name="check_circle" className="text-[20px] font-bold" />}
                   </div>
                   <span
-                    className={`text-sm font-bold flex-1 transition-all ${
-                      item.done
+                    className={`text-sm font-bold flex-1 transition-all ${item.done
                         ? 'text-gray-400 line-through'
                         : 'text-slate-900 dark:text-white'
-                    }`}
+                      }`}
                   >
                     {item.text}
                   </span>
@@ -378,17 +369,16 @@ const TaskDetailScreen = () => {
         </section>
       </main>
 
-      <div className="fixed bottom-0 left-0 w-full bg-white/80 dark:bg-[#111722]/80 backdrop-blur-2xl border-t border-gray-200 dark:border-gray-800 p-6 pb-10 z-40">
+      <div className="fixed bottom-0 left-0 w-full bg-white/80 dark:bg-surface-dark/80 backdrop-blur-2xl border-t border-gray-200 dark:border-gray-800 p-6 pb-10 z-40">
         <div className="flex gap-4 max-w-lg mx-auto">
           <button
             onClick={handleStatusChange}
-            className={`flex-1 h-16 rounded-[1.5rem] text-white font-black text-base shadow-xl flex items-center justify-center gap-3 active:scale-95 transition-all ${
-              task.status === 'К выполнению'
+            className={`flex-1 h-16 rounded-[1.5rem] text-white font-black text-base shadow-xl flex items-center justify-center gap-3 active:scale-95 transition-all ${task.status === 'К выполнению'
                 ? 'bg-slate-900 dark:bg-primary shadow-slate-900/30 dark:shadow-primary/40'
                 : task.status === 'В процессе'
-                ? 'bg-emerald-500 shadow-emerald-500/40'
-                : 'bg-gray-200 dark:bg-gray-800 text-slate-500 dark:text-slate-400 border border-transparent dark:border-white/5'
-            }`}
+                  ? 'bg-emerald-500 shadow-emerald-500/40'
+                  : 'bg-gray-200 dark:bg-gray-800 text-slate-500 dark:text-slate-400 border border-transparent dark:border-white/5'
+              }`}
           >
             {task.status === 'К выполнению' && (
               <>

@@ -184,6 +184,28 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
   };
 
+  // Fetch user preferences from backend and sync with local storage
+  const syncThemeWithBackend = async () => {
+    try {
+      const userData = await api.auth.me();
+      if (userData?.preferences?.theme) {
+        const backendTheme = userData.preferences.theme as 'light' | 'dark';
+        const localTheme = localStorage.getItem('alash_theme');
+
+        // If backend theme differs from local, backend is the source of truth
+        if (backendTheme !== localTheme) {
+          console.log('🔄 Syncing theme from backend:', backendTheme);
+          setTheme(backendTheme);
+          localStorage.setItem('alash_theme', backendTheme);
+          document.documentElement.classList.toggle('dark', backendTheme === 'dark');
+        }
+      }
+    } catch (error) {
+      console.log('⚠️ Could not sync theme from backend, using local preference');
+      // Silently fail - local theme is already set
+    }
+  };
+
   useEffect(() => {
     const init = async () => {
       const token = localStorage.getItem('alash_token');
@@ -201,6 +223,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
           // Сразу убираем глобальный Loading, показываем UI с локальными скелетонами
           setIsLoading(false);
+
+          // Sync theme from backend (non-blocking)
+          syncThemeWithBackend().catch(console.error);
 
           // Загружаем данные асинхронно в фоне
           refreshData().catch(console.error);
@@ -289,8 +314,11 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   }, [isAuthenticated, handleWebSocketEvent]);
 
   useEffect(() => {
+    console.log('🎨 Theme changed to:', theme);
+    console.log('🎨 Applying dark class:', theme === 'dark');
     document.documentElement.classList.toggle('dark', theme === 'dark');
     localStorage.setItem('alash_theme', theme);
+    console.log('🎨 HTML classes:', document.documentElement.className);
   }, [theme]);
 
   const setAppConfig = (name: string, domain: string) => {
@@ -310,8 +338,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         setIsAuthenticated(true);
         setUser(userData);
 
-        // Не перезаписываем тему при логине - используем сохраненную локально
-        // Тема пользователя уже загружена из localStorage при инициализации
+        // Sync theme from backend after login (backend is source of truth)
+        syncThemeWithBackend().catch(console.error);
 
         // Загружаем данные асинхронно в фоне, не ждем завершения
         refreshData().catch(console.error);
@@ -349,12 +377,26 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     const newTheme = theme === 'light' ? 'dark' : 'light';
     setTheme(newTheme);
 
-    // Save to backend if authenticated
+    // Update localStorage immediately
+    localStorage.setItem('alash_theme', newTheme);
+
+    // Update DOM
+    document.documentElement.classList.toggle('dark', newTheme === 'dark');
+
+    // Update mobile browser theme color
+    const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+    if (metaThemeColor) {
+      metaThemeColor.setAttribute('content', newTheme === 'dark' ? '#000000' : '#fcfcfd');
+    }
+
+    // Save to backend if authenticated (non-blocking)
     if (isAuthenticated) {
       try {
         await api.auth.updatePreferences(newTheme);
+        console.log('✅ Theme preference saved to backend');
       } catch (error) {
-        console.error('Failed to update theme preference:', error);
+        console.error('⚠️ Failed to update theme preference on backend:', error);
+        // Still allow local theme change even if backend fails
       }
     }
   };

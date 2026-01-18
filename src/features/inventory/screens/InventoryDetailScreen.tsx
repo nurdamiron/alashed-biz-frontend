@@ -103,9 +103,8 @@ const InventoryDetailScreen = () => {
             </div>
             <div className="mt-8 flex items-center gap-4">
               <div
-                className={`backdrop-blur-xl px-4 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 border border-white/20 ${
-                  product.stock <= product.minStock ? 'bg-red-500/30' : 'bg-white/20'
-                }`}
+                className={`backdrop-blur-xl px-4 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 border border-white/20 ${product.stock <= product.minStock ? 'bg-red-500/30' : 'bg-white/20'
+                  }`}
               >
                 <Icon
                   name={product.stock <= product.minStock ? 'warning' : 'auto_mode'}
@@ -167,11 +166,10 @@ const InventoryDetailScreen = () => {
                 >
                   <div className="flex items-center gap-4">
                     <div
-                      className={`h-11 w-11 rounded-xl flex items-center justify-center transition-all ${
-                        log.delta > 0
+                      className={`h-11 w-11 rounded-xl flex items-center justify-center transition-all ${log.delta > 0
                           ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'
                           : 'bg-red-500/10 text-red-500 border-red-500/20'
-                      }`}
+                        }`}
                     >
                       <Icon
                         name={log.delta > 0 ? 'post_add' : 'local_shipping'}
@@ -193,9 +191,8 @@ const InventoryDetailScreen = () => {
                     </div>
                   </div>
                   <span
-                    className={`text-sm font-black ${
-                      log.delta > 0 ? 'text-emerald-500' : 'text-slate-900 dark:text-white'
-                    }`}
+                    className={`text-sm font-black ${log.delta > 0 ? 'text-emerald-500' : 'text-slate-900 dark:text-white'
+                      }`}
                   >
                     {log.delta > 0 ? '+' : ''}
                     {log.delta}
@@ -211,7 +208,7 @@ const InventoryDetailScreen = () => {
         </section>
       </main>
 
-      <div className="fixed bottom-0 left-0 w-full bg-white/80 dark:bg-[#111722]/80 backdrop-blur-2xl border-t border-gray-200 dark:border-gray-800 p-6 pb-10 z-30">
+      <div className="fixed bottom-0 left-0 w-full bg-white/80 dark:bg-surface-dark/80 backdrop-blur-2xl border-t border-gray-200 dark:border-gray-800 p-6 pb-10 z-30">
         <div className="flex gap-4 max-w-lg mx-auto">
           <button
             onClick={() => setModalType('out')}
@@ -232,14 +229,13 @@ const InventoryDetailScreen = () => {
 
       {modalType && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/60 backdrop-blur-md animate-in fade-in duration-300">
-          <div className="w-full max-w-sm bg-white dark:bg-[#192233] rounded-[3rem] p-8 shadow-2xl border border-white/10 animate-in zoom-in-95 duration-300">
+          <div className="w-full max-w-sm bg-white dark:bg-surface-dark rounded-[3rem] p-8 shadow-2xl border border-white/10 animate-in zoom-in-95 duration-300">
             <div className="flex flex-col items-center mb-8">
               <div
-                className={`h-20 w-20 rounded-[1.8rem] flex items-center justify-center mb-6 shadow-2xl ${
-                  modalType === 'in'
+                className={`h-20 w-20 rounded-[1.8rem] flex items-center justify-center mb-6 shadow-2xl ${modalType === 'in'
                     ? 'bg-emerald-500/10 text-emerald-500'
                     : 'bg-red-500/10 text-red-500'
-                }`}
+                  }`}
               >
                 <Icon
                   name={modalType === 'in' ? 'post_add' : 'inventory_2'}
@@ -256,7 +252,7 @@ const InventoryDetailScreen = () => {
                 autoFocus
                 value={quantity}
                 onChange={(e) => setQuantity(e.target.value)}
-                className="block w-full bg-gray-50 dark:bg-[#111722] border-2 border-gray-100 dark:border-white/5 rounded-[1.5rem] py-6 text-center text-4xl font-black text-slate-900 dark:text-white outline-none shadow-inner"
+                className="block w-full bg-gray-50 dark:bg-background-dark border-2 border-gray-100 dark:border-white/5 rounded-[1.5rem] py-6 text-center text-4xl font-black text-slate-900 dark:text-white outline-none shadow-inner"
                 placeholder="0"
               />
             </div>
@@ -273,9 +269,8 @@ const InventoryDetailScreen = () => {
               <button
                 onClick={handleAction}
                 disabled={!quantity || parseInt(quantity) <= 0}
-                className={`flex-1 py-4 rounded-[1.5rem] font-black text-[10px] uppercase tracking-[0.2em] text-white shadow-xl transition-all active:scale-95 disabled:opacity-30 ${
-                  modalType === 'in' ? 'bg-emerald-500' : 'bg-red-500'
-                }`}
+                className={`flex-1 py-4 rounded-[1.5rem] font-black text-[10px] uppercase tracking-[0.2em] text-white shadow-xl transition-all active:scale-95 disabled:opacity-30 ${modalType === 'in' ? 'bg-emerald-500' : 'bg-red-500'
+                  }`}
               >
                 Confirm
               </button>

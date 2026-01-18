@@ -2,12 +2,75 @@
 @tailwind components;
 @tailwind utilities;
 
-/* iOS Safe Area Support */
+/* ============================================
+   THEME CSS VARIABLES
+   Instant theme switching without reload
+   ============================================ */
+
 :root {
+  /* iOS Safe Area Support */
   --sat: env(safe-area-inset-top);
   --sar: env(safe-area-inset-right);
   --sab: env(safe-area-inset-bottom);
   --sal: env(safe-area-inset-left);
+
+  /* Light Theme Colors */
+  --color-primary: #135bec;
+  --color-primary-hover: #0f4dc7;
+
+  --color-background: #fcfcfd;
+  --color-background-elevated: #ffffff;
+  --color-background-overlay: rgba(0, 0, 0, 0.5);
+
+  --color-surface: #ffffff;
+  --color-surface-hover: #f8fafc;
+
+  --color-text-primary: #09090b;
+  --color-text-secondary: #71717a;
+  --color-text-tertiary: #a1a1aa;
+
+  --color-border: #e4e4e7;
+  --color-border-light: #f4f4f5;
+
+  --color-success: #22c55e;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  --color-info: #3b82f6;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+html.dark {
+  /* Dark Theme Colors */
+  --color-primary: #135bec;
+  --color-primary-hover: #1d6bff;
+
+  --color-background: #000000;
+  --color-background-elevated: #0a0a0a;
+  --color-background-overlay: rgba(0, 0, 0, 0.8);
+
+  --color-surface: #0a0a0a;
+  --color-surface-hover: #18181b;
+
+  --color-text-primary: #fafafa;
+  --color-text-secondary: #a1a1aa;
+  --color-text-tertiary: #71717a;
+
+  --color-border: #18181b;
+  --color-border-light: #27272a;
+
+  --color-success: #22c55e;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  --color-info: #3b82f6;
+
+  /* Shadows (lighter for dark mode) */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.7);
 }
 
 /* iOS Viewport Height Fix */
@@ -16,8 +79,8 @@ html {
 }
 
 body {
-  background-color: #fcfcfd;
-  color: #09090b;
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
@@ -26,11 +89,8 @@ body {
   overscroll-behavior-y: none;
   /* Improve touch scrolling on iOS */
   -webkit-overflow-scrolling: touch;
-}
-
-html.dark body {
-  background-color: #000000;
-  color: #fafafa;
+  /* Smooth theme transition */
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* iOS Touch Improvements */

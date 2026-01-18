@@ -204,40 +204,31 @@ const CreateTaskModal = () => {
                 <button
                   key={emp.id}
                   onClick={() => setSelectedAssignee(emp)}
-                  className={`flex flex-col items-center gap-3 p-4 rounded-[2.2rem] border min-w-[110px] transition-all duration-300 ${
+                  className={`flex flex-col items-center gap-2.5 p-3.5 rounded-xl border min-w-[90px] transition-all duration-300 ${
                     isSelected
-                      ? 'bg-primary text-white border-primary shadow-xl shadow-primary/25 scale-105'
-                      : 'bg-white dark:bg-surface-dark border-gray-100 dark:border-white/5'
+                      ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20 scale-105'
+                      : 'bg-white dark:bg-surface-dark border-gray-200 dark:border-white/10'
                   }`}
                 >
                   <div className="relative">
                     <img
                       src={emp.avatar}
                       alt={emp.name}
-                      className="h-12 w-12 rounded-2xl object-cover border-2 border-white/20"
+                      className="h-14 w-14 rounded-xl object-cover"
                     />
                     <span
-                      className={`absolute -top-1 -right-1 h-5 w-5 rounded-full flex items-center justify-center text-[10px] font-black border-2 border-white dark:border-surface-dark text-white ${workloadColor}`}
+                      className={`absolute -top-1 -right-1 h-5 w-5 rounded-full flex items-center justify-center text-[9px] font-black border-2 border-white dark:border-surface-dark text-white shadow-sm ${workloadColor}`}
                     >
                       {emp.activeTasks}
                     </span>
                   </div>
-                  <div className="text-center">
-                    <p
-                      className={`text-[11px] font-black leading-none mb-1 ${
-                        isSelected ? 'text-white' : 'text-slate-900 dark:text-white'
-                      }`}
-                    >
-                      {emp.name.split(' ')[0]}
-                    </p>
-                    <p
-                      className={`text-[8px] font-bold uppercase tracking-widest opacity-60 ${
-                        isSelected ? 'text-blue-100' : 'text-gray-400'
-                      }`}
-                    >
-                      {emp.role}
-                    </p>
-                  </div>
+                  <p
+                    className={`text-[11px] font-bold leading-tight ${
+                      isSelected ? 'text-white' : 'text-slate-900 dark:text-white'
+                    }`}
+                  >
+                    {emp.name.split(' ')[0]}
+                  </p>
                 </button>
               );
             })}
