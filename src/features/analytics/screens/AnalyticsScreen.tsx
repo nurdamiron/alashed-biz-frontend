@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Icon } from '@/shared/components';
 import { api } from '@/shared/lib/api';
+import { useAppContext } from '@/shared/context/AppContext';
 import {
   LineChart, Line, BarChart, Bar, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
@@ -11,6 +12,8 @@ type Period = 'daily' | 'weekly' | 'monthly';
 const COLORS = ['#135bec', '#22c55e', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
 
 const AnalyticsScreen = () => {
+  const { theme } = useAppContext();
+  const isDark = theme === 'dark';
   const [period, setPeriod] = useState<Period>('daily');
   const [revenueData, setRevenueData] = useState<any[]>([]);
   const [topProducts, setTopProducts] = useState<any[]>([]);
@@ -111,11 +114,16 @@ const AnalyticsScreen = () => {
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={revenueData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" opacity={0.2} />
-                  <XAxis dataKey="period" tick={{ fontSize: 10 }} stroke="#9ca3af" />
-                  <YAxis tick={{ fontSize: 10 }} stroke="#9ca3af" tickFormatter={(v) => `${(v/1000).toFixed(0)}K`} />
+                  <CartesianGrid strokeDasharray="3 3" stroke={isDark ? '#374151' : '#e5e7eb'} opacity={0.5} />
+                  <XAxis dataKey="period" tick={{ fontSize: 10, fill: isDark ? '#9ca3af' : '#6b7280' }} />
+                  <YAxis tick={{ fontSize: 10, fill: isDark ? '#9ca3af' : '#6b7280' }} tickFormatter={(v) => `${(v/1000).toFixed(0)}K`} />
                   <Tooltip
-                    contentStyle={{ background: '#1f2937', border: 'none', borderRadius: '0.5rem' }}
+                    contentStyle={{
+                      background: isDark ? '#1f2937' : '#ffffff',
+                      border: isDark ? 'none' : '1px solid #e5e7eb',
+                      borderRadius: '0.5rem',
+                      color: isDark ? '#ffffff' : '#000000'
+                    }}
                     formatter={(value: number | undefined) => [formatCurrency(value || 0), 'Выручка']}
                   />
                   <Line type="monotone" dataKey="revenue" stroke="#135bec" strokeWidth={3} dot={{ fill: '#135bec' }} />
@@ -133,11 +141,16 @@ const AnalyticsScreen = () => {
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={topProducts} layout="vertical">
-                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" opacity={0.2} />
-                  <XAxis type="number" tick={{ fontSize: 10 }} stroke="#9ca3af" />
-                  <YAxis dataKey="name" type="category" tick={{ fontSize: 10 }} stroke="#9ca3af" width={100} />
+                  <CartesianGrid strokeDasharray="3 3" stroke={isDark ? '#374151' : '#e5e7eb'} opacity={0.5} />
+                  <XAxis type="number" tick={{ fontSize: 10, fill: isDark ? '#9ca3af' : '#6b7280' }} />
+                  <YAxis dataKey="name" type="category" tick={{ fontSize: 10, fill: isDark ? '#9ca3af' : '#6b7280' }} width={100} />
                   <Tooltip
-                    contentStyle={{ background: '#1f2937', border: 'none', borderRadius: '0.5rem' }}
+                    contentStyle={{
+                      background: isDark ? '#1f2937' : '#ffffff',
+                      border: isDark ? 'none' : '1px solid #e5e7eb',
+                      borderRadius: '0.5rem',
+                      color: isDark ? '#ffffff' : '#000000'
+                    }}
                     formatter={(value: number | undefined) => [value || 0, 'Продано']}
                   />
                   <Bar dataKey="soldQuantity" fill="#22c55e" radius={[0, 4, 4, 0]} />
@@ -162,7 +175,11 @@ const AnalyticsScreen = () => {
                     cx="50%"
                     cy="50%"
                     outerRadius={80}
-                    label={({ name, percent }: any) => `${name}: ${((percent || 0) * 100).toFixed(0)}%`}
+                    label={({ name, percent }: any) => ({
+                      ...{name, percent},
+                      fill: isDark ? '#fff' : '#000',
+                      children: `${name}: ${((percent || 0) * 100).toFixed(0)}%`
+                    })}
                     labelLine={false}
                   >
                     {categoryData.map((_, index) => (
@@ -170,7 +187,12 @@ const AnalyticsScreen = () => {
                     ))}
                   </Pie>
                   <Tooltip
-                    contentStyle={{ background: '#1f2937', border: 'none', borderRadius: '0.5rem' }}
+                    contentStyle={{
+                      background: isDark ? '#1f2937' : '#ffffff',
+                      border: isDark ? 'none' : '1px solid #e5e7eb',
+                      borderRadius: '0.5rem',
+                      color: isDark ? '#ffffff' : '#000000'
+                    }}
                     formatter={(value: number | undefined) => [formatCurrency(value || 0), 'Выручка']}
                   />
                 </PieChart>
