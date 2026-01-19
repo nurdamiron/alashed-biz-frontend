@@ -53,57 +53,43 @@ const TasksScreen = () => {
 
   return (
     <div className="flex flex-col h-full bg-background-light dark:bg-background-dark transition-colors duration-300">
-      <header
-        className="sticky top-0 z-20 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-xl px-6 pb-4 transition-colors"
-        style={{
-          paddingTop: 'max(2rem, calc(2rem + env(safe-area-inset-top)))'
-        }}
-      >
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex flex-col">
-            <span className="text-[10px] font-black text-primary uppercase tracking-[0.3em] mb-1">
-              Mission Control
-            </span>
-            <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">
-              ЗАДАЧИ
-            </h1>
-          </div>
+      <header className="sticky top-0 z-20 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-800/50 transition-colors">
+        <div
+          className="flex items-center justify-between px-5 pb-2"
+          style={{
+            paddingTop: 'max(1.25rem, calc(1.25rem + env(safe-area-inset-top)))'
+          }}
+        >
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
+            Задачи
+          </h1>
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className={`flex items-center justify-center w-12 h-12 rounded-2xl border shadow-sm active:scale-90 transition-all ${showFilters
-                ? 'bg-primary text-white border-primary'
-                : 'bg-white dark:bg-surface-dark border-gray-100 dark:border-white/5 text-slate-900 dark:text-white'
-              }`}
+            className={`flex items-center justify-center w-10 h-10 rounded-full bg-white dark:bg-surface-dark border border-gray-100 dark:border-gray-800 shadow-sm text-slate-900 dark:text-white ${showFilters ? 'ring-2 ring-primary' : ''}`}
           >
-            <Icon name="filter_list" className="text-[22px]" />
+            <Icon name="filter_list" />
           </button>
         </div>
 
         {/* Поиск */}
-        <div className="mb-4">
-          <div className="relative">
-            <Icon name="search" className="absolute left-4 top-1/2 -translate-y-1/2 text-[20px] text-gray-400" />
+        <div className="px-5 pb-3">
+          <div className="relative group">
+            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400 transition-colors group-focus-within:text-primary">
+              <Icon name="search" className="text-[20px]" />
+            </div>
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Поиск задач..."
-              className="w-full h-12 pl-12 pr-4 rounded-2xl bg-white dark:bg-surface-dark border border-gray-100 dark:border-white/5 text-sm font-medium text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
+              className="block w-full rounded-2xl border-none bg-white dark:bg-surface-dark py-3 pl-10 pr-4 text-sm text-slate-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-primary/50 shadow-sm transition-all"
             />
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5"
-              >
-                <Icon name="close" className="text-[18px] text-gray-400" />
-              </button>
-            )}
           </div>
         </div>
 
         {/* Панель фильтров */}
         {showFilters && (
-          <div className="mb-4 p-4 rounded-2xl bg-white dark:bg-surface-dark border border-gray-100 dark:border-white/5 space-y-4">
+          <div className="mx-5 mb-3 p-4 rounded-2xl bg-white dark:bg-surface-dark border border-gray-100 dark:border-gray-800 space-y-4">
             {/* Фильтр по приоритету */}
             <div className="space-y-2">
               <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Приоритет</label>
@@ -176,7 +162,7 @@ const TasksScreen = () => {
         )}
 
         {/* Workload Heatmap */}
-        <div className="mb-6 overflow-x-auto no-scrollbar py-3">
+        <div className="px-5 pb-3 overflow-x-auto no-scrollbar">
           <div className="flex items-center gap-3">
             {Array.isArray(employees) && employees.map((emp) => (
               <button
@@ -211,24 +197,24 @@ const TasksScreen = () => {
         </div>
 
         {/* View Toggler */}
-        <div className="bg-gray-200/50 dark:bg-surface-dark p-1.5 rounded-2xl flex relative border border-white dark:border-white/5 shadow-inner">
+        <div className="mx-5 mb-3 bg-gray-100 dark:bg-surface-dark p-1 rounded-2xl flex relative border border-gray-200 dark:border-white/5">
           <button
             onClick={() => handleViewChange('List')}
-            className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 ${view === 'List'
-                ? 'bg-white dark:bg-primary shadow-lg text-slate-900 dark:text-white'
-                : 'text-gray-500 dark:text-text-secondary'
+            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-medium transition-all ${view === 'List'
+                ? 'bg-white dark:bg-blue-500 shadow-sm text-slate-900 dark:text-white'
+                : 'text-slate-500 dark:text-slate-400'
               }`}
           >
-            <Icon name="reorder" className="text-[18px]" /> Список
+            Список
           </button>
           <button
             onClick={() => handleViewChange('Kanban')}
-            className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 ${view === 'Kanban'
-                ? 'bg-white dark:bg-primary shadow-lg text-slate-900 dark:text-white'
-                : 'text-gray-500 dark:text-text-secondary'
+            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-medium transition-all ${view === 'Kanban'
+                ? 'bg-white dark:bg-blue-500 shadow-sm text-slate-900 dark:text-white'
+                : 'text-slate-500 dark:text-slate-400'
               }`}
           >
-            <Icon name="dashboard_customize" className="text-[18px]" /> Канбан
+            Канбан
           </button>
         </div>
       </header>

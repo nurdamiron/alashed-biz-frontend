@@ -27,42 +27,43 @@ const StaffScreen = () => {
 
   return (
     <div className="flex flex-col h-full bg-background-light dark:bg-background-dark transition-colors duration-300">
-      <header className="sticky top-0 z-20 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-xl pt-8 px-6 pb-4 transition-colors">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex flex-col">
-            <span className="text-[10px] font-black text-primary uppercase tracking-[0.3em] mb-1">
-              Team Management
-            </span>
-            <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">
-              СОТРУДНИКИ
-            </h1>
-          </div>
+      <header className="sticky top-0 z-20 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-800/50 transition-colors">
+        <div
+          className="flex items-center justify-between px-5 pb-2"
+          style={{
+            paddingTop: 'max(1.25rem, calc(1.25rem + env(safe-area-inset-top)))'
+          }}
+        >
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
+            Сотрудники
+          </h1>
           <button
             onClick={() => setShowInactive(!showInactive)}
-            className={`flex items-center justify-center w-12 h-12 rounded-2xl border shadow-sm active:scale-90 transition-all ${
-              showInactive
-                ? 'bg-primary text-white border-primary'
-                : 'bg-white dark:bg-surface-dark border-gray-100 dark:border-white/5 text-slate-900 dark:text-white'
-            }`}
+            className={`flex items-center justify-center w-10 h-10 rounded-full bg-white dark:bg-surface-dark border border-gray-100 dark:border-gray-800 shadow-sm text-slate-900 dark:text-white ${showInactive ? 'ring-2 ring-primary' : ''}`}
           >
-            <Icon name={showInactive ? 'visibility' : 'visibility_off'} className="text-[22px]" />
+            <Icon name={showInactive ? 'visibility' : 'visibility_off'} />
           </button>
         </div>
 
+        <div className="px-5 pb-3">
+
         {/* Search */}
-        <div className="relative mb-4">
-          <Icon name="search" className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-[20px]" />
+        <div className="relative group">
+          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400 transition-colors group-focus-within:text-primary">
+            <Icon name="search" className="text-[20px]" />
+          </div>
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Поиск по имени, отделу..."
-            className="w-full h-12 pl-12 pr-4 rounded-2xl bg-white dark:bg-surface-dark border border-gray-100 dark:border-white/5 text-sm font-medium placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/20"
+            className="block w-full rounded-2xl border-none bg-white dark:bg-surface-dark py-3 pl-10 pr-4 text-sm text-slate-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-primary/50 shadow-sm transition-all"
           />
+        </div>
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-3 gap-3 px-5 pb-3">
           <div className="bg-white dark:bg-surface-dark rounded-2xl p-4 border border-gray-100 dark:border-white/5">
             <p className="text-2xl font-black text-slate-900 dark:text-white">{Array.isArray(employees) ? employees.filter(e => e.isActive !== false).length : 0}</p>
             <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Активных</p>

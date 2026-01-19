@@ -64,7 +64,7 @@ const DashboardScreen = () => {
         </div>
       </header>
 
-      <div className="px-6 pt-2 space-y-8">
+      <div className="px-6 pt-2 space-y-8 pb-40">
         {/* Main Revenue Card */}
         <section className={`rounded-3xl p-6 ${
           isDark

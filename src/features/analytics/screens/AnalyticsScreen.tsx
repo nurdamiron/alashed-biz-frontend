@@ -67,26 +67,26 @@ const AnalyticsScreen = () => {
 
   return (
     <div className="flex flex-col h-full bg-background-light dark:bg-background-dark transition-colors duration-300">
-      <header className="sticky top-0 z-20 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-xl pt-8 px-6 pb-4 transition-colors">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex flex-col">
-            <span className="text-[10px] font-black text-primary uppercase tracking-[0.3em] mb-1">
-              Business Intelligence
-            </span>
-            <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">
-              АНАЛИТИКА
-            </h1>
-          </div>
+      <header className="sticky top-0 z-20 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-800/50 transition-colors">
+        <div
+          className="flex items-center justify-between px-5 pb-2"
+          style={{
+            paddingTop: 'max(1.25rem, calc(1.25rem + env(safe-area-inset-top)))'
+          }}
+        >
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
+            Аналитика
+          </h1>
           <button
             onClick={loadData}
-            className="h-12 w-12 rounded-2xl bg-white dark:bg-surface-dark border border-gray-100 dark:border-white/5 flex items-center justify-center active:scale-90 transition-all"
+            className="flex items-center justify-center w-10 h-10 rounded-full bg-white dark:bg-surface-dark border border-gray-100 dark:border-gray-800 shadow-sm text-slate-900 dark:text-white"
           >
-            <Icon name="refresh" className="text-[22px]" />
+            <Icon name="refresh" />
           </button>
         </div>
 
         {/* Period Selector */}
-        <div className="flex gap-2">
+        <div className="flex gap-2 px-5 pb-3">
           {(['daily', 'weekly', 'monthly'] as Period[]).map((p) => (
             <button
               key={p}

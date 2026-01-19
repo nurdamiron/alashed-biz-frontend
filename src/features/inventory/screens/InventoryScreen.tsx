@@ -15,15 +15,6 @@ function useDebounce<T>(value: T, delay: number): T {
   return debouncedValue;
 }
 
-const CATEGORY_ICONS: Record<string, string> = {
-  Все: 'grid_view',
-  Наборы: 'Precision_manufacturing',
-  Контроллеры: 'memory',
-  Датчики: 'sensors',
-  Моторы: 'settings_input_component',
-  Корпуса: 'inventory_2',
-};
-
 const InventoryScreen = () => {
   const navigate = useNavigate();
   const { products, stats, formatPrice, refreshData } = useAppContext();
@@ -51,55 +42,49 @@ const InventoryScreen = () => {
 
   return (
     <div className="flex flex-col h-full bg-background-light dark:bg-background-dark transition-colors duration-300">
-      <header className="sticky top-0 z-30 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-xl border-b border-transparent dark:border-white/5 transition-colors">
+      <header className="sticky top-0 z-30 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-800/50 transition-colors">
         <div
-          className="flex items-center justify-between px-6 pb-4"
+          className="flex items-center justify-between px-5 pb-2"
           style={{
-            paddingTop: 'max(2rem, calc(2rem + env(safe-area-inset-top)))'
+            paddingTop: 'max(1.25rem, calc(1.25rem + env(safe-area-inset-top)))'
           }}
         >
-          <div className="flex flex-col">
-            <span className="text-[10px] font-black text-primary uppercase tracking-[0.3em] mb-1">
-              Складской хаб
-            </span>
-            <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">
-              СКЛАД
-            </h1>
-          </div>
-          <button className="flex items-center justify-center w-12 h-12 rounded-2xl bg-white dark:bg-surface-dark border border-gray-100 dark:border-white/5 shadow-sm active:scale-90 transition-all">
-            <Icon name="qr_code_scanner" className="text-[24px]" />
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
+            Склад
+          </h1>
+          <button className="flex items-center justify-center w-10 h-10 rounded-full bg-white dark:bg-surface-dark border border-gray-100 dark:border-gray-800 shadow-sm text-slate-900 dark:text-white">
+            <Icon name="qr_code_scanner" />
           </button>
         </div>
 
-        <div className="px-6 pb-4 space-y-4">
+        <div className="px-5 pb-3">
           <div className="relative group">
-            <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-gray-400">
+            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400 transition-colors group-focus-within:text-primary">
               <Icon name="search" className="text-[20px]" />
             </div>
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="block w-full rounded-2xl border-none bg-white dark:bg-surface-dark py-4 pl-12 pr-4 text-sm font-bold text-slate-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-primary/50 shadow-sm transition-all"
+              className="block w-full rounded-2xl border-none bg-white dark:bg-surface-dark py-3 pl-10 pr-4 text-sm text-slate-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-primary/50 shadow-sm transition-all"
               placeholder="Поиск по артикулу или названию..."
             />
           </div>
+        </div>
 
-          <div className="flex gap-3 overflow-x-auto no-scrollbar py-1">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setActiveCategory(cat)}
-                className={`flex items-center gap-2 h-11 shrink-0 rounded-xl px-5 text-[10px] font-black uppercase tracking-widest transition-all border ${activeCategory === cat
-                    ? 'bg-primary text-white border-primary shadow-lg shadow-primary/25'
-                    : 'bg-white dark:bg-surface-dark text-gray-400 border-gray-100 dark:border-white/5'
-                  }`}
-              >
-                <Icon name={CATEGORY_ICONS[cat] || 'category'} className="text-[18px]" />
-                <span>{cat}</span>
-              </button>
-            ))}
-          </div>
+        <div className="flex gap-2 px-5 pb-3 overflow-x-auto no-scrollbar">
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setActiveCategory(cat)}
+              className={`flex h-9 shrink-0 items-center justify-center rounded-xl px-4 text-sm font-medium transition-all ${activeCategory === cat
+                  ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/25'
+                  : 'bg-white dark:bg-surface-dark text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-white/5'
+                }`}
+            >
+              {cat}
+            </button>
+          ))}
         </div>
       </header>
 
