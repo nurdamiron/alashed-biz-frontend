@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Icon, ThemeToggle } from '@/shared/components';
+import { Icon, ThemeToggle, PushNotificationToggle } from '@/shared/components';
 import { useAppContext } from '@/shared/context/AppContext';
 
 const SettingsScreen = () => {
@@ -68,6 +68,22 @@ const SettingsScreen = () => {
 
         {/* Theme Section */}
         <ThemeToggle variant="card" />
+
+        {/* Push Notifications Section */}
+        <section className={`rounded-2xl overflow-hidden ${
+          isDark
+            ? 'bg-slate-800/50 border border-white/5'
+            : 'bg-white border border-slate-200/50 shadow-sm'
+        }`}>
+          <div className="p-5">
+            <h3 className={`text-xs font-semibold uppercase tracking-wider mb-4 ${
+              isDark ? 'text-slate-500' : 'text-slate-400'
+            }`}>
+              Уведомления
+            </h3>
+            <PushNotificationToggle />
+          </div>
+        </section>
 
         {/* App Config Section */}
         <section className={`rounded-2xl overflow-hidden ${

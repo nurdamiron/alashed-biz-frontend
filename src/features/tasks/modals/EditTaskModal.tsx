@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Icon } from '@/shared/components';
+import { Icon, ConfirmDialog } from '@/shared/components';
 import { useAppContext } from '@/shared/context/AppContext';
 import type { Employee } from '@/shared/types';
 
@@ -199,38 +199,16 @@ const EditTaskModal = () => {
         </button>
       </div>
 
-      {/* Модалка подтверждения удаления */}
-      {showDeleteConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div className="mx-4 w-full max-w-sm rounded-3xl bg-white dark:bg-surface-dark p-6 shadow-2xl">
-            <div className="mb-4 flex items-center justify-center">
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-500/10">
-                <Icon name="delete" className="text-[32px] text-red-500" />
-              </div>
-            </div>
-            <h3 className="mb-2 text-center text-xl font-black text-gray-900 dark:text-white">
-              Удалить задачу?
-            </h3>
-            <p className="mb-6 text-center text-sm text-gray-500 dark:text-text-secondary">
-              Это действие нельзя отменить. Задача будет удалена навсегда.
-            </p>
-            <div className="flex gap-3">
-              <button
-                onClick={() => setShowDeleteConfirm(false)}
-                className="flex-1 rounded-xl bg-gray-100 dark:bg-gray-800 py-3 font-bold text-gray-900 dark:text-white active:scale-95 transition-all"
-              >
-                Отмена
-              </button>
-              <button
-                onClick={handleDelete}
-                className="flex-1 rounded-xl bg-red-500 py-3 font-bold text-white shadow-lg shadow-red-500/30 active:scale-95 transition-all"
-              >
-                Удалить
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <ConfirmDialog
+        isOpen={showDeleteConfirm}
+        onClose={() => setShowDeleteConfirm(false)}
+        onConfirm={handleDelete}
+        title="Удалить задачу?"
+        message="Это действие нельзя отменить. Задача будет удалена навсегда."
+        confirmText="Удалить"
+        cancelText="Отмена"
+        variant="danger"
+      />
     </div>
   );
 };

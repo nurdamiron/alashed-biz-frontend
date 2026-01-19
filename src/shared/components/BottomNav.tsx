@@ -19,11 +19,11 @@ const BottomNav = () => {
   const isDark = theme === 'dark';
 
   const navItems = [
-    { name: 'Home', icon: 'home', path: '/' },
-    { name: 'Orders', icon: 'shopping_bag', path: '/orders' },
-    { name: 'Tasks', icon: 'check_circle', path: '/tasks' },
-    { name: 'Stock', icon: 'inventory_2', path: '/inventory' },
-    { name: 'Settings', icon: 'settings', path: '/settings' },
+    { name: 'Home', label: 'Главная', icon: 'home', path: '/' },
+    { name: 'Orders', label: 'Заказы', icon: 'shopping_bag', path: '/orders' },
+    { name: 'Tasks', label: 'Задачи', icon: 'check_circle', path: '/tasks' },
+    { name: 'Stock', label: 'Склад', icon: 'inventory_2', path: '/inventory' },
+    { name: 'Settings', label: 'Настройки', icon: 'settings', path: '/settings' },
   ];
 
   return (
@@ -44,7 +44,9 @@ const BottomNav = () => {
             <button
               key={item.name}
               onClick={() => navigate(item.path)}
-              className={`flex flex-col items-center justify-center h-12 flex-1 rounded-2xl transition-all ${
+              aria-label={item.label}
+              aria-current={active ? 'page' : undefined}
+              className={`flex flex-col items-center justify-center h-12 flex-1 rounded-2xl transition-all touch-target ${
                 active
                   ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/25'
                   : isDark
@@ -53,6 +55,7 @@ const BottomNav = () => {
               }`}
             >
               <Icon name={item.icon} filled={active} className="text-[20px]" />
+              <span className="sr-only">{item.label}</span>
             </button>
           );
         })}

@@ -41,7 +41,8 @@ const DashboardScreen = () => {
           <div className="flex items-center gap-4">
             <button
               onClick={() => setShowAIHub(true)}
-              className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
+              aria-label="Открыть AI ассистент"
+              className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all touch-target ${
                 isDark
                   ? 'bg-white/5 hover:bg-white/10 text-white'
                   : 'bg-black/5 hover:bg-black/10 text-slate-700'
@@ -51,7 +52,8 @@ const DashboardScreen = () => {
             </button>
             <button
               onClick={() => navigate('/notifications')}
-              className={`relative w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
+              aria-label={`Уведомления${unreadCount > 0 ? `, ${unreadCount} непрочитанных` : ''}`}
+              className={`relative w-11 h-11 rounded-xl flex items-center justify-center transition-all touch-target ${
                 isDark
                   ? 'bg-white/5 hover:bg-white/10 text-white'
                   : 'bg-black/5 hover:bg-black/10 text-slate-700'
@@ -59,7 +61,7 @@ const DashboardScreen = () => {
             >
               <Icon name="notifications" className="text-xl" />
               {unreadCount > 0 && (
-                <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center" aria-hidden="true">
                   {unreadCount > 9 ? '9+' : unreadCount}
                 </span>
               )}
@@ -76,14 +78,9 @@ const DashboardScreen = () => {
             : 'bg-blue-500'
         }`}>
           <p className="text-sm font-medium text-white/70 mb-1">Общая выручка</p>
-          <h2 className="text-4xl font-black text-white tracking-tight mb-4">
+          <h2 className="text-4xl font-black text-white tracking-tight">
             {formatPrice(stats.revenue)}
           </h2>
-          <div className="flex items-center gap-2">
-            <span className="px-2 py-1 bg-white/20 rounded-lg text-xs font-semibold text-white">
-              +12% за месяц
-            </span>
-          </div>
         </section>
 
         {/* Stats Grid */}

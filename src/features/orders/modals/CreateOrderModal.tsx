@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Icon } from '@/shared/components';
 import { useAppContext } from '@/shared/context/AppContext';
 import { api } from '@/shared/lib/api';
+import { validatePhone, handlePhoneInput } from '@/shared/lib/validators';
 import type { Product, OrderItem } from '@/shared/types';
 
 interface InternalOrderItem {
@@ -46,6 +47,7 @@ const CreateOrderModal = () => {
 
   const [clientName, setClientName] = useState('');
   const [phone, setPhone] = useState('');
+  const [phoneError, setPhoneError] = useState<string | undefined>();
   const [address] = useState('');
   const [source, setSource] = useState<OrderSource>('Kaspi');
   const [deliveryType] = useState<DeliveryOption>('pickup');
@@ -54,6 +56,15 @@ const CreateOrderModal = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<Product[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+
+  const handlePhoneChange = (value: string) => {
+    const formatted = handlePhoneInput(value);
+    setPhone(formatted);
+
+    // Validate
+    const validation = validatePhone(formatted);
+    setPhoneError(validation.error);
+  };
 
   const totalAmount = useMemo(
     () => selectedItems.reduce((sum, item) => sum + item.product.priceSell * item.quantity, 0),
@@ -91,17 +102,23 @@ const CreateOrderModal = () => {
   const addItem = (product: Product) => {
     setSelectedItems((prev) => {
       const exists = prev.find((i) => i.product.id === product.id);
-      if (exists)
+      if (exists) {
+        // Check stock limit
+        const currentQty = exists.quantity;
+        if (currentQty >= product.stock) {
+          return prev; // Don't exceed stock
+        }
         return prev.map((i) =>
-          i.product.id === product.id ? { ...i, quantity: i.quantity + 1 } : i
+          i.product.id === product.id ? { ...i, quantity: Math.min(i.quantity + 1, product.stock) } : i
         );
+      }
       return [...prev, { product, quantity: 1 }];
     });
     setShowProductPicker(false);
   };
 
   const handleSave = async () => {
-    if (!clientName || selectedItems.length === 0) return;
+    if (!clientName || selectedItems.length === 0 || phoneError) return;
 
     const structuredItems: OrderItem[] = selectedItems.map((item) => ({
       productId: item.product.id,
@@ -164,12 +181,28 @@ const CreateOrderModal = () => {
             placeholder="ФИО Клиента"
             className="w-full h-14 rounded-2xl bg-white dark:bg-surface-dark border-none px-5 font-bold"
           />
-          <input
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            placeholder="Телефон"
-            className="w-full h-14 rounded-2xl bg-white dark:bg-surface-dark border-none px-5 font-bold"
-          />
+          <div>
+            <input
+              value={phone}
+              onChange={(e) => handlePhoneChange(e.target.value)}
+              placeholder="+7 700 123 45 67"
+              type="tel"
+              inputMode="tel"
+              autoComplete="tel"
+              aria-invalid={!!phoneError}
+              aria-describedby={phoneError ? 'phone-error' : undefined}
+              className={`w-full h-14 rounded-2xl bg-white dark:bg-surface-dark border-2 px-5 font-bold transition-colors ${
+                phoneError
+                  ? 'border-red-500 focus:border-red-500'
+                  : 'border-transparent focus:border-primary'
+              }`}
+            />
+            {phoneError && (
+              <p id="phone-error" className="text-xs text-red-500 font-medium mt-1 ml-2">
+                {phoneError}
+              </p>
+            )}
+          </div>
         </section>
 
         <section className="space-y-4">
@@ -205,24 +238,34 @@ const CreateOrderModal = () => {
                       )
                     )
                   }
-                  className="h-8 w-8 rounded-lg bg-gray-100 dark:bg-white/5"
+                  aria-label="Уменьшить количество"
+                  className="h-11 w-11 rounded-lg bg-gray-100 dark:bg-white/5 touch-target flex items-center justify-center"
                 >
                   <Icon name="remove" />
                 </button>
-                <span className="font-black">{item.quantity}</span>
+                <span className="font-black min-w-[2rem] text-center">{item.quantity}</span>
                 <button
                   onClick={() =>
                     setSelectedItems((prev) =>
                       prev.map((i) =>
-                        i.product.id === item.product.id ? { ...i, quantity: i.quantity + 1 } : i
+                        i.product.id === item.product.id
+                          ? { ...i, quantity: Math.min(i.quantity + 1, item.product.stock) }
+                          : i
                       )
                     )
                   }
-                  className="h-8 w-8 rounded-lg bg-primary text-white"
+                  disabled={item.quantity >= item.product.stock}
+                  aria-label="Увеличить количество"
+                  className="h-11 w-11 rounded-lg bg-primary text-white touch-target flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Icon name="add" />
                 </button>
               </div>
+              {item.quantity >= item.product.stock && (
+                <p className="text-[10px] text-amber-600 dark:text-amber-400 font-bold mt-1">
+                  Макс. кол-во на складе
+                </p>
+              )}
             </div>
           ))}
         </section>
@@ -236,8 +279,8 @@ const CreateOrderModal = () => {
       <div className="fixed bottom-0 left-0 w-full p-6 bg-white dark:bg-background-dark border-t border-gray-200 dark:border-gray-800">
         <button
           onClick={handleSave}
-          disabled={!clientName || selectedItems.length === 0}
-          className="w-full h-16 bg-blue-500 text-white font-bold rounded-2xl shadow-xl shadow-primary/30 disabled:opacity-30"
+          disabled={!clientName || selectedItems.length === 0 || !!phoneError}
+          className="w-full h-16 bg-blue-500 text-white font-bold rounded-2xl shadow-xl shadow-primary/30 disabled:opacity-30 touch-target"
         >
           Создать заказ
         </button>

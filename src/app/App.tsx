@@ -1,7 +1,9 @@
+import { useEffect } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AppProvider, useAppContext } from '@/shared/context/AppContext';
 import { BottomNav } from '@/shared/components';
+import { initializePush } from '@/shared/lib/push';
 
 // Features - Screens
 import { LoginScreen } from '@/features/auth';
@@ -18,6 +20,14 @@ import { NotificationsScreen } from '@/features/notifications';
 
 const ProtectedRoute = ({ children }: { children?: React.ReactNode }) => {
   const { isAuthenticated, isLoading } = useAppContext();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      // Initialize push notifications after authentication
+      initializePush().catch(console.error);
+    }
+  }, [isAuthenticated]);
+
   if (isLoading) return null;
   if (!isAuthenticated) return <Navigate to="/login" replace />;
   return <>{children}</>;

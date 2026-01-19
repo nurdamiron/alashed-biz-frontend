@@ -164,3 +164,89 @@ html {
 .animate-breathe {
   animation: breathe 4s ease-in-out infinite;
 }
+
+/* ============================================
+   ACCESSIBILITY IMPROVEMENTS
+   WCAG 2.1 AA Compliance
+   ============================================ */
+
+/* Focus visible for keyboard navigation */
+*:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Improve button focus */
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Skip focus outline for mouse users */
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Minimum touch target size (44x44px) */
+.touch-target {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+/* Improved text contrast classes */
+.text-accessible {
+  color: #525252; /* gray-600 equivalent - 7:1 contrast on white */
+}
+
+html.dark .text-accessible {
+  color: #d4d4d8; /* zinc-300 equivalent - 7:1 contrast on black */
+}
+
+/* Label text with proper contrast */
+.label-text {
+  color: #525252;
+  font-weight: 600;
+}
+
+html.dark .label-text {
+  color: #a1a1aa;
+}
+
+/* Screen reader only */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Reduced motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  :root {
+    --color-border: #000000;
+    --color-text-secondary: #404040;
+  }
+
+  html.dark {
+    --color-border: #ffffff;
+    --color-text-secondary: #e5e5e5;
+  }
+}

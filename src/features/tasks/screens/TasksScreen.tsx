@@ -101,15 +101,7 @@ const TasksScreen = () => {
     return true;
   }) : [];
 
-  // DEBUG: Показываем что именно в задачах
-  if (filteredTasks.length > 0 && filteredTasks[0]) {
-    console.log('🐛 DEBUG: First task:', {
-      status: filteredTasks[0].status,
-      priority: filteredTasks[0].priority,
-      title: filteredTasks[0].title
-    });
-  }
-
+  
   const urgentTasks = filteredTasks.filter((t) => t.priority === 'Высокий' && t.status !== 'Готово');
   const inProgressTasks = filteredTasks.filter((t) => t.status === 'В процессе');
   const todoTasks = filteredTasks.filter((t) => t.status === 'К выполнению');
@@ -382,7 +374,7 @@ const TasksScreen = () => {
               <div className={`h-10 w-10 rounded-full border-4 border-primary/20 border-t-primary transition-transform ${pullDistance > 80 ? 'animate-spin' : ''}`}
                 style={{ transform: `rotate(${pullDistance * 3}deg)` }} />
               <span className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider">
-                {pullDistance > 80 ? '🎉 Отпустите!' : '👇 Тяните вниз'}
+                {pullDistance > 80 ? 'Отпустите для обновления' : 'Тяните вниз для обновления'}
               </span>
             </div>
           </div>
