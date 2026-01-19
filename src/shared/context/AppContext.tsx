@@ -172,7 +172,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
             position: emp.position,
             phone: emp.phone,
             email: emp.email,
-            avatar: emp.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(emp.name)}&background=6366F1&color=fff`,
+            avatar: emp.avatar,
             activeTasks: emp.activeTasksCount || 0,
             isActive: emp.isActive,
           }));

@@ -241,7 +241,7 @@ const TasksScreen = () => {
                 className={`flex flex-col items-center gap-2 shrink-0 transition-all ${selectedAssignee === emp.id ? 'scale-110' : ''}`}
               >
                 <div
-                  className={`relative h-14 w-14 rounded-xl overflow-hidden border-2 transition-all ${
+                  className={`relative h-14 w-14 rounded-xl overflow-hidden border-2 transition-all flex items-center justify-center bg-gradient-to-br from-primary to-blue-600 ${
                     selectedAssignee === emp.id
                       ? 'border-primary ring-2 ring-primary/30'
                       : emp.activeTasks > 4
@@ -251,11 +251,9 @@ const TasksScreen = () => {
                           : 'border-emerald-500'
                   }`}
                 >
-                  <img
-                    src={emp.avatar}
-                    className="h-full w-full object-cover"
-                    alt={emp.name}
-                  />
+                  <span className="text-white font-black text-lg">
+                    {emp.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                  </span>
                   <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-slate-900 dark:bg-slate-800 border-2 border-white dark:border-surface-dark text-[9px] font-black text-white flex items-center justify-center shadow-md">
                     {emp.activeTasks}
                   </span>

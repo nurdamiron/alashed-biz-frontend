@@ -118,12 +118,10 @@ const EmployeeCard: React.FC<{
       <div className="flex items-center gap-4">
         {/* Avatar */}
         <div className="relative flex-shrink-0">
-          <div className="h-14 w-14 rounded-xl overflow-hidden bg-gradient-to-br from-blue-500 to-blue-600">
-            <img
-              src={employee.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(employee.name)}&background=135bec&color=fff`}
-              alt={employee.name}
-              className="h-full w-full object-cover"
-            />
+          <div className="h-14 w-14 rounded-xl overflow-hidden bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center">
+            <span className="text-white font-black text-lg">
+              {employee.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+            </span>
           </div>
           {employee.isActive !== false && (
             <div className="absolute -bottom-0.5 -right-0.5 h-4 w-4 rounded-full bg-emerald-500 border-2 border-white dark:border-surface-dark" />

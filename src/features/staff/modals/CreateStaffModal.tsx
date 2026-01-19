@@ -36,7 +36,6 @@ const CreateStaffModal = () => {
         phone: formData.phone,
         email: formData.email,
         role: formData.role,
-        avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(formData.name)}&background=135bec&color=fff`,
         activeTasks: 0,
         isActive: true,
       });
@@ -70,14 +69,14 @@ const CreateStaffModal = () => {
           {/* Avatar Preview */}
           <div className="flex justify-center">
             <div className="relative">
-              <img
-                src={formData.name
-                  ? `https://ui-avatars.com/api/?name=${encodeURIComponent(formData.name)}&background=135bec&color=fff&size=128`
-                  : 'https://ui-avatars.com/api/?name=?&background=94a3b8&color=fff&size=128'
-                }
-                alt="Avatar"
-                className="h-24 w-24 rounded-3xl object-cover shadow-xl"
-              />
+              <div className="h-24 w-24 rounded-3xl bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center shadow-xl">
+                <span className="text-white font-black text-3xl">
+                  {formData.name
+                    ? formData.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()
+                    : '?'
+                  }
+                </span>
+              </div>
               <div className="absolute -bottom-2 -right-2 h-8 w-8 rounded-xl bg-primary text-white flex items-center justify-center shadow-lg">
                 <Icon name="camera_alt" className="text-[16px]" />
               </div>
