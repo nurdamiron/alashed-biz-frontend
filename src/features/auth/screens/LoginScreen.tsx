@@ -6,7 +6,7 @@ import { useAppContext } from '@/shared/context/AppContext';
 const LoginScreen = () => {
   const navigate = useNavigate();
   const { login, theme, toggleTheme } = useAppContext();
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
@@ -14,13 +14,13 @@ const LoginScreen = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!password || !email) return;
+    if (!password || !username) return;
 
     setIsLoading(true);
     setError('');
 
     try {
-      const success = await login(email, password);
+      const success = await login(username, password);
       if (success) {
         navigate('/');
       } else {
@@ -122,9 +122,9 @@ const LoginScreen = () => {
                   </div>
                   <input
                     type="text"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="admin"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    placeholder="Введите логин"
                     autoComplete="username"
                     className={`w-full h-14 pl-12 pr-4 border rounded-xl transition-all focus:outline-none focus:ring-2 ${
                       isDark
@@ -150,7 +150,7 @@ const LoginScreen = () => {
                     type={showPassword ? 'text' : 'password'}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••"
+                    placeholder="Введите пароль"
                     autoComplete="current-password"
                     className={`w-full h-14 pl-12 pr-12 border rounded-xl transition-all focus:outline-none focus:ring-2 ${
                       isDark
@@ -181,7 +181,7 @@ const LoginScreen = () => {
               {/* Submit Button */}
               <button
                 type="submit"
-                disabled={isLoading || !password || !email}
+                disabled={isLoading || !password || !username}
                 className="w-full h-14 mt-2 bg-blue-500  disabled:opacity-50 rounded-xl text-white font-bold text-sm uppercase tracking-wider shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 active:scale-[0.98] transition-all disabled:cursor-not-allowed disabled:active:scale-100 flex items-center justify-center gap-2"
               >
                 {isLoading ? (
@@ -195,57 +195,11 @@ const LoginScreen = () => {
               </button>
             </form>
 
-            {/* Divider */}
-            <div className="flex items-center gap-4 my-6">
-              <div className={`flex-1 h-px ${isDark ? 'bg-white/10' : 'bg-slate-200'}`} />
-              <span className={`text-xs uppercase tracking-wider ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
-                или
-              </span>
-              <div className={`flex-1 h-px ${isDark ? 'bg-white/10' : 'bg-slate-200'}`} />
-            </div>
-
-            {/* Demo Credentials */}
-            <div className={`border rounded-xl p-4 ${
-              isDark
-                ? 'bg-white/5 border-white/10'
-                : 'bg-slate-50 border-slate-200'
-            }`}>
-              <div className="flex items-center gap-2 mb-3">
-                <Icon name="info" className="text-blue-500 text-lg" />
-                <span className={`text-xs font-semibold uppercase tracking-wider ${
-                  isDark ? 'text-slate-400' : 'text-slate-500'
-                }`}>
-                  Демо доступ
-                </span>
-              </div>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className={isDark ? 'text-slate-500' : 'text-slate-400'}>Логин:</span>
-                  <button
-                    type="button"
-                    onClick={() => setEmail('admin')}
-                    className="text-blue-500 hover:text-blue-400 font-medium transition-colors"
-                  >
-                    admin
-                  </button>
-                </div>
-                <div className="flex justify-between">
-                  <span className={isDark ? 'text-slate-500' : 'text-slate-400'}>Пароль:</span>
-                  <button
-                    type="button"
-                    onClick={() => setPassword('admin')}
-                    className="text-blue-500 hover:text-blue-400 font-medium transition-colors"
-                  >
-                    admin
-                  </button>
-                </div>
-              </div>
-            </div>
           </div>
 
           {/* Footer */}
           <p className={`text-center text-xs mt-8 ${isDark ? 'text-slate-600' : 'text-slate-400'}`}>
-            © 2024 Alashed Business. Все права защищены.
+            © {new Date().getFullYear()} Alashed Business. Все права защищены.
           </p>
         </div>
       </main>

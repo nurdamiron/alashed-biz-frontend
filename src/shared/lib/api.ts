@@ -28,10 +28,10 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
 
 export const api = {
   auth: {
-    login: async (email: string, password: string) => {
+    login: async (username: string, password: string) => {
       const data = await request<{ accessToken: string; refreshToken: string; user: any }>('/auth/login', {
         method: 'POST',
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ username, password }),
       });
       return { success: true, data };
     },

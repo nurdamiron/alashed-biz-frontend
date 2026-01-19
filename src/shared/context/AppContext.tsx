@@ -43,7 +43,7 @@ interface AppContextType {
   setAppConfig: (name: string, domain: string) => void;
 
   // Auth
-  login: (email: string, password: string) => Promise<boolean>;
+  login: (username: string, password: string) => Promise<boolean>;
   logout: () => void;
 
   // Theme
@@ -328,9 +328,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     toast.success('Настройки обновлены');
   };
 
-  const login = async (email: string, password: string): Promise<boolean> => {
+  const login = async (username: string, password: string): Promise<boolean> => {
     try {
-      const response = await api.auth.login(email, password);
+      const response = await api.auth.login(username, password);
       if (response.success && response.data) {
         const { accessToken, user: userData } = response.data;
         localStorage.setItem('alash_token', accessToken);
