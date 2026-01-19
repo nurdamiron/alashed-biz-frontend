@@ -1,13 +1,10 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Icon, PullToRefresh } from '@/shared/components';
 import { useAppContext } from '@/shared/context/AppContext';
-import { AIHubModal } from '@/features/ai';
 
 const DashboardScreen = () => {
   const navigate = useNavigate();
   const { stats, formatPrice, theme, notifications, refreshData } = useAppContext();
-  const [showAIHub, setShowAIHub] = useState(false);
 
   const isDark = theme === 'dark';
   const unreadCount = Array.isArray(notifications) ? notifications.filter(n => !n.read).length : 0;
@@ -28,27 +25,18 @@ const DashboardScreen = () => {
           <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
             Главная
           </h1>
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setShowAIHub(true)}
-              aria-label="Открыть AI ассистент"
-              className="flex items-center justify-center w-10 h-10 rounded-full bg-white dark:bg-surface-dark border border-gray-100 dark:border-gray-800 shadow-sm text-slate-900 dark:text-white"
-            >
-              <Icon name="auto_awesome" />
-            </button>
-            <button
-              onClick={() => navigate('/notifications')}
-              aria-label={`Уведомления${unreadCount > 0 ? `, ${unreadCount} непрочитанных` : ''}`}
-              className="relative flex items-center justify-center w-10 h-10 rounded-full bg-white dark:bg-surface-dark border border-gray-100 dark:border-gray-800 shadow-sm text-slate-900 dark:text-white"
-            >
-              <Icon name="notifications" />
-              {unreadCount > 0 && (
-                <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center" aria-hidden="true">
-                  {unreadCount > 9 ? '9+' : unreadCount}
-                </span>
-              )}
-            </button>
-          </div>
+          <button
+            onClick={() => navigate('/notifications')}
+            aria-label={`Уведомления${unreadCount > 0 ? `, ${unreadCount} непрочитанных` : ''}`}
+            className="relative flex items-center justify-center w-10 h-10 rounded-full bg-white dark:bg-surface-dark border border-gray-100 dark:border-gray-800 shadow-sm text-slate-900 dark:text-white"
+          >
+            <Icon name="notifications" />
+            {unreadCount > 0 && (
+              <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center" aria-hidden="true">
+                {unreadCount > 9 ? '9+' : unreadCount}
+              </span>
+            )}
+          </button>
         </div>
       </header>
 
@@ -203,33 +191,131 @@ const DashboardScreen = () => {
           </div>
         </section>
 
-        {/* AI Assistant */}
-        <section
-          onClick={() => setShowAIHub(true)}
-          className={`rounded-2xl p-5 cursor-pointer active:scale-[0.98] transition-all ${
-            isDark
-              ? 'bg-slate-800 border border-white/5'
-              : 'bg-slate-100 border border-slate-200/50'
-          }`}
-        >
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-blue-500 flex items-center justify-center">
-              <Icon name="auto_awesome" className="text-white text-2xl" />
+        {/* Analytics Section */}
+        <section>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className={`text-sm font-bold ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+              Аналитика
+            </h3>
+            <button
+              onClick={() => navigate('/analytics')}
+              className="text-xs font-medium text-blue-500"
+            >
+              Подробнее
+            </button>
+          </div>
+
+          <div className="space-y-3">
+            {/* Sales Analytics */}
+            <div
+              onClick={() => navigate('/analytics')}
+              className={`rounded-2xl p-4 cursor-pointer active:scale-[0.98] transition-all ${
+                isDark
+                  ? 'bg-slate-800/50 border border-white/5'
+                  : 'bg-white border border-slate-200/50 shadow-sm'
+              }`}
+            >
+              <div className="flex items-center gap-4">
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
+                  isDark ? 'bg-green-500/10' : 'bg-green-50'
+                }`}>
+                  <Icon name="trending_up" className="text-green-500 text-xl" />
+                </div>
+                <div className="flex-1">
+                  <p className={`text-sm font-bold ${isDark ? 'text-white' : 'text-slate-800'}`}>
+                    Продажи
+                  </p>
+                  <p className={`text-xs ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
+                    Выручка и динамика продаж
+                  </p>
+                </div>
+                <Icon name="chevron_right" className={isDark ? 'text-slate-600' : 'text-slate-300'} />
+              </div>
             </div>
-            <div className="flex-1">
-              <h4 className={`font-bold ${isDark ? 'text-white' : 'text-slate-800'}`}>
-                AI Ассистент
-              </h4>
-              <p className={`text-xs ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
-                Задайте вопрос о бизнесе
-              </p>
+
+            {/* Products Analytics */}
+            <div
+              onClick={() => navigate('/analytics')}
+              className={`rounded-2xl p-4 cursor-pointer active:scale-[0.98] transition-all ${
+                isDark
+                  ? 'bg-slate-800/50 border border-white/5'
+                  : 'bg-white border border-slate-200/50 shadow-sm'
+              }`}
+            >
+              <div className="flex items-center gap-4">
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
+                  isDark ? 'bg-amber-500/10' : 'bg-amber-50'
+                }`}>
+                  <Icon name="inventory_2" className="text-amber-500 text-xl" />
+                </div>
+                <div className="flex-1">
+                  <p className={`text-sm font-bold ${isDark ? 'text-white' : 'text-slate-800'}`}>
+                    Товары
+                  </p>
+                  <p className={`text-xs ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
+                    Топ продукты и категории
+                  </p>
+                </div>
+                <Icon name="chevron_right" className={isDark ? 'text-slate-600' : 'text-slate-300'} />
+              </div>
             </div>
-            <Icon name="arrow_forward" className={isDark ? 'text-slate-600' : 'text-slate-300'} />
+
+            {/* Staff Analytics */}
+            <div
+              onClick={() => navigate('/analytics')}
+              className={`rounded-2xl p-4 cursor-pointer active:scale-[0.98] transition-all ${
+                isDark
+                  ? 'bg-slate-800/50 border border-white/5'
+                  : 'bg-white border border-slate-200/50 shadow-sm'
+              }`}
+            >
+              <div className="flex items-center gap-4">
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
+                  isDark ? 'bg-blue-500/10' : 'bg-blue-50'
+                }`}>
+                  <Icon name="groups" className="text-blue-500 text-xl" />
+                </div>
+                <div className="flex-1">
+                  <p className={`text-sm font-bold ${isDark ? 'text-white' : 'text-slate-800'}`}>
+                    Сотрудники
+                  </p>
+                  <p className={`text-xs ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
+                    Эффективность команды
+                  </p>
+                </div>
+                <Icon name="chevron_right" className={isDark ? 'text-slate-600' : 'text-slate-300'} />
+              </div>
+            </div>
+
+            {/* Stock Analytics */}
+            <div
+              onClick={() => navigate('/analytics')}
+              className={`rounded-2xl p-4 cursor-pointer active:scale-[0.98] transition-all ${
+                isDark
+                  ? 'bg-slate-800/50 border border-white/5'
+                  : 'bg-white border border-slate-200/50 shadow-sm'
+              }`}
+            >
+              <div className="flex items-center gap-4">
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
+                  isDark ? 'bg-red-500/10' : 'bg-red-50'
+                }`}>
+                  <Icon name="warehouse" className="text-red-500 text-xl" />
+                </div>
+                <div className="flex-1">
+                  <p className={`text-sm font-bold ${isDark ? 'text-white' : 'text-slate-800'}`}>
+                    Склад
+                  </p>
+                  <p className={`text-xs ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
+                    Остатки и дефициты
+                  </p>
+                </div>
+                <Icon name="chevron_right" className={isDark ? 'text-slate-600' : 'text-slate-300'} />
+              </div>
+            </div>
           </div>
         </section>
       </div>
-
-      {showAIHub && <AIHubModal onClose={() => setShowAIHub(false)} />}
     </PullToRefresh>
   );
 };

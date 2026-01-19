@@ -162,16 +162,17 @@ const TasksScreen = () => {
         )}
 
         {/* Workload Heatmap */}
-        <div className="px-5 pb-3 overflow-x-auto no-scrollbar">
-          <div className="flex items-center gap-3">
-            {Array.isArray(employees) && employees.map((emp) => (
+        <div className="px-5 py-3 overflow-x-auto no-scrollbar">
+          <div className="flex items-center gap-4">
+            {Array.isArray(employees) && employees.map((emp, index) => (
               <button
                 key={emp.id}
                 onClick={() => setSelectedAssignee(selectedAssignee === emp.id ? null : emp.id)}
-                className={`flex flex-col items-center gap-2 shrink-0 transition-all ${selectedAssignee === emp.id ? 'scale-110' : ''}`}
+                className={`flex flex-col items-center gap-2 shrink-0 transition-all ${selectedAssignee === emp.id ? 'scale-105' : ''}`}
+                style={{ zIndex: selectedAssignee === emp.id ? 10 : employees.length - index }}
               >
                 <div
-                  className={`relative h-14 w-14 rounded-xl border-2 transition-all flex items-center justify-center bg-gradient-to-br from-primary to-blue-600 ${
+                  className={`relative h-12 w-12 rounded-xl border-2 transition-all flex items-center justify-center bg-gradient-to-br from-primary to-blue-600 ${
                     selectedAssignee === emp.id
                       ? 'border-primary ring-2 ring-primary/30'
                       : emp.activeTasks > 4
@@ -181,14 +182,14 @@ const TasksScreen = () => {
                           : 'border-emerald-500'
                   }`}
                 >
-                  <span className="text-white font-black text-lg">
+                  <span className="text-white font-bold text-base">
                     {emp.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
                   </span>
-                  <span className="absolute -top-2 -right-2 z-10 h-5 w-5 rounded-full bg-slate-900 dark:bg-slate-800 border-2 border-white dark:border-surface-dark text-[9px] font-black text-white flex items-center justify-center shadow-md">
+                  <span className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-slate-900 dark:bg-slate-800 border-2 border-white dark:border-surface-dark text-[9px] font-bold text-white flex items-center justify-center">
                     {emp.activeTasks}
                   </span>
                 </div>
-                <span className={`text-[10px] font-bold transition-colors ${selectedAssignee === emp.id ? 'text-primary' : 'text-slate-700 dark:text-slate-300'}`}>
+                <span className={`text-[10px] font-medium transition-colors ${selectedAssignee === emp.id ? 'text-primary' : 'text-slate-600 dark:text-slate-400'}`}>
                   {emp.name.split(' ')[0]}
                 </span>
               </button>
