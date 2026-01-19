@@ -146,10 +146,10 @@ export async function subscribeToPush(): Promise<boolean> {
     const registration = await navigator.serviceWorker.ready;
 
     // Subscribe to push
-    const applicationKey = urlBase64ToUint8Array(vapidKey);
     const subscription = await registration.pushManager.subscribe({
       userVisibleOnly: true,
-      applicationServerKey: applicationKey.buffer,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      applicationServerKey: urlBase64ToUint8Array(vapidKey) as any,
     });
 
     console.log('Push subscription created:', subscription.endpoint);
