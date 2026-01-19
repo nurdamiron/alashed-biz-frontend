@@ -32,6 +32,7 @@ interface AppContextType {
 
   // State
   isLoading: boolean;
+  isDataLoading: boolean;
   theme: 'light' | 'dark';
   isAuthenticated: boolean;
   user: User | null;
@@ -115,6 +116,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [transactions, setTransactions] = useState<Transaction[]>([]);
 
   const [isLoading, setIsLoading] = useState(true);
+  const [isDataLoading, setIsDataLoading] = useState(false);
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
     // Читаем тему из localStorage при инициализации
     const savedTheme = localStorage.getItem('alash_theme') as 'light' | 'dark' | null;
@@ -337,14 +339,18 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         localStorage.setItem('alash_auth', JSON.stringify(userData));
         setIsAuthenticated(true);
         setUser(userData);
+        setIsDataLoading(true);
 
         // Sync theme from backend after login (backend is source of truth)
         syncThemeWithBackend().catch(console.error);
 
-        // Загружаем данные асинхронно в фоне, не ждем завершения
-        refreshData().catch(console.error);
+        // Загружаем данные и ждём завершения
+        try {
+          await refreshData();
+        } finally {
+          setIsDataLoading(false);
+        }
 
-        toast.success(`Добро пожаловать, ${userData.name}!`);
         return true;
       }
       toast.error('Ошибка входа: Неверные данные');
@@ -587,6 +593,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     notifications,
     stats,
     isLoading,
+    isDataLoading,
     theme,
     isAuthenticated,
     user,

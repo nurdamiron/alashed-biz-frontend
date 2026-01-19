@@ -37,13 +37,10 @@ const LoginScreen = () => {
 
   return (
     <div
-      className={`flex flex-col relative overflow-hidden transition-colors duration-300 ${
-        isDark
-          ? 'bg-slate-900'
-          : 'bg-slate-50'
-      }`}
+      className="flex flex-col relative overflow-hidden transition-colors duration-300"
       style={{
         height: '100dvh',
+        backgroundColor: isDark ? '#000000' : '#fcfcfd',
       }}
     >
       {/* Theme Toggle Button */}

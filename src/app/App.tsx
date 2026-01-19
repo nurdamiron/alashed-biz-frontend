@@ -3,6 +3,8 @@ import { Toaster } from 'react-hot-toast';
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AppProvider, useAppContext } from '@/shared/context/AppContext';
 import { BottomNav } from '@/shared/components';
+import { PushPrompt } from '@/shared/components/PushPrompt';
+import Loading from '@/shared/components/Loading';
 import { initializePush } from '@/shared/lib/push';
 
 // Features - Screens
@@ -34,7 +36,11 @@ const ProtectedRoute = ({ children }: { children?: React.ReactNode }) => {
 };
 
 const AppRoutes = () => {
-  const { theme } = useAppContext();
+  const { theme, isAuthenticated, isDataLoading } = useAppContext();
+
+  if (isDataLoading) {
+    return <Loading />;
+  }
 
   return (
     <div
@@ -250,6 +256,7 @@ const AppRoutes = () => {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </div>
+      {isAuthenticated && <PushPrompt />}
       <BottomNav />
     </div>
   );

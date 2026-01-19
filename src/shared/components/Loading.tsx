@@ -5,9 +5,10 @@ const Loading = () => {
   const isDark = theme === 'dark';
 
   return (
-    <div className={`fixed inset-0 z-[100] flex items-center justify-center transition-colors duration-500 ${
-      isDark ? 'bg-slate-900' : 'bg-slate-50'
-    }`}>
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center transition-colors duration-500"
+      style={{ backgroundColor: isDark ? '#000000' : '#fcfcfd' }}
+    >
       {/* Animated Background Pulse */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className={`absolute top-1/2 left-1/2 w-[500px] h-[500px] rounded-full blur-[128px] -translate-x-1/2 -translate-y-1/2 animate-pulse ${

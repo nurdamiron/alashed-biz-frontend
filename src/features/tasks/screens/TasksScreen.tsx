@@ -135,31 +135,6 @@ const TasksScreen = () => {
           </button>
         </div>
 
-        {/* Статистика задач */}
-        <div className="grid grid-cols-3 gap-3 mb-6">
-          <div className="flex flex-col items-center p-3 rounded-2xl bg-gradient-to-br from-orange-50 to-orange-100/50 dark:from-orange-500/10 dark:to-orange-500/5 border border-orange-200 dark:border-orange-500/20">
-            <div className="flex items-center gap-2 mb-1">
-              <div className="h-2 w-2 rounded-full bg-orange-500 animate-pulse" />
-              <span className="text-[8px] font-black text-orange-600 dark:text-orange-400 uppercase tracking-wider">Ожидание</span>
-            </div>
-            <span className="text-2xl font-black text-orange-600 dark:text-orange-400">{todoTasks.length}</span>
-          </div>
-          <div className="flex flex-col items-center p-3 rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-500/10 dark:to-blue-500/5 border border-blue-200 dark:border-blue-500/20">
-            <div className="flex items-center gap-2 mb-1">
-              <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
-              <span className="text-[8px] font-black text-primary uppercase tracking-wider">В работе</span>
-            </div>
-            <span className="text-2xl font-black text-primary">{inProgressTasks.length}</span>
-          </div>
-          <div className="flex flex-col items-center p-3 rounded-2xl bg-gradient-to-br from-emerald-50 to-emerald-100/50 dark:from-emerald-500/10 dark:to-emerald-500/5 border border-emerald-200 dark:border-emerald-500/20">
-            <div className="flex items-center gap-2 mb-1">
-              <Icon name="verified" className="text-[14px] text-emerald-600 dark:text-emerald-400" />
-              <span className="text-[8px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">Готово</span>
-            </div>
-            <span className="text-2xl font-black text-emerald-600 dark:text-emerald-400">{completedTasks.length}</span>
-          </div>
-        </div>
-
         {/* Поиск */}
         <div className="mb-4">
           <div className="relative">
@@ -260,14 +235,21 @@ const TasksScreen = () => {
         <div className="mb-6 overflow-x-auto no-scrollbar py-1">
           <div className="flex items-center gap-3">
             {Array.isArray(employees) && employees.map((emp) => (
-              <div key={emp.id} className="flex flex-col items-center gap-2 shrink-0">
+              <button
+                key={emp.id}
+                onClick={() => setSelectedAssignee(selectedAssignee === emp.id ? null : emp.id)}
+                className={`flex flex-col items-center gap-2 shrink-0 transition-all ${selectedAssignee === emp.id ? 'scale-110' : ''}`}
+              >
                 <div
-                  className={`relative h-14 w-14 rounded-xl overflow-hidden border-2 ${emp.activeTasks > 4
-                      ? 'border-red-500'
-                      : emp.activeTasks > 2
-                        ? 'border-orange-500'
-                        : 'border-emerald-500'
-                    }`}
+                  className={`relative h-14 w-14 rounded-xl overflow-hidden border-2 transition-all ${
+                    selectedAssignee === emp.id
+                      ? 'border-primary ring-2 ring-primary/30'
+                      : emp.activeTasks > 4
+                        ? 'border-red-500'
+                        : emp.activeTasks > 2
+                          ? 'border-orange-500'
+                          : 'border-emerald-500'
+                  }`}
                 >
                   <img
                     src={emp.avatar}
@@ -278,58 +260,15 @@ const TasksScreen = () => {
                     {emp.activeTasks}
                   </span>
                 </div>
-                <span className="text-[10px] font-bold text-slate-700 dark:text-slate-300">
+                <span className={`text-[10px] font-bold transition-colors ${selectedAssignee === emp.id ? 'text-primary' : 'text-slate-700 dark:text-slate-300'}`}>
                   {emp.name.split(' ')[0]}
                 </span>
-              </div>
+              </button>
             ))}
             <button className="h-14 w-14 rounded-xl bg-slate-100 dark:bg-white/5 border-2 border-dashed border-slate-300 dark:border-slate-700 flex items-center justify-center text-slate-400 shrink-0 hover:bg-slate-200 dark:hover:bg-white/10 transition-colors">
               <Icon name="add" className="text-[20px]" />
             </button>
           </div>
-        </div>
-
-        {/* Быстрые фильтры */}
-        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2">
-          <button
-            onClick={() => setSelectedPriority(null)}
-            className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all shrink-0 ${selectedPriority === null
-                ? 'bg-primary text-white shadow-md'
-                : 'bg-gray-100 dark:bg-white/5 text-gray-500 border border-gray-200 dark:border-white/10'
-              }`}
-          >
-            Все
-          </button>
-          <button
-            onClick={() => setSelectedPriority('Высокий')}
-            className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all shrink-0 flex items-center gap-1 ${selectedPriority === 'Высокий'
-                ? 'bg-red-500 text-white shadow-md'
-                : 'bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-500/20'
-              }`}
-          >
-            <Icon name="priority_high" className="text-[14px]" />
-            Срочно
-          </button>
-          <button
-            onClick={() => setSelectedPriority('Средний')}
-            className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all shrink-0 flex items-center gap-1 ${selectedPriority === 'Средний'
-                ? 'bg-orange-500 text-white shadow-md'
-                : 'bg-orange-50 dark:bg-orange-500/10 text-orange-600 dark:text-orange-400 border border-orange-200 dark:border-orange-500/20'
-              }`}
-          >
-            <Icon name="trending_up" className="text-[14px]" />
-            Средний
-          </button>
-          <button
-            onClick={() => setSelectedPriority('Низкий')}
-            className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all shrink-0 flex items-center gap-1 ${selectedPriority === 'Низкий'
-                ? 'bg-blue-500 text-white shadow-md'
-                : 'bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-500/20'
-              }`}
-          >
-            <Icon name="trending_down" className="text-[14px]" />
-            Низкий
-          </button>
         </div>
 
         {/* View Toggler */}
