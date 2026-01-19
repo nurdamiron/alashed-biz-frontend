@@ -18,42 +18,30 @@ const DashboardScreen = () => {
       className="flex-1 overflow-y-auto no-scrollbar transition-colors duration-300 bg-background-light dark:bg-background-dark"
     >
       {/* Header */}
-      <header
-        className="sticky top-0 z-30 backdrop-blur-xl px-6 pb-6 transition-colors bg-background-light/80 dark:bg-background-dark/80"
-        style={{
-          paddingTop: 'max(3rem, calc(3rem + env(safe-area-inset-top)))'
-        }}
-      >
-        <div className="flex items-center justify-between">
+      <header className="sticky top-0 z-30 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-800/50 transition-colors">
+        <div
+          className="flex items-center justify-between px-5 pb-2"
+          style={{
+            paddingTop: 'max(1.25rem, calc(1.25rem + env(safe-area-inset-top)))'
+          }}
+        >
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
+            Главная
+          </h1>
           <div className="flex items-center gap-3">
-            <img
-              src={isDark ? '/logo-dark.png' : '/logo-light.png'}
-              alt="Logo"
-              className="h-10 w-auto"
-            />
-          </div>
-          <div className="flex items-center gap-4">
             <button
               onClick={() => setShowAIHub(true)}
               aria-label="Открыть AI ассистент"
-              className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all touch-target ${
-                isDark
-                  ? 'bg-white/5 hover:bg-white/10 text-white'
-                  : 'bg-black/5 hover:bg-black/10 text-slate-700'
-              }`}
+              className="flex items-center justify-center w-10 h-10 rounded-full bg-white dark:bg-surface-dark border border-gray-100 dark:border-gray-800 shadow-sm text-slate-900 dark:text-white"
             >
-              <Icon name="auto_awesome" className="text-xl" />
+              <Icon name="auto_awesome" />
             </button>
             <button
               onClick={() => navigate('/notifications')}
               aria-label={`Уведомления${unreadCount > 0 ? `, ${unreadCount} непрочитанных` : ''}`}
-              className={`relative w-11 h-11 rounded-xl flex items-center justify-center transition-all touch-target ${
-                isDark
-                  ? 'bg-white/5 hover:bg-white/10 text-white'
-                  : 'bg-black/5 hover:bg-black/10 text-slate-700'
-              }`}
+              className="relative flex items-center justify-center w-10 h-10 rounded-full bg-white dark:bg-surface-dark border border-gray-100 dark:border-gray-800 shadow-sm text-slate-900 dark:text-white"
             >
-              <Icon name="notifications" className="text-xl" />
+              <Icon name="notifications" />
               {unreadCount > 0 && (
                 <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center" aria-hidden="true">
                   {unreadCount > 9 ? '9+' : unreadCount}
@@ -64,7 +52,7 @@ const DashboardScreen = () => {
         </div>
       </header>
 
-      <div className="px-6 pt-2 space-y-8 pb-40">
+      <div className="px-5 pt-4 space-y-6 pb-40">
         {/* Main Revenue Card */}
         <section className={`rounded-3xl p-6 ${
           isDark
