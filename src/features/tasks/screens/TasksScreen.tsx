@@ -232,7 +232,7 @@ const TasksScreen = () => {
         )}
 
         {/* Workload Heatmap */}
-        <div className="mb-6 overflow-x-auto no-scrollbar py-1">
+        <div className="mb-6 overflow-x-auto no-scrollbar py-3">
           <div className="flex items-center gap-3">
             {Array.isArray(employees) && employees.map((emp) => (
               <button
@@ -241,7 +241,7 @@ const TasksScreen = () => {
                 className={`flex flex-col items-center gap-2 shrink-0 transition-all ${selectedAssignee === emp.id ? 'scale-110' : ''}`}
               >
                 <div
-                  className={`relative h-14 w-14 rounded-xl overflow-hidden border-2 transition-all flex items-center justify-center bg-gradient-to-br from-primary to-blue-600 ${
+                  className={`relative h-14 w-14 rounded-xl border-2 transition-all flex items-center justify-center bg-gradient-to-br from-primary to-blue-600 ${
                     selectedAssignee === emp.id
                       ? 'border-primary ring-2 ring-primary/30'
                       : emp.activeTasks > 4
@@ -254,7 +254,7 @@ const TasksScreen = () => {
                   <span className="text-white font-black text-lg">
                     {emp.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
                   </span>
-                  <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-slate-900 dark:bg-slate-800 border-2 border-white dark:border-surface-dark text-[9px] font-black text-white flex items-center justify-center shadow-md">
+                  <span className="absolute -top-2 -right-2 z-10 h-5 w-5 rounded-full bg-slate-900 dark:bg-slate-800 border-2 border-white dark:border-surface-dark text-[9px] font-black text-white flex items-center justify-center shadow-md">
                     {emp.activeTasks}
                   </span>
                 </div>
@@ -263,9 +263,6 @@ const TasksScreen = () => {
                 </span>
               </button>
             ))}
-            <button className="h-14 w-14 rounded-xl bg-slate-100 dark:bg-white/5 border-2 border-dashed border-slate-300 dark:border-slate-700 flex items-center justify-center text-slate-400 shrink-0 hover:bg-slate-200 dark:hover:bg-white/10 transition-colors">
-              <Icon name="add" className="text-[20px]" />
-            </button>
           </div>
         </div>
 

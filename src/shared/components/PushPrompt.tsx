@@ -14,22 +14,26 @@ export function PushPrompt() {
 
   const checkIfShouldShow = async () => {
     // Don't show if not supported
-    if (!isPushSupported()) return;
+    if (!isPushSupported()) {
+      console.log('[PushPrompt] Not supported');
+      return;
+    }
 
-    // Don't show if already granted or denied
+    // Don't show if already denied
     const permission = getNotificationPermission();
+    console.log('[PushPrompt] Permission:', permission);
     if (permission === 'denied') return;
 
     // Don't show if already subscribed
     const subscription = await getCurrentSubscription();
+    console.log('[PushPrompt] Subscription:', subscription);
     if (subscription) return;
 
-    // Don't show if already prompted recently (24 hours)
-    const lastPrompted = localStorage.getItem(STORAGE_KEY);
-    if (lastPrompted) {
-      const lastTime = parseInt(lastPrompted, 10);
-      const hoursSince = (Date.now() - lastTime) / (1000 * 60 * 60);
-      if (hoursSince < 24) return;
+    // Don't show if already granted (already have permission but no subscription yet is ok)
+    if (permission === 'granted') {
+      // Show prompt after a short delay
+      setTimeout(() => setShow(true), 2000);
+      return;
     }
 
     // Show prompt after a short delay
