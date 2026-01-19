@@ -211,11 +211,15 @@ const CreateTaskModal = () => {
                   }`}
                 >
                   <div className="relative">
-                    <img
-                      src={emp.avatar}
-                      alt={emp.name}
-                      className="h-14 w-14 rounded-xl object-cover"
-                    />
+                    <div className={`h-14 w-14 rounded-xl flex items-center justify-center ${
+                      isSelected
+                        ? 'bg-white/20'
+                        : 'bg-gradient-to-br from-primary to-blue-600'
+                    }`}>
+                      <span className="text-white font-black text-lg">
+                        {emp.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                      </span>
+                    </div>
                     <span
                       className={`absolute -top-1 -right-1 h-5 w-5 rounded-full flex items-center justify-center text-[9px] font-black border-2 border-white dark:border-surface-dark text-white shadow-sm ${workloadColor}`}
                     >

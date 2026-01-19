@@ -50,7 +50,7 @@ const OrdersScreen = () => {
         {showFilters && (
           <div className="absolute top-20 right-5 z-50 w-72 bg-white dark:bg-surface-dark rounded-2xl shadow-xl border border-gray-100 dark:border-gray-800 p-4 animate-in fade-in zoom-in-95 duration-200">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="font-bold text-sm">Фильтры</h3>
+              <h3 className="font-bold text-sm text-slate-900 dark:text-white">Фильтры</h3>
               <button onClick={() => setShowFilters(false)} className="text-gray-400">
                 <Icon name="close" />
               </button>
@@ -62,7 +62,7 @@ const OrdersScreen = () => {
                 <select
                   value={sourceFilter}
                   onChange={(e) => setSourceFilter(e.target.value)}
-                  className="w-full rounded-xl bg-gray-50 dark:bg-white/5 border-none text-sm p-3"
+                  className="w-full rounded-xl bg-gray-50 dark:bg-white/5 border-none text-sm p-3 text-slate-900 dark:text-white"
                 >
                   {['Все', 'Kaspi', 'Instagram', 'WhatsApp', 'Сайт', 'Магазин'].map((s) => (
                     <option key={s} value={s}>
@@ -79,13 +79,13 @@ const OrdersScreen = () => {
                     type="date"
                     value={dateRange.start}
                     onChange={(e) => setDateRange({ ...dateRange, start: e.target.value })}
-                    className="flex-1 rounded-xl bg-gray-50 dark:bg-white/5 border-none text-xs p-2"
+                    className="flex-1 rounded-xl bg-gray-50 dark:bg-white/5 border-none text-xs p-2 text-slate-900 dark:text-white"
                   />
                   <input
                     type="date"
                     value={dateRange.end}
                     onChange={(e) => setDateRange({ ...dateRange, end: e.target.value })}
-                    className="flex-1 rounded-xl bg-gray-50 dark:bg-white/5 border-none text-xs p-2"
+                    className="flex-1 rounded-xl bg-gray-50 dark:bg-white/5 border-none text-xs p-2 text-slate-900 dark:text-white"
                   />
                 </div>
               </div>

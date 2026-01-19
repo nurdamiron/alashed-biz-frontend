@@ -146,17 +146,32 @@ const CreateOrderModal = () => {
 
   return (
     <div className="flex flex-col h-screen bg-background-light dark:bg-background-dark overflow-hidden z-50">
-      <header className="px-5 py-4 flex items-center justify-between border-b dark:border-gray-800 bg-white dark:bg-surface-dark">
-        <button onClick={() => navigate(-1)} className="p-2">
-          <Icon name="close" />
+      {/* Pill indicator */}
+      <div className="flex-none pt-3 pb-1 flex justify-center">
+        <div className="h-1.5 w-14 rounded-full bg-gray-200 dark:bg-white/10"></div>
+      </div>
+
+      <header className="flex-none flex items-center justify-between px-6 pb-4 pt-2">
+        <button
+          onClick={() => navigate(-1)}
+          className="flex items-center justify-center w-10 h-10 rounded-2xl bg-white dark:bg-surface-dark border border-gray-100 dark:border-white/5 shadow-sm text-gray-400 active:scale-90 transition-all"
+        >
+          <Icon name="close" className="text-[20px]" />
         </button>
-        <h2 className="font-black uppercase text-sm">Новый заказ</h2>
+        <div className="flex flex-col items-center">
+          <span className="text-[9px] font-black text-primary uppercase tracking-[0.2em] mb-0.5">
+            Новый процесс
+          </span>
+          <h2 className="text-slate-900 dark:text-white text-lg font-black tracking-tight uppercase">
+            Заказ
+          </h2>
+        </div>
         <div className="w-10"></div>
       </header>
 
-      <main className="flex-1 overflow-y-auto p-5 space-y-8 pb-32">
+      <main className="flex-1 overflow-y-auto no-scrollbar px-6 py-4 space-y-8 pb-48">
         <section className="space-y-4">
-          <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+          <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">
             Источник и клиент
           </label>
           <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
@@ -171,7 +186,7 @@ const CreateOrderModal = () => {
                 }`}
               >
                 <img src={s.img} className="h-8 w-8 object-contain mx-auto mb-2" alt="" />
-                <p className="text-[10px] font-black text-center">{s.label}</p>
+                <p className="text-[10px] font-black text-center text-slate-900 dark:text-white">{s.label}</p>
               </button>
             ))}
           </div>
@@ -179,7 +194,7 @@ const CreateOrderModal = () => {
             value={clientName}
             onChange={(e) => setClientName(e.target.value)}
             placeholder="ФИО Клиента"
-            className="w-full h-14 rounded-2xl bg-white dark:bg-surface-dark border-none px-5 font-bold"
+            className="w-full h-14 px-5 rounded-2xl bg-white dark:bg-surface-dark border border-gray-100 dark:border-white/5 text-base font-bold text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/20 shadow-sm"
           />
           <div>
             <input
@@ -191,10 +206,10 @@ const CreateOrderModal = () => {
               autoComplete="tel"
               aria-invalid={!!phoneError}
               aria-describedby={phoneError ? 'phone-error' : undefined}
-              className={`w-full h-14 rounded-2xl bg-white dark:bg-surface-dark border-2 px-5 font-bold transition-colors ${
+              className={`w-full h-14 px-5 rounded-2xl bg-white dark:bg-surface-dark border text-base font-bold text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 transition-all shadow-sm ${
                 phoneError
-                  ? 'border-red-500 focus:border-red-500'
-                  : 'border-transparent focus:border-primary'
+                  ? 'border-red-500 focus:ring-red-500/20'
+                  : 'border-gray-100 dark:border-white/5 focus:ring-primary/20'
               }`}
             />
             {phoneError && (
@@ -207,7 +222,7 @@ const CreateOrderModal = () => {
 
         <section className="space-y-4">
           <div className="flex justify-between items-center">
-            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+            <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">
               Товары
             </label>
             <button
@@ -224,7 +239,7 @@ const CreateOrderModal = () => {
             >
               <img src={item.product.img} className="h-12 w-12 rounded-xl object-cover" alt="" />
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-black truncate">{item.product.name}</p>
+                <p className="text-sm font-black truncate text-slate-900 dark:text-white">{item.product.name}</p>
                 <p className="text-xs text-primary font-black">{formatPrice(item.product.priceSell)}</p>
               </div>
               <div className="flex items-center gap-3">
@@ -243,7 +258,7 @@ const CreateOrderModal = () => {
                 >
                   <Icon name="remove" />
                 </button>
-                <span className="font-black min-w-[2rem] text-center">{item.quantity}</span>
+                <span className="font-black min-w-[2rem] text-center text-slate-900 dark:text-white">{item.quantity}</span>
                 <button
                   onClick={() =>
                     setSelectedItems((prev) =>
@@ -270,19 +285,24 @@ const CreateOrderModal = () => {
           ))}
         </section>
 
-        <section className="bg-primary p-6 rounded-[2rem] text-white">
-          <p className="text-[10px] font-black uppercase tracking-widest opacity-60">Итого к оплате</p>
+        <section className="bg-gradient-to-br from-primary to-blue-600 p-6 rounded-[2.5rem] text-white shadow-lg shadow-primary/30">
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-70 mb-1">Итого к оплате</p>
           <h2 className="text-4xl font-black">{formatPrice(totalAmount)}</h2>
         </section>
       </main>
 
-      <div className="fixed bottom-0 left-0 w-full p-6 bg-white dark:bg-background-dark border-t border-gray-200 dark:border-gray-800">
+      <div className="flex-none p-6 pb-12 z-10">
         <button
           onClick={handleSave}
           disabled={!clientName || selectedItems.length === 0 || !!phoneError}
-          className="w-full h-16 bg-blue-500 text-white font-bold rounded-2xl shadow-xl shadow-primary/30 disabled:opacity-30 touch-target"
+          className="group relative flex w-full items-center justify-center h-16 rounded-[2rem] bg-primary overflow-hidden shadow-2xl shadow-primary/40 active:scale-95 transition-all disabled:opacity-30 disabled:grayscale"
         >
-          Создать заказ
+          <div className="relative flex items-center gap-3">
+            <span className="text-base font-black text-white uppercase tracking-widest">
+              Создать заказ
+            </span>
+            <Icon name="shopping_cart_checkout" className="text-[24px] text-white" />
+          </div>
         </button>
       </div>
 
@@ -290,8 +310,8 @@ const CreateOrderModal = () => {
         <div className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-md flex items-end">
           <div className="w-full bg-background-light dark:bg-surface-dark rounded-t-[3rem] h-[80vh] flex flex-col p-6 animate-in slide-in-from-bottom-full duration-300">
             <div className="flex justify-between items-center mb-6">
-              <h3 className="font-black text-xl">Каталог</h3>
-              <button onClick={() => setShowProductPicker(false)}>
+              <h3 className="font-black text-xl text-slate-900 dark:text-white">Каталог</h3>
+              <button onClick={() => setShowProductPicker(false)} className="text-slate-900 dark:text-white">
                 <Icon name="close" />
               </button>
             </div>
@@ -299,7 +319,7 @@ const CreateOrderModal = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Поиск..."
-              className="w-full h-12 rounded-xl bg-white dark:bg-background-dark border-none px-4 mb-4"
+              className="w-full h-12 rounded-xl bg-white dark:bg-background-dark border-none px-4 mb-4 text-slate-900 dark:text-white placeholder-gray-400"
             />
             <div className="flex-1 overflow-y-auto space-y-2">
               {isSearching ? (
@@ -315,7 +335,7 @@ const CreateOrderModal = () => {
                   >
                     <img src={p.img} className="h-10 w-10 rounded-lg object-cover" alt="" />
                     <div className="flex-1">
-                      <p className="text-sm font-black">{p.name}</p>
+                      <p className="text-sm font-black text-slate-900 dark:text-white">{p.name}</p>
                       <p className="text-[10px] font-bold text-gray-400">{p.sku}</p>
                     </div>
                     <Icon name="add_circle" className="text-primary" />

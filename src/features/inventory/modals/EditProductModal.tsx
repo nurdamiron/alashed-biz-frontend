@@ -344,8 +344,8 @@ const EditProductModal = () => {
           <div className="w-full max-w-md bg-white dark:bg-surface-dark rounded-[3rem] h-[70vh] flex flex-col shadow-2xl overflow-hidden">
             <div className="p-6 border-b dark:border-white/5">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-black">Выбор комплектующих</h3>
-                <button onClick={() => setShowItemPicker(false)}>
+                <h3 className="text-lg font-black text-slate-900 dark:text-white">Выбор комплектующих</h3>
+                <button onClick={() => setShowItemPicker(false)} className="text-slate-900 dark:text-white">
                   <Icon name="close" />
                 </button>
               </div>
@@ -353,7 +353,7 @@ const EditProductModal = () => {
                 autoFocus
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full h-12 px-4 rounded-xl bg-gray-50 dark:bg-background-dark border-none"
+                className="w-full h-12 px-4 rounded-xl bg-gray-50 dark:bg-background-dark border-none text-slate-900 dark:text-white placeholder-gray-400"
                 placeholder="Поиск по складу..."
               />
             </div>
@@ -366,7 +366,7 @@ const EditProductModal = () => {
                 >
                   <img src={p.img} className="h-10 w-10 rounded-lg object-cover" alt="" />
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-bold truncate">{p.name}</p>
+                    <p className="text-sm font-bold truncate text-slate-900 dark:text-white">{p.name}</p>
                     <p className="text-[10px] text-gray-400 uppercase">
                       {p.sku} • {formatPrice(p.priceBuy)}
                     </p>

@@ -44,23 +44,31 @@ const CreateSupplierModal = () => {
   };
 
   return (
-    <div className="flex flex-col h-full bg-background-light dark:bg-background-dark">
-      <header className="sticky top-0 z-20 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-xl px-6 py-4 border-b border-gray-100 dark:border-white/5">
-        <div className="flex items-center justify-between">
-          <button
-            onClick={() => navigate('/suppliers')}
-            className="h-10 w-10 rounded-xl bg-white dark:bg-surface-dark border border-gray-100 dark:border-white/5 flex items-center justify-center active:scale-90 transition-all"
-          >
-            <Icon name="close" className="text-[20px]" />
-          </button>
-          <h1 className="text-lg font-black text-slate-900 dark:text-white">
-            Новый поставщик
+    <div className="flex flex-col h-full bg-background-light dark:bg-background-dark overflow-hidden">
+      {/* Pill indicator */}
+      <div className="flex-none pt-3 pb-1 flex justify-center">
+        <div className="h-1.5 w-14 rounded-full bg-gray-200 dark:bg-white/10"></div>
+      </div>
+
+      <header className="flex-none flex items-center justify-between px-6 pb-4 pt-2">
+        <button
+          onClick={() => navigate('/suppliers')}
+          className="flex items-center justify-center w-10 h-10 rounded-2xl bg-white dark:bg-surface-dark border border-gray-100 dark:border-white/5 shadow-sm text-gray-400 active:scale-90 transition-all"
+        >
+          <Icon name="close" className="text-[20px]" />
+        </button>
+        <div className="flex flex-col items-center">
+          <span className="text-[9px] font-black text-primary uppercase tracking-[0.2em] mb-0.5">
+            Новый процесс
+          </span>
+          <h1 className="text-slate-900 dark:text-white text-lg font-black tracking-tight uppercase">
+            Поставщик
           </h1>
-          <div className="w-10" />
         </div>
+        <div className="w-10" />
       </header>
 
-      <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto no-scrollbar px-6 py-6 pb-40">
+      <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto no-scrollbar px-6 py-4 pb-48">
         <div className="space-y-6">
           {/* Icon */}
           <div className="flex justify-center">
@@ -71,7 +79,7 @@ const CreateSupplierModal = () => {
 
           {/* Name */}
           <div>
-            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">
+            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">
               Название компании *
             </label>
             <input
@@ -79,14 +87,14 @@ const CreateSupplierModal = () => {
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               placeholder="ТОО Поставщик"
-              className="w-full h-14 px-5 rounded-2xl bg-white dark:bg-surface-dark border border-gray-100 dark:border-white/5 text-base font-medium focus:outline-none focus:ring-2 focus:ring-primary/20"
+              className="w-full h-14 px-5 rounded-2xl bg-white dark:bg-surface-dark border border-gray-100 dark:border-white/5 text-base font-medium text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/20"
               required
             />
           </div>
 
           {/* TIN */}
           <div>
-            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">
+            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">
               БИН/ИИН
             </label>
             <input
@@ -95,13 +103,13 @@ const CreateSupplierModal = () => {
               onChange={(e) => setFormData({ ...formData, tin: e.target.value })}
               placeholder="123456789012"
               maxLength={12}
-              className="w-full h-14 px-5 rounded-2xl bg-white dark:bg-surface-dark border border-gray-100 dark:border-white/5 text-base font-medium focus:outline-none focus:ring-2 focus:ring-primary/20"
+              className="w-full h-14 px-5 rounded-2xl bg-white dark:bg-surface-dark border border-gray-100 dark:border-white/5 text-base font-medium text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/20"
             />
           </div>
 
           {/* Contact Person */}
           <div>
-            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">
+            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">
               Контактное лицо
             </label>
             <input
@@ -109,13 +117,13 @@ const CreateSupplierModal = () => {
               value={formData.contactPerson}
               onChange={(e) => setFormData({ ...formData, contactPerson: e.target.value })}
               placeholder="Иванов Иван"
-              className="w-full h-14 px-5 rounded-2xl bg-white dark:bg-surface-dark border border-gray-100 dark:border-white/5 text-base font-medium focus:outline-none focus:ring-2 focus:ring-primary/20"
+              className="w-full h-14 px-5 rounded-2xl bg-white dark:bg-surface-dark border border-gray-100 dark:border-white/5 text-base font-medium text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/20"
             />
           </div>
 
           {/* Phone */}
           <div>
-            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">
+            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">
               Телефон
             </label>
             <input
@@ -123,13 +131,13 @@ const CreateSupplierModal = () => {
               value={formData.phone}
               onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
               placeholder="+7 (700) 123-45-67"
-              className="w-full h-14 px-5 rounded-2xl bg-white dark:bg-surface-dark border border-gray-100 dark:border-white/5 text-base font-medium focus:outline-none focus:ring-2 focus:ring-primary/20"
+              className="w-full h-14 px-5 rounded-2xl bg-white dark:bg-surface-dark border border-gray-100 dark:border-white/5 text-base font-medium text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/20"
             />
           </div>
 
           {/* Email */}
           <div>
-            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">
+            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">
               Email
             </label>
             <input
@@ -137,13 +145,13 @@ const CreateSupplierModal = () => {
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               placeholder="info@supplier.kz"
-              className="w-full h-14 px-5 rounded-2xl bg-white dark:bg-surface-dark border border-gray-100 dark:border-white/5 text-base font-medium focus:outline-none focus:ring-2 focus:ring-primary/20"
+              className="w-full h-14 px-5 rounded-2xl bg-white dark:bg-surface-dark border border-gray-100 dark:border-white/5 text-base font-medium text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/20"
             />
           </div>
 
           {/* Address */}
           <div>
-            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">
+            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">
               Адрес
             </label>
             <input
@@ -151,13 +159,13 @@ const CreateSupplierModal = () => {
               value={formData.address}
               onChange={(e) => setFormData({ ...formData, address: e.target.value })}
               placeholder="г. Алматы, ул. Примерная, 123"
-              className="w-full h-14 px-5 rounded-2xl bg-white dark:bg-surface-dark border border-gray-100 dark:border-white/5 text-base font-medium focus:outline-none focus:ring-2 focus:ring-primary/20"
+              className="w-full h-14 px-5 rounded-2xl bg-white dark:bg-surface-dark border border-gray-100 dark:border-white/5 text-base font-medium text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/20"
             />
           </div>
 
           {/* Notes */}
           <div>
-            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">
+            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">
               Примечания
             </label>
             <textarea
@@ -165,26 +173,33 @@ const CreateSupplierModal = () => {
               onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
               placeholder="Дополнительная информация о поставщике..."
               rows={3}
-              className="w-full px-5 py-4 rounded-2xl bg-white dark:bg-surface-dark border border-gray-100 dark:border-white/5 text-base font-medium focus:outline-none focus:ring-2 focus:ring-primary/20 resize-none"
+              className="w-full px-5 py-4 rounded-2xl bg-white dark:bg-surface-dark border border-gray-100 dark:border-white/5 text-base font-medium text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/20 resize-none"
             />
           </div>
         </div>
       </form>
 
       {/* Submit Button */}
-      <div className="fixed bottom-0 left-0 right-0 p-6 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-xl border-t border-gray-100 dark:border-white/5">
+      <div className="flex-none p-6 pb-12 z-10">
         <button
           onClick={handleSubmit}
           disabled={!formData.name.trim() || isSubmitting}
-          className="w-full h-14 rounded-2xl bg-blue-500 text-white font-bold text-base shadow-xl shadow-primary/30 active:scale-[0.98] transition-all disabled:opacity-50 disabled:shadow-none flex items-center justify-center gap-2"
+          className="group relative flex w-full items-center justify-center h-16 rounded-[2rem] bg-primary overflow-hidden shadow-2xl shadow-primary/40 active:scale-95 transition-all disabled:opacity-30 disabled:grayscale"
         >
           {isSubmitting ? (
-            <div className="h-5 w-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            <div className="flex items-center gap-3">
+              <div className="h-5 w-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              <span className="text-base font-black text-white uppercase tracking-widest">
+                Создание...
+              </span>
+            </div>
           ) : (
-            <>
-              <Icon name="add_business" className="text-[20px]" />
-              Добавить поставщика
-            </>
+            <div className="relative flex items-center gap-3">
+              <span className="text-base font-black text-white uppercase tracking-widest">
+                Добавить поставщика
+              </span>
+              <Icon name="add_business" className="text-[24px] text-white" />
+            </div>
           )}
         </button>
       </div>
