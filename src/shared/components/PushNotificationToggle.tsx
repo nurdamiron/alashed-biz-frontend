@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useAppContext } from '../context/AppContext';
 import Icon from './Icon';
 import {
-  isPushSupported,
   getPushState,
   subscribeToPush,
   unsubscribeFromPush,
