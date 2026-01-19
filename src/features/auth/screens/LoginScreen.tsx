@@ -59,26 +59,24 @@ const LoginScreen = () => {
         <Icon name={isDark ? 'light_mode' : 'dark_mode'} className="text-2xl" />
       </button>
 
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className={`absolute top-0 left-0 w-96 h-96 rounded-full blur-[128px] -translate-x-1/2 -translate-y-1/2 ${
-          isDark ? 'bg-blue-500/20' : 'bg-blue-500/30'
-        }`} />
-        <div className={`absolute bottom-0 right-0 w-96 h-96 rounded-full blur-[128px] translate-x-1/2 translate-y-1/2 ${
-          isDark ? 'bg-cyan-500/15' : 'bg-cyan-500/20'
-        }`} />
-        <div className={`absolute top-1/2 left-1/2 w-64 h-64 rounded-full blur-[100px] -translate-x-1/2 -translate-y-1/2 animate-pulse ${
-          isDark ? 'bg-indigo-500/10' : 'bg-indigo-500/15'
-        }`} />
-      </div>
+      {/* Animated Background Elements - only in light mode */}
+      {!isDark && (
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-0 left-0 w-96 h-96 rounded-full blur-[128px] -translate-x-1/2 -translate-y-1/2 bg-blue-500/30" />
+          <div className="absolute bottom-0 right-0 w-96 h-96 rounded-full blur-[128px] translate-x-1/2 translate-y-1/2 bg-cyan-500/20" />
+          <div className="absolute top-1/2 left-1/2 w-64 h-64 rounded-full blur-[100px] -translate-x-1/2 -translate-y-1/2 animate-pulse bg-indigo-500/15" />
+        </div>
+      )}
 
-      {/* Grid Pattern */}
-      <div
-        className={`absolute inset-0 ${isDark ? 'opacity-[0.02]' : 'opacity-[0.03]'}`}
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='${isDark ? '%23ffffff' : '%23000000'}' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-        }}
-      />
+      {/* Grid Pattern - only in light mode */}
+      {!isDark && (
+        <div
+          className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+          }}
+        />
+      )}
 
       <main className="relative z-10 flex-1 flex items-center justify-center p-6">
         <div className="w-full max-w-md">

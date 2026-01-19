@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Icon } from '@/shared/components';
+import { Icon, PullToRefresh } from '@/shared/components';
 import { useAppContext } from '@/shared/context/AppContext';
 import { getOrderStatusColor } from '@/shared/lib/utils';
 
 const OrdersScreen = () => {
   const navigate = useNavigate();
-  const { orders, formatPrice } = useAppContext();
+  const { orders, formatPrice, refreshData } = useAppContext();
   const [activeFilter, setActiveFilter] = useState('Все');
   const [showFilters, setShowFilters] = useState(false);
   const [dateRange, setDateRange] = useState<{ start: string; end: string }>({

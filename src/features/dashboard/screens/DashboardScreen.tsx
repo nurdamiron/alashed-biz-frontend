@@ -1,23 +1,21 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Icon } from '@/shared/components';
+import { Icon, PullToRefresh } from '@/shared/components';
 import { useAppContext } from '@/shared/context/AppContext';
 import { AIHubModal } from '@/features/ai';
 
 const DashboardScreen = () => {
   const navigate = useNavigate();
-  const { stats, formatPrice, theme, notifications } = useAppContext();
+  const { stats, formatPrice, theme, notifications, refreshData } = useAppContext();
   const [showAIHub, setShowAIHub] = useState(false);
 
   const isDark = theme === 'dark';
   const unreadCount = Array.isArray(notifications) ? notifications.filter(n => !n.read).length : 0;
 
   return (
-    <div
+    <PullToRefresh
+      onRefresh={refreshData}
       className="flex-1 overflow-y-auto no-scrollbar transition-colors duration-300 bg-background-light dark:bg-background-dark"
-      style={{
-        paddingBottom: 'calc(8rem + env(safe-area-inset-bottom))'
-      }}
     >
       {/* Header */}
       <header
@@ -244,7 +242,7 @@ const DashboardScreen = () => {
       </div>
 
       {showAIHub && <AIHubModal onClose={() => setShowAIHub(false)} />}
-    </div>
+    </PullToRefresh>
   );
 };
 
