@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Icon } from '@/shared/components';
+import { Icon, PullToRefresh } from '@/shared/components';
 import { useAppContext } from '@/shared/context/AppContext';
 
 const NotificationsScreen = () => {
   const navigate = useNavigate();
-  const { notifications, clearNotifications } = useAppContext();
+  const { notifications, clearNotifications, refreshData } = useAppContext();
   const [activeTab, setActiveTab] = useState<'all' | 'unread'>('all');
 
   const filtered =
@@ -60,7 +60,7 @@ const NotificationsScreen = () => {
         </div>
       </header>
 
-      <main className="flex-1 overflow-y-auto no-scrollbar p-6 space-y-6 pb-32">
+      <PullToRefresh onRefresh={refreshData} className="flex-1 overflow-y-auto no-scrollbar p-6 space-y-6 pb-32">
         {filtered.length > 0 ? (
           filtered.map((n: any) => (
             <div
@@ -100,7 +100,7 @@ const NotificationsScreen = () => {
             <p className="text-sm font-black uppercase tracking-widest">Нет событий</p>
           </div>
         )}
-      </main>
+      </PullToRefresh>
     </div>
   );
 };

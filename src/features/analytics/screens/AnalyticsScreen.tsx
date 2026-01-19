@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Icon } from '@/shared/components';
+import { Icon, PullToRefresh } from '@/shared/components';
 import { api } from '@/shared/lib/api';
 import { useAppContext } from '@/shared/context/AppContext';
 import {
@@ -103,7 +103,7 @@ const AnalyticsScreen = () => {
         </div>
       </header>
 
-      <main className="flex-1 overflow-y-auto no-scrollbar px-6 pt-4 pb-40">
+      <PullToRefresh onRefresh={loadData} className="flex-1 overflow-y-auto no-scrollbar px-6 pt-4 pb-40">
         <div className="space-y-6">
           {/* Revenue Chart */}
           <div className="bg-white dark:bg-surface-dark rounded-[2rem] p-5 border border-gray-100 dark:border-white/5">
@@ -253,7 +253,7 @@ const AnalyticsScreen = () => {
             </div>
           </div>
         </div>
-      </main>
+      </PullToRefresh>
     </div>
   );
 };

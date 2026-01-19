@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Icon } from '@/shared/components';
+import { Icon, PullToRefresh } from '@/shared/components';
 import { useAppContext } from '@/shared/context/AppContext';
 
 // Custom debounce hook
@@ -26,7 +26,7 @@ const CATEGORY_ICONS: Record<string, string> = {
 
 const InventoryScreen = () => {
   const navigate = useNavigate();
-  const { products, stats, formatPrice } = useAppContext();
+  const { products, stats, formatPrice, refreshData } = useAppContext();
   const [searchTerm, setSearchTerm] = useState('');
   const [activeCategory, setActiveCategory] = useState('Все');
   const [showOnlyLowStock, setShowOnlyLowStock] = useState(false);
@@ -103,7 +103,8 @@ const InventoryScreen = () => {
         </div>
       </header>
 
-      <main
+      <PullToRefresh
+        onRefresh={refreshData}
         className="flex-1 overflow-y-auto no-scrollbar p-6 space-y-4"
         style={{
           paddingBottom: 'calc(10rem + env(safe-area-inset-bottom))'
@@ -212,7 +213,7 @@ const InventoryScreen = () => {
             )}
           </div>
         )}
-      </main>
+      </PullToRefresh>
 
       <button
         onClick={() => navigate('/inventory/new')}

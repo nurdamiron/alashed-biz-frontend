@@ -1,29 +1,33 @@
-import { useState, useRef, type ReactNode } from 'react';
+import { useState, useRef, type ReactNode, type CSSProperties } from 'react';
 
 interface PullToRefreshProps {
   onRefresh: () => Promise<void>;
   children: ReactNode;
   className?: string;
+  style?: CSSProperties;
 }
 
-export function PullToRefresh({ onRefresh, children, className = '' }: PullToRefreshProps) {
+export function PullToRefresh({ onRefresh, children, className = '', style }: PullToRefreshProps) {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [pullDistance, setPullDistance] = useState(0);
   const touchStartY = useRef(0);
+  const isPulling = useRef(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const handleTouchStart = (e: React.TouchEvent) => {
     const container = containerRef.current;
-    if (container && container.scrollTop <= 5) {
+    if (container && container.scrollTop <= 0) {
       touchStartY.current = e.touches[0].clientY;
+      isPulling.current = true;
     }
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
-    if (touchStartY.current === 0 || isRefreshing) return;
+    if (!isPulling.current || isRefreshing) return;
 
     const container = containerRef.current;
-    if (container && container.scrollTop > 5) {
+    if (container && container.scrollTop > 0) {
+      isPulling.current = false;
       touchStartY.current = 0;
       setPullDistance(0);
       return;
@@ -32,15 +36,19 @@ export function PullToRefresh({ onRefresh, children, className = '' }: PullToRef
     const currentY = e.touches[0].clientY;
     const distance = currentY - touchStartY.current;
 
-    if (distance > 0 && distance < 150) {
-      setPullDistance(distance);
+    if (distance > 0) {
+      // Prevent default to stop iOS rubber-band effect
+      e.preventDefault();
+      // Apply diminishing returns for smoother feel
+      const dampedDistance = Math.min(distance * 0.5, 100);
+      setPullDistance(dampedDistance);
     }
   };
 
   const handleTouchEnd = async () => {
     if (isRefreshing) return;
 
-    if (pullDistance > 80) {
+    if (pullDistance > 50) {
       setIsRefreshing(true);
       setPullDistance(0);
 
@@ -55,6 +63,7 @@ export function PullToRefresh({ onRefresh, children, className = '' }: PullToRef
       setPullDistance(0);
     }
     touchStartY.current = 0;
+    isPulling.current = false;
   };
 
   return (
@@ -64,23 +73,24 @@ export function PullToRefresh({ onRefresh, children, className = '' }: PullToRef
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
+      style={{ overscrollBehavior: 'none', ...style }}
     >
-      {/* Pull indicator */}
+      {/* Pull indicator - fixed at top */}
       {pullDistance > 0 && (
         <div
-          className="absolute left-0 right-0 flex justify-center z-50 transition-opacity"
+          className="fixed left-0 right-0 flex justify-center z-50 pointer-events-none"
           style={{
-            top: Math.min(pullDistance - 40, 60),
-            opacity: Math.min(pullDistance / 80, 1),
+            top: `calc(env(safe-area-inset-top) + ${Math.min(pullDistance, 60)}px)`,
+            opacity: Math.min(pullDistance / 50, 1),
           }}
         >
           <div className="flex items-center gap-2 bg-white dark:bg-zinc-800 px-4 py-2 rounded-full shadow-lg border border-gray-200 dark:border-zinc-700">
             <div
               className="h-5 w-5 rounded-full border-2 border-primary/30 border-t-primary"
-              style={{ transform: `rotate(${pullDistance * 3}deg)` }}
+              style={{ transform: `rotate(${pullDistance * 5}deg)` }}
             />
             <span className="text-xs font-semibold text-slate-600 dark:text-zinc-300">
-              {pullDistance > 80 ? 'Отпустите' : 'Потяните вниз'}
+              {pullDistance > 50 ? 'Отпустите' : 'Потяните'}
             </span>
           </div>
         </div>
@@ -88,7 +98,10 @@ export function PullToRefresh({ onRefresh, children, className = '' }: PullToRef
 
       {/* Refreshing indicator */}
       {isRefreshing && (
-        <div className="absolute left-0 right-0 top-4 flex justify-center z-50">
+        <div
+          className="fixed left-0 right-0 flex justify-center z-50 pointer-events-none"
+          style={{ top: 'calc(env(safe-area-inset-top) + 60px)' }}
+        >
           <div className="flex items-center gap-2 bg-primary px-4 py-2 rounded-full shadow-lg">
             <div className="h-4 w-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
             <span className="text-xs font-semibold text-white">Обновление...</span>
@@ -96,10 +109,8 @@ export function PullToRefresh({ onRefresh, children, className = '' }: PullToRef
         </div>
       )}
 
-      {/* Content with pull offset */}
-      <div style={{ transform: `translateY(${pullDistance > 0 ? Math.min(pullDistance * 0.5, 50) : 0}px)` }}>
-        {children}
-      </div>
+      {/* Content - no transform to avoid bottom gap */}
+      {children}
     </div>
   );
 }

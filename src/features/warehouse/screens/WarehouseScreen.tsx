@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Icon } from '@/shared/components';
+import { Icon, PullToRefresh } from '@/shared/components';
 import { api } from '@/shared/lib/api';
 import toast from 'react-hot-toast';
 
@@ -124,7 +124,7 @@ const WarehouseScreen = () => {
         </div>
       </header>
 
-      <main className="flex-1 overflow-y-auto no-scrollbar px-6 pt-4 pb-40">
+      <PullToRefresh onRefresh={loadLocations} className="flex-1 overflow-y-auto no-scrollbar px-6 pt-4 pb-40">
         <div className="space-y-6">
           {Object.entries(groupedByZone).map(([zone, locs]) => (
             <div key={zone}>
@@ -147,7 +147,7 @@ const WarehouseScreen = () => {
             </div>
           )}
         </div>
-      </main>
+      </PullToRefresh>
 
       {/* FAB */}
       <button
