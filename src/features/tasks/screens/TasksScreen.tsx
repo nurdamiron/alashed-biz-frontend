@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Icon } from '@/shared/components';
+import { Icon, PullToRefresh } from '@/shared/components';
 import { useAppContext } from '@/shared/context/AppContext';
 import { formatDeadline, getPriorityIconBadge } from '@/shared/lib/utils';
 import type { Task } from '@/shared/types';
@@ -15,9 +15,6 @@ const TasksScreen = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedPriority, setSelectedPriority] = useState<string | null>(null);
   const [selectedAssignee, setSelectedAssignee] = useState<string | null>(null);
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [touchStart, setTouchStart] = useState(0);
-  const [pullDistance, setPullDistance] = useState(0);
 
   const navigate = useNavigate();
   const { tasks, updateTaskStatus, employees, refreshData } = useAppContext();
@@ -30,59 +27,6 @@ const TasksScreen = () => {
 
   // Локальное состояние загрузки для этой страницы
   const isLoading = !tasks || tasks.length === 0;
-
-  // Pull to refresh handler
-  const handleTouchStart = (e: React.TouchEvent) => {
-    const container = e.currentTarget as HTMLElement;
-    // Проверяем что мы в самом верху страницы
-    if (container.scrollTop <= 10) {
-      setTouchStart(e.touches[0].clientY);
-    }
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (touchStart === 0 || isRefreshing) return;
-
-    const container = e.currentTarget as HTMLElement;
-    if (container.scrollTop > 10) {
-      setTouchStart(0);
-      setPullDistance(0);
-      return;
-    }
-
-    const currentTouch = e.touches[0].clientY;
-    const distance = currentTouch - touchStart;
-
-    // Только если тянем вниз и находимся вверху страницы
-    if (distance > 0 && distance < 200) {
-      setPullDistance(distance);
-      // Предотвращаем стандартный скролл при pull
-      if (distance > 10) {
-        e.preventDefault();
-      }
-    }
-  };
-
-  const handleTouchEnd = async () => {
-    if (isRefreshing) return;
-
-    if (pullDistance > 80) {
-      setIsRefreshing(true);
-      setPullDistance(0);
-
-      try {
-        await refreshData();
-      } catch (error) {
-        console.error('Refresh failed:', error);
-      }
-
-      // Показываем skeleton минимум 800ms для визуального эффекта
-      setTimeout(() => setIsRefreshing(false), 800);
-    } else {
-      setPullDistance(0);
-    }
-    setTouchStart(0);
-  };
 
   // Фильтрация задач
   const filteredTasks = Array.isArray(tasks) ? tasks.filter((t) => {
@@ -289,42 +233,11 @@ const TasksScreen = () => {
         </div>
       </header>
 
-      <main
-        className="flex-1 overflow-y-auto no-scrollbar relative"
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-        style={{ paddingTop: pullDistance > 0 ? `${Math.min(pullDistance, 120)}px` : '8px' }}
+      <PullToRefresh
+        onRefresh={refreshData}
+        className="flex-1 overflow-y-auto no-scrollbar relative pt-2"
       >
-        {/* Pull to refresh indicator */}
-        {pullDistance > 0 && (
-          <div
-            className="fixed top-16 left-0 right-0 flex items-center justify-center z-50 transition-opacity duration-200"
-            style={{
-              opacity: Math.min(pullDistance / 80, 1)
-            }}
-          >
-            <div className="flex flex-col items-center gap-2 bg-white dark:bg-slate-800 px-6 py-3 rounded-2xl shadow-lg border border-gray-200 dark:border-white/10">
-              <div className={`h-10 w-10 rounded-full border-4 border-primary/20 border-t-primary transition-transform ${pullDistance > 80 ? 'animate-spin' : ''}`}
-                style={{ transform: `rotate(${pullDistance * 3}deg)` }} />
-              <span className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider">
-                {pullDistance > 80 ? 'Отпустите для обновления' : 'Тяните вниз для обновления'}
-              </span>
-            </div>
-          </div>
-        )}
-
-        {/* Refreshing indicator */}
-        {isRefreshing && (
-          <div className="fixed top-16 left-0 right-0 flex items-center justify-center z-50">
-            <div className="flex items-center gap-3 bg-primary px-6 py-3 rounded-2xl shadow-lg">
-              <div className="h-5 w-5 rounded-full border-2 border-white/30 border-t-white animate-spin" />
-              <span className="text-sm font-black text-white">Обновление...</span>
-            </div>
-          </div>
-        )}
-
-        {isLoading || isRefreshing ? (
+        {isLoading ? (
           <TasksSkeleton view={view} />
         ) : view === 'List' ? (
           <ListView
@@ -343,7 +256,7 @@ const TasksScreen = () => {
             navigate={navigate}
           />
         )}
-      </main>
+      </PullToRefresh>
 
       {/* FAB */}
       <button

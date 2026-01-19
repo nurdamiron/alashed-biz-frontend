@@ -1,4 +1,4 @@
-import { useState, useRef, type ReactNode, type CSSProperties } from 'react';
+import { useState, useRef, useEffect, useCallback, type ReactNode, type CSSProperties } from 'react';
 
 interface PullToRefreshProps {
   onRefresh: () => Promise<void>;
@@ -13,16 +13,22 @@ export function PullToRefresh({ onRefresh, children, className = '', style }: Pu
   const touchStartY = useRef(0);
   const isPulling = useRef(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const pullDistanceRef = useRef(0);
 
-  const handleTouchStart = (e: React.TouchEvent) => {
+  // Keep ref in sync with state for use in event handlers
+  useEffect(() => {
+    pullDistanceRef.current = pullDistance;
+  }, [pullDistance]);
+
+  const handleTouchStart = useCallback((e: TouchEvent) => {
     const container = containerRef.current;
-    if (container && container.scrollTop <= 0) {
+    if (container && container.scrollTop <= 0 && !isRefreshing) {
       touchStartY.current = e.touches[0].clientY;
       isPulling.current = true;
     }
-  };
+  }, [isRefreshing]);
 
-  const handleTouchMove = (e: React.TouchEvent) => {
+  const handleTouchMove = useCallback((e: TouchEvent) => {
     if (!isPulling.current || isRefreshing) return;
 
     const container = containerRef.current;
@@ -43,12 +49,14 @@ export function PullToRefresh({ onRefresh, children, className = '', style }: Pu
       const dampedDistance = Math.min(distance * 0.5, 100);
       setPullDistance(dampedDistance);
     }
-  };
+  }, [isRefreshing]);
 
-  const handleTouchEnd = async () => {
+  const handleTouchEnd = useCallback(async () => {
     if (isRefreshing) return;
 
-    if (pullDistance > 50) {
+    const currentPullDistance = pullDistanceRef.current;
+
+    if (currentPullDistance > 50) {
       setIsRefreshing(true);
       setPullDistance(0);
 
@@ -64,15 +72,28 @@ export function PullToRefresh({ onRefresh, children, className = '', style }: Pu
     }
     touchStartY.current = 0;
     isPulling.current = false;
-  };
+  }, [isRefreshing, onRefresh]);
+
+  // Use native event listeners with passive: false to allow preventDefault
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    container.addEventListener('touchstart', handleTouchStart, { passive: true });
+    container.addEventListener('touchmove', handleTouchMove, { passive: false });
+    container.addEventListener('touchend', handleTouchEnd, { passive: true });
+
+    return () => {
+      container.removeEventListener('touchstart', handleTouchStart);
+      container.removeEventListener('touchmove', handleTouchMove);
+      container.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [handleTouchStart, handleTouchMove, handleTouchEnd]);
 
   return (
     <div
       ref={containerRef}
       className={`relative ${className}`}
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
       style={{ overscrollBehavior: 'none', ...style }}
     >
       {/* Pull indicator - fixed at top */}
@@ -109,7 +130,7 @@ export function PullToRefresh({ onRefresh, children, className = '', style }: Pu
         </div>
       )}
 
-      {/* Content - no transform to avoid bottom gap */}
+      {/* Content */}
       {children}
     </div>
   );
