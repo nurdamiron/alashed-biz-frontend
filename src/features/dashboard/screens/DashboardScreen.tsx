@@ -14,18 +14,14 @@ const DashboardScreen = () => {
 
   return (
     <div
-      className={`flex-1 overflow-y-auto no-scrollbar transition-colors duration-300 ${
-        isDark ? 'bg-slate-900' : 'bg-slate-50'
-      }`}
+      className="flex-1 overflow-y-auto no-scrollbar transition-colors duration-300 bg-background-light dark:bg-background-dark"
       style={{
         paddingBottom: 'calc(8rem + env(safe-area-inset-bottom))'
       }}
     >
       {/* Header */}
       <header
-        className={`sticky top-0 z-30 backdrop-blur-xl px-6 pb-6 transition-colors ${
-          isDark ? 'bg-slate-900/80' : 'bg-slate-50/80'
-        }`}
+        className="sticky top-0 z-30 backdrop-blur-xl px-6 pb-6 transition-colors bg-background-light/80 dark:bg-background-dark/80"
         style={{
           paddingTop: 'max(3rem, calc(3rem + env(safe-area-inset-top)))'
         }}

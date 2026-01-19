@@ -24,12 +24,8 @@ const SettingsScreen = () => {
   };
 
   return (
-    <div className={`flex flex-col h-full transition-colors duration-300 ${
-      isDark ? 'bg-slate-900' : 'bg-slate-50'
-    }`}>
-      <header className={`sticky top-0 z-30 backdrop-blur-xl px-6 pt-12 pb-4 ${
-        isDark ? 'bg-slate-900/80' : 'bg-slate-50/80'
-      }`}>
+    <div className="flex flex-col h-full bg-background-light dark:bg-background-dark transition-colors duration-300">
+      <header className="sticky top-0 z-30 backdrop-blur-xl px-6 pt-12 pb-4 bg-background-light/80 dark:bg-background-dark/80">
         <h1 className={`text-2xl font-black tracking-tight ${
           isDark ? 'text-white' : 'text-slate-800'
         }`}>
@@ -41,7 +37,7 @@ const SettingsScreen = () => {
         {/* Profile Section */}
         <section className={`rounded-2xl p-5 ${
           isDark
-            ? 'bg-slate-800/50 border border-white/5'
+            ? 'bg-surface-dark border border-white/5'
             : 'bg-white border border-slate-200/50 shadow-sm'
         }`}>
           <div className="flex items-center gap-4">
@@ -72,7 +68,7 @@ const SettingsScreen = () => {
         {/* Push Notifications Section */}
         <section className={`rounded-2xl overflow-hidden ${
           isDark
-            ? 'bg-slate-800/50 border border-white/5'
+            ? 'bg-surface-dark border border-white/5'
             : 'bg-white border border-slate-200/50 shadow-sm'
         }`}>
           <div className="p-5">
@@ -88,7 +84,7 @@ const SettingsScreen = () => {
         {/* App Config Section */}
         <section className={`rounded-2xl overflow-hidden ${
           isDark
-            ? 'bg-slate-800/50 border border-white/5'
+            ? 'bg-surface-dark border border-white/5'
             : 'bg-white border border-slate-200/50 shadow-sm'
         }`}>
           <div className="p-5">
@@ -119,7 +115,7 @@ const SettingsScreen = () => {
                   onChange={(e) => setLocalName(e.target.value)}
                   className={`w-full h-12 px-4 rounded-xl text-sm font-medium transition-colors disabled:opacity-60 ${
                     isDark
-                      ? 'bg-slate-900/50 border border-white/5 text-white'
+                      ? 'bg-surface-dark border border-white/5 text-white'
                       : 'bg-slate-50 border border-slate-200 text-slate-800'
                   }`}
                 />
@@ -137,7 +133,7 @@ const SettingsScreen = () => {
                   placeholder="Например: Магазин электроники"
                   className={`w-full h-12 px-4 rounded-xl text-sm font-medium transition-colors disabled:opacity-60 ${
                     isDark
-                      ? 'bg-slate-900/50 border border-white/5 text-white placeholder:text-slate-600'
+                      ? 'bg-surface-dark border border-white/5 text-white placeholder:text-slate-600'
                       : 'bg-slate-50 border border-slate-200 text-slate-800 placeholder:text-slate-400'
                   }`}
                 />
@@ -149,7 +145,7 @@ const SettingsScreen = () => {
         {/* Navigation Links */}
         <section className={`rounded-2xl overflow-hidden ${
           isDark
-            ? 'bg-slate-800/50 border border-white/5'
+            ? 'bg-surface-dark border border-white/5'
             : 'bg-white border border-slate-200/50 shadow-sm'
         }`}>
           <div className="p-5">
@@ -197,7 +193,7 @@ const SettingsScreen = () => {
         {/* Logout Section */}
         <section className={`rounded-2xl overflow-hidden ${
           isDark
-            ? 'bg-slate-800/50 border border-white/5'
+            ? 'bg-surface-dark border border-white/5'
             : 'bg-white border border-slate-200/50 shadow-sm'
         }`}>
           <button
