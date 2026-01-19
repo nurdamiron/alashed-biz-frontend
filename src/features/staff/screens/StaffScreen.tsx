@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Icon } from '@/shared/components';
+import { Icon, PullToRefresh } from '@/shared/components';
 import { useAppContext } from '@/shared/context/AppContext';
 import type { Employee } from '@/shared/types';
 
 const StaffScreen = () => {
   const navigate = useNavigate();
-  const { employees, deleteEmployee } = useAppContext();
+  const { employees, deleteEmployee, refreshData } = useAppContext();
   const [searchQuery, setSearchQuery] = useState('');
   const [showInactive, setShowInactive] = useState(false);
 
@@ -78,7 +78,7 @@ const StaffScreen = () => {
         </div>
       </header>
 
-      <main className="flex-1 overflow-y-auto no-scrollbar px-6 pt-4 pb-40">
+      <PullToRefresh onRefresh={refreshData} className="flex-1 overflow-y-auto no-scrollbar px-6 pt-4 pb-40">
         <div className="space-y-4">
           {filteredEmployees.map((employee) => (
             <EmployeeCard
@@ -95,7 +95,7 @@ const StaffScreen = () => {
             </div>
           )}
         </div>
-      </main>
+      </PullToRefresh>
 
       {/* FAB */}
       <button

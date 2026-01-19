@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Icon, ThemeToggle, PushNotificationToggle } from '@/shared/components';
+import { Icon, ThemeToggle, PushNotificationToggle, PullToRefresh } from '@/shared/components';
 import { useAppContext } from '@/shared/context/AppContext';
 
 const SettingsScreen = () => {
   const navigate = useNavigate();
-  const { theme, logout, appName, businessDomain, setAppConfig, user } = useAppContext();
+  const { theme, logout, appName, businessDomain, setAppConfig, user, refreshData } = useAppContext();
 
   const [localName, setLocalName] = useState(appName);
   const [localDomain, setLocalDomain] = useState(businessDomain);
@@ -33,7 +33,7 @@ const SettingsScreen = () => {
         </h1>
       </header>
 
-      <main className="flex-1 overflow-y-auto no-scrollbar p-6 space-y-6 pb-40">
+      <PullToRefresh onRefresh={refreshData} className="flex-1 overflow-y-auto no-scrollbar p-6 space-y-6 pb-40">
         {/* Profile Section */}
         <section className={`rounded-2xl p-5 ${
           isDark
@@ -223,7 +223,7 @@ const SettingsScreen = () => {
             Alashed Business v2.5.0
           </p>
         </div>
-      </main>
+      </PullToRefresh>
     </div>
   );
 };

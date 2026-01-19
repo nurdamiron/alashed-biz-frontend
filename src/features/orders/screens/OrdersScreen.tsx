@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Icon } from '@/shared/components';
+import { Icon, PullToRefresh } from '@/shared/components';
 import { useAppContext } from '@/shared/context/AppContext';
 import { getOrderStatusColor } from '@/shared/lib/utils';
 
 const OrdersScreen = () => {
   const navigate = useNavigate();
-  const { orders, formatPrice } = useAppContext();
+  const { orders, formatPrice, refreshData } = useAppContext();
   const [activeFilter, setActiveFilter] = useState('Все');
   const [showFilters, setShowFilters] = useState(false);
   const [dateRange, setDateRange] = useState<{ start: string; end: string }>({
@@ -132,11 +132,9 @@ const OrdersScreen = () => {
         </div>
       </header>
 
-      <main
+      <PullToRefresh
+        onRefresh={refreshData}
         className="flex-1 overflow-y-auto no-scrollbar px-5 pt-4 space-y-4"
-        style={{
-          paddingBottom: 'calc(7rem + env(safe-area-inset-bottom))'
-        }}
       >
         {filteredOrders.map((order) => {
           const isCancelled = order.status === 'Отменено';
@@ -194,7 +192,7 @@ const OrdersScreen = () => {
             <p className="text-gray-500 dark:text-gray-400">Ничего не найдено</p>
           </div>
         )}
-      </main>
+      </PullToRefresh>
 
       <button
         onClick={() => navigate('/orders/new')}
