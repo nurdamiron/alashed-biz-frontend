@@ -94,312 +94,282 @@ const TaskDetailScreen = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-background-light dark:bg-background-dark pb-[140px] transition-colors duration-300">
-      <header className="sticky top-0 z-30 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-xl px-5 py-4 flex items-center justify-between border-b border-gray-200/50 dark:border-gray-800/50">
-        <button
-          onClick={() => navigate(-1)}
-          className="text-slate-900 dark:text-white flex items-center justify-center w-11 h-11 rounded-2xl bg-white dark:bg-surface-dark border border-gray-100 dark:border-gray-800 shadow-sm active:scale-90 transition-all"
+    <div className="flex flex-col h-full bg-background-light dark:bg-background-dark transition-colors duration-300">
+      <header className="sticky top-0 z-30 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-800/50">
+        <div
+          className="flex items-center justify-between px-5 pb-3"
+          style={{
+            paddingTop: 'max(1rem, calc(1rem + env(safe-area-inset-top)))'
+          }}
         >
-          <Icon name="arrow_back_ios_new" className="text-[20px]" />
-        </button>
-        <div className="flex flex-col items-center">
-          <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-0.5">
-            ALASH CORE
-          </span>
-          <h2 className="text-sm font-black text-slate-900 dark:text-white tracking-tight uppercase">
-            Задача
-          </h2>
+          <button
+            onClick={() => navigate(-1)}
+            className="flex items-center justify-center w-10 h-10 rounded-2xl bg-white dark:bg-surface-dark border border-gray-100 dark:border-white/5 shadow-sm text-slate-900 dark:text-white active:scale-90 transition-all"
+          >
+            <Icon name="arrow_back_ios_new" className="text-[18px]" />
+          </button>
+          <div className="flex flex-col items-center">
+            <span className="text-[9px] font-black text-primary uppercase tracking-[0.2em] mb-0.5">
+              Детали
+            </span>
+            <h2 className="text-base font-black text-slate-900 dark:text-white tracking-tight uppercase">
+              Задача
+            </h2>
+          </div>
+          <button
+            onClick={() => navigate(`/tasks/${id}/edit`)}
+            className="flex items-center justify-center w-10 h-10 rounded-2xl bg-white dark:bg-surface-dark border border-gray-100 dark:border-white/5 shadow-sm text-primary active:scale-90 transition-all"
+          >
+            <Icon name="edit" className="text-[20px]" />
+          </button>
         </div>
-        <button
-          onClick={() => navigate(`/tasks/${id}/edit`)}
-          className="text-primary flex items-center justify-center w-11 h-11 rounded-2xl bg-white dark:bg-surface-dark border border-gray-100 dark:border-gray-800 shadow-sm active:scale-90 transition-all">
-          <Icon name="edit_square" className="text-[24px]" />
-        </button>
       </header>
 
-      <main className="flex-1 px-5 pt-6 space-y-8">
-        {/* Статус бейдж */}
-        <div className="flex items-center justify-center">
-          <div className={`px-4 py-2 rounded-2xl border-2 ${task.status === 'К выполнению'
-              ? 'bg-orange-50 dark:bg-orange-500/10 border-orange-500 text-orange-600 dark:text-orange-400'
-              : task.status === 'В процессе'
-                ? 'bg-blue-50 dark:bg-blue-500/10 border-blue-500 text-blue-600 dark:text-blue-400'
-                : 'bg-emerald-50 dark:bg-emerald-500/10 border-emerald-500 text-emerald-600 dark:text-emerald-400'
+      <main className="flex-1 overflow-y-auto no-scrollbar px-5 pt-4 space-y-6 pb-40">
+
+        {/* Main Info Card */}
+        <section className="bg-white dark:bg-surface-dark rounded-[2rem] p-6 shadow-sm border border-gray-100 dark:border-white/5">
+          {/* Status & Priority Row */}
+          <div className="flex items-center justify-between mb-5">
+            <div className={`flex items-center gap-2 px-3 py-1.5 rounded-xl ${
+              task.status === 'К выполнению'
+                ? 'bg-orange-500/10 text-orange-500'
+                : task.status === 'В процессе'
+                  ? 'bg-blue-500/10 text-blue-500'
+                  : 'bg-emerald-500/10 text-emerald-500'
             }`}>
-            <div className="flex items-center gap-2">
-              <div className={`h-2 w-2 rounded-full ${task.status === 'К выполнению' ? 'bg-orange-500 animate-pulse'
+              <div className={`h-2 w-2 rounded-full ${
+                task.status === 'К выполнению' ? 'bg-orange-500 animate-pulse'
                   : task.status === 'В процессе' ? 'bg-blue-500 animate-pulse'
                     : 'bg-emerald-500'
-                }`} />
-              <span className="text-xs font-black uppercase tracking-wider">{task.status}</span>
+              }`} />
+              <span className="text-[10px] font-black uppercase tracking-wider">{task.status}</span>
             </div>
-          </div>
-        </div>
-
-        <section className="bg-white dark:bg-surface-dark rounded-[2.5rem] p-7 shadow-sm border border-gray-100 dark:border-gray-800 relative overflow-hidden">
-          <div className="flex items-center justify-between mb-6">
             {(() => {
               const priorityStyle = getPriorityIconBadge(task.priority);
               return (
-                <div className="flex items-center gap-3">
-                  <div className={`h-10 w-10 rounded-xl ${priorityStyle.color} text-white flex items-center justify-center ring-4 ${priorityStyle.ringColor} shadow-lg`}>
-                    <Icon name={priorityStyle.icon} className="text-[22px]" />
-                  </div>
-                  <span className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight">
-                    {priorityStyle.label} приоритет
-                  </span>
-                </div>
-              );
-            })()}
-            {(() => {
-              const isOverdue = task.deadline && task.status !== 'Готово' && new Date(task.deadline) < new Date();
-              return (
-                <div className={`flex items-center gap-1.5 px-3 py-1 rounded-xl ${isOverdue
-                    ? 'bg-red-500 text-white'
-                    : 'text-gray-400 bg-gray-50 dark:bg-white/5'
-                  }`}>
-                  <Icon name={isOverdue ? "schedule" : "history"} className="text-[16px]" />
-                  <span className="text-[10px] font-black uppercase tracking-widest">
-                    {formatDeadline(task.deadline)}
+                <div className={`flex items-center gap-2 px-3 py-1.5 rounded-xl ${priorityStyle.color}/10`}>
+                  <Icon name={priorityStyle.icon} className={`text-[16px] ${priorityStyle.color.replace('bg-', 'text-')}`} />
+                  <span className={`text-[10px] font-black uppercase ${priorityStyle.color.replace('bg-', 'text-')}`}>
+                    {priorityStyle.label}
                   </span>
                 </div>
               );
             })()}
           </div>
 
-          <h1 className="text-2xl font-black text-slate-900 dark:text-white leading-tight mb-4 tracking-tight">
+          {/* Title */}
+          <h1 className="text-xl font-black text-slate-900 dark:text-white leading-tight mb-3">
             {task.title}
           </h1>
-          <p className="text-sm text-gray-500 dark:text-text-secondary leading-relaxed mb-8 font-medium">
-            {task.description || 'Описание задачи отсутствует.'}
-          </p>
 
-          {/* Расширенная метаинформация */}
-          <div className="grid grid-cols-2 gap-4 mb-6 p-4 rounded-2xl bg-gray-50 dark:bg-white/5">
-            <div className="flex flex-col">
-              <span className="text-[9px] text-gray-400 font-black uppercase tracking-[0.2em] mb-1">
-                Создано
-              </span>
-              <span className="text-xs font-bold text-slate-700 dark:text-gray-300">
-                {task.createdAt ? new Date(task.createdAt).toLocaleDateString('ru-RU', {
-                  day: 'numeric',
-                  month: 'long',
-                  hour: '2-digit',
-                  minute: '2-digit'
-                }) : 'Неизвестно'}
-              </span>
-            </div>
-            <div className="flex flex-col">
-              <span className="text-[9px] text-gray-400 font-black uppercase tracking-[0.2em] mb-1">
-                Обновлено
-              </span>
-              <span className="text-xs font-bold text-slate-700 dark:text-gray-300">
-                {task.updatedAt ? new Date(task.updatedAt).toLocaleDateString('ru-RU', {
-                  day: 'numeric',
-                  month: 'long',
-                  hour: '2-digit',
-                  minute: '2-digit'
-                }) : 'Неизвестно'}
-              </span>
-            </div>
-          </div>
+          {/* Description */}
+          {task.description && (
+            <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed mb-5">
+              {task.description}
+            </p>
+          )}
 
-          <div className="grid grid-cols-2 gap-4 pt-6 border-t border-gray-100 dark:border-gray-800">
-            <div className="flex flex-col">
-              <span className="text-[9px] text-gray-400 font-black uppercase tracking-[0.2em] mb-2">
-                Исполнитель
-              </span>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-primary text-white flex items-center justify-center text-[10px] font-black shadow-lg shadow-primary/30">
-                  {task.assignee ? task.assignee[0] : 'А'}
-                </div>
-                <span className="text-sm font-black text-slate-800 dark:text-white truncate">
-                  {task.assignee || 'Не назначен'}
+          {/* Deadline */}
+          {(() => {
+            const isOverdue = task.deadline && task.status !== 'Готово' && new Date(task.deadline) < new Date();
+            return task.deadline && (
+              <div className={`flex items-center gap-2 px-4 py-3 rounded-xl mb-5 ${
+                isOverdue
+                  ? 'bg-red-500 text-white'
+                  : 'bg-gray-50 dark:bg-white/5 text-gray-500 dark:text-gray-400'
+              }`}>
+                <Icon name="schedule" className="text-[18px]" />
+                <span className="text-xs font-bold">
+                  {isOverdue ? 'Просрочено: ' : 'Дедлайн: '}
+                  {formatDeadline(task.deadline)}
                 </span>
               </div>
+            );
+          })()}
+
+          {/* Info Grid */}
+          <div className="grid grid-cols-2 gap-4 pt-5 border-t border-gray-100 dark:border-white/5">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-blue-600 text-white flex items-center justify-center font-black shadow-lg shadow-primary/20">
+                {task.assignee ? task.assignee.split(' ').map(n => n[0]).join('').slice(0, 2) : 'А'}
+              </div>
+              <div>
+                <p className="text-[9px] font-black text-gray-400 uppercase tracking-wider">Исполнитель</p>
+                <p className="text-sm font-bold text-slate-900 dark:text-white truncate">
+                  {task.assignee || 'Не назначен'}
+                </p>
+              </div>
             </div>
-            <div className="flex flex-col">
-              <span className="text-[9px] text-gray-400 font-black uppercase tracking-[0.2em] mb-2">
-                Таймер
-              </span>
-              <div className="flex items-center gap-3">
-                <div
-                  className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-all ${isTimerRunning
-                      ? 'bg-emerald-500 text-white shadow-[0_0_15px_rgba(16,185,129,0.5)]'
-                      : 'bg-gray-100 dark:bg-white/5 text-gray-400'
-                    }`}
-                >
-                  <Icon
-                    name="timer"
-                    className={`text-[20px] ${isTimerRunning ? 'animate-pulse' : ''}`}
-                  />
-                </div>
-                <span
-                  className={`text-base font-black tracking-tight ${isTimerRunning ? 'text-emerald-500' : 'text-slate-800 dark:text-white'
-                    }`}
-                >
+            <div className="flex items-center gap-3">
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                isTimerRunning
+                  ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/30'
+                  : 'bg-gray-100 dark:bg-white/5 text-gray-400'
+              }`}>
+                <Icon name="timer" className={`text-[20px] ${isTimerRunning ? 'animate-pulse' : ''}`} />
+              </div>
+              <div>
+                <p className="text-[9px] font-black text-gray-400 uppercase tracking-wider">Таймер</p>
+                <p className={`text-sm font-black ${isTimerRunning ? 'text-emerald-500' : 'text-slate-900 dark:text-white'}`}>
                   {formatTime(timerSeconds)}
-                </span>
+                </p>
               </div>
             </div>
           </div>
         </section>
 
+        {/* Checklist */}
         {checklist.length > 0 && (
-          <section>
-            <div className="flex items-center justify-between mb-4 px-1">
+          <section className="bg-white dark:bg-surface-dark rounded-[2rem] p-5 shadow-sm border border-gray-100 dark:border-white/5">
+            <div className="flex items-center justify-between mb-4">
               <div>
-                <h3 className="font-black text-lg text-slate-900 dark:text-white tracking-tight">
-                  Рабочие Этапы
+                <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
+                  Рабочие этапы
                 </h3>
-                <p className="text-[10px] font-bold text-gray-400 mt-1">
+                <p className="text-xs font-bold text-slate-900 dark:text-white mt-1">
                   {completedCount} из {checklist.length} выполнено
                 </p>
               </div>
-              <div className="flex items-center gap-3">
-                <div className="flex flex-col items-end">
-                  <span className="text-2xl font-black text-primary tracking-tight">
-                    {progressPercentage}%
-                  </span>
-                  <span className="text-[8px] font-black text-gray-400 uppercase tracking-wider">
-                    Прогресс
-                  </span>
-                </div>
-              </div>
+              <span className="text-2xl font-black text-primary">{progressPercentage}%</span>
             </div>
 
-            <div className="relative w-full h-3 bg-gray-100 dark:bg-gray-800 rounded-full mb-6 overflow-hidden shadow-inner">
+            {/* Progress bar */}
+            <div className="relative w-full h-2 bg-gray-100 dark:bg-white/5 rounded-full mb-4 overflow-hidden">
               <div
-                className="absolute h-full bg-gradient-to-r from-primary to-blue-500 transition-all duration-700 ease-out rounded-full shadow-lg"
+                className="absolute h-full bg-gradient-to-r from-primary to-blue-500 rounded-full transition-all duration-500"
                 style={{ width: `${progressPercentage}%` }}
-              >
-                <div className="absolute inset-0 bg-white/20 animate-pulse" />
-              </div>
+              />
             </div>
 
-            <div className="bg-white dark:bg-surface-dark rounded-[2.2rem] p-3 shadow-sm border border-gray-100 dark:border-gray-800 space-y-2">
+            {/* Checklist items */}
+            <div className="space-y-2">
               {checklist.map((item, index) => (
                 <div
                   key={item.id}
                   onClick={() => toggleCheck(item.id)}
-                  className={`flex items-center gap-4 p-4 rounded-[1.5rem] transition-all cursor-pointer relative ${item.done ? 'bg-emerald-500/5' : 'hover:bg-gray-50 dark:hover:bg-white/5'
-                    }`}
+                  className={`flex items-center gap-3 p-3 rounded-xl transition-all cursor-pointer active:scale-[0.98] ${
+                    item.done
+                      ? 'bg-emerald-500/5'
+                      : 'hover:bg-gray-50 dark:hover:bg-white/5'
+                  }`}
                 >
-                  <div className="flex items-center justify-center w-6 h-6 rounded-lg bg-gray-100 dark:bg-gray-800 text-[10px] font-black text-gray-400">
+                  <span className="flex items-center justify-center w-6 h-6 rounded-lg bg-gray-100 dark:bg-white/5 text-[10px] font-black text-gray-400">
                     {index + 1}
+                  </span>
+                  <div className={`h-7 w-7 rounded-lg border-2 flex items-center justify-center transition-all ${
+                    item.done
+                      ? 'bg-emerald-500 border-emerald-500 text-white'
+                      : 'border-gray-200 dark:border-gray-700'
+                  }`}>
+                    {item.done && <Icon name="check" className="text-[16px]" />}
                   </div>
-                  <div
-                    className={`h-8 w-8 rounded-xl border-2 flex items-center justify-center transition-all ${item.done
-                        ? 'bg-emerald-500 border-emerald-500 text-white shadow-lg shadow-emerald-500/20'
-                        : 'border-gray-200 dark:border-gray-700'
-                      }`}
-                  >
-                    {item.done && <Icon name="check_circle" className="text-[20px] font-bold" />}
-                  </div>
-                  <span
-                    className={`text-sm font-bold flex-1 transition-all ${item.done
-                        ? 'text-gray-400 line-through'
-                        : 'text-slate-900 dark:text-white'
-                      }`}
-                  >
+                  <span className={`text-sm font-medium flex-1 ${
+                    item.done
+                      ? 'text-gray-400 line-through'
+                      : 'text-slate-900 dark:text-white'
+                  }`}>
                     {item.text}
                   </span>
-                  {item.done && (
-                    <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-emerald-500/10">
-                      <Icon name="verified" className="text-[14px] text-emerald-500" />
-                    </div>
-                  )}
                 </div>
               ))}
             </div>
           </section>
         )}
 
-        <section className="pb-6">
-          <h3 className="font-black text-lg text-slate-900 dark:text-white mb-4 px-1">
-            Комментарии
+        {/* Comments */}
+        <section className="bg-white dark:bg-surface-dark rounded-[2rem] p-5 shadow-sm border border-gray-100 dark:border-white/5">
+          <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-4">
+            Комментарии ({comments.length})
           </h3>
-          <div className="space-y-5">
+
+          <div className="space-y-4 mb-4">
             {comments.length > 0 ? (
               comments.map((comment: any) => (
-                <div key={comment.id} className="flex gap-4">
-                  <div className="w-10 h-10 rounded-2xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center shrink-0 border border-gray-200 dark:border-white/5">
-                    <Icon name="account_circle" className="text-[22px] text-gray-400" />
-                  </div>
-                  <div className="flex flex-col max-w-[80%]">
-                    <div className="p-4 rounded-[1.5rem] text-sm font-medium shadow-sm bg-white dark:bg-surface-dark border border-gray-100 dark:border-gray-800 rounded-tl-none">
-                      <p className="font-black text-[9px] mb-1 uppercase tracking-widest opacity-60">
-                        {comment.userName || 'Пользователь'}
-                      </p>
-                      <p className="leading-relaxed text-slate-900 dark:text-white">{comment.comment}</p>
-                    </div>
-                    <span className="text-[9px] font-black text-gray-400 mt-2 uppercase tracking-tighter opacity-60">
-                      {new Date(comment.createdAt).toLocaleTimeString('ru-RU', {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        timeZone: 'Asia/Almaty'
-                      })}
+                <div key={comment.id} className="flex gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center shrink-0">
+                    <span className="text-white text-xs font-black">
+                      {(comment.userName || 'П')[0]}
                     </span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-xs font-bold text-slate-900 dark:text-white">
+                        {comment.userName || 'Пользователь'}
+                      </span>
+                      <span className="text-[10px] text-gray-400">
+                        {new Date(comment.createdAt).toLocaleTimeString('ru-RU', {
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })}
+                      </span>
+                    </div>
+                    <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
+                      {comment.comment}
+                    </p>
                   </div>
                 </div>
               ))
             ) : (
-              <div className="text-center py-8 text-gray-400 text-sm">
-                Комментариев пока нет. Будьте первым!
+              <div className="text-center py-6">
+                <Icon name="chat_bubble_outline" className="text-3xl text-gray-300 dark:text-gray-700 mb-2" />
+                <p className="text-xs text-gray-400">Комментариев пока нет</p>
               </div>
             )}
           </div>
 
-          <div className="mt-8 flex gap-3">
+          {/* Comment input */}
+          <div className="flex gap-2 pt-4 border-t border-gray-100 dark:border-white/5">
             <input
               type="text"
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && addComment()}
-              placeholder="Написать сообщение..."
-              className="flex-1 h-14 rounded-2xl bg-white dark:bg-surface-dark border-2 border-gray-100 dark:border-white/5 px-6 text-sm font-medium focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all text-slate-900 dark:text-white"
+              placeholder="Написать комментарий..."
+              className="flex-1 h-12 rounded-xl bg-gray-50 dark:bg-white/5 border-none px-4 text-sm font-medium text-slate-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-primary/20"
             />
             <button
               onClick={addComment}
-              className="h-14 w-14 rounded-2xl bg-primary text-white flex items-center justify-center shadow-xl shadow-primary/30 active:scale-90 transition-all"
+              disabled={!newComment.trim()}
+              className="h-12 w-12 rounded-xl bg-primary text-white flex items-center justify-center shadow-lg shadow-primary/30 active:scale-90 transition-all disabled:opacity-30"
             >
-              <Icon name="send" className="text-[22px]" />
+              <Icon name="send" className="text-[20px]" />
             </button>
           </div>
         </section>
       </main>
 
-      <div className="fixed bottom-0 left-0 w-full bg-white/80 dark:bg-surface-dark/80 backdrop-blur-2xl border-t border-gray-200 dark:border-gray-800 p-6 pb-10 z-40">
-        <div className="flex gap-4 max-w-lg mx-auto">
-          <button
-            onClick={handleStatusChange}
-            className={`flex-1 h-16 rounded-[1.5rem] text-white font-black text-base shadow-xl flex items-center justify-center gap-3 active:scale-95 transition-all ${task.status === 'К выполнению'
-                ? 'bg-slate-900 dark:bg-primary shadow-slate-900/30 dark:shadow-primary/40'
-                : task.status === 'В процессе'
-                  ? 'bg-emerald-500 shadow-emerald-500/40'
-                  : 'bg-gray-200 dark:bg-gray-800 text-slate-500 dark:text-slate-400 border border-transparent dark:border-white/5'
-              }`}
-          >
-            {task.status === 'К выполнению' && (
-              <>
-                <span>Начать работу</span>
-                <Icon name="rocket_launch" className="text-[24px]" />
-              </>
-            )}
-            {task.status === 'В процессе' && (
-              <>
-                <span>Завершить задачу</span>
-                <Icon name="verified" className="text-[24px]" />
-              </>
-            )}
-            {task.status === 'Готово' && (
-              <>
-                <span>Восстановить задачу</span>
-                <Icon name="refresh" className="text-[24px]" />
-              </>
-            )}
-          </button>
-        </div>
+      {/* Footer Action Button */}
+      <div className="flex-none p-5 pb-8 bg-background-light dark:bg-background-dark">
+        <button
+          onClick={handleStatusChange}
+          className={`w-full h-16 rounded-[2rem] font-black text-base flex items-center justify-center gap-3 active:scale-95 transition-all ${
+            task.status === 'К выполнению'
+              ? 'bg-primary text-white shadow-2xl shadow-primary/40'
+              : task.status === 'В процессе'
+                ? 'bg-emerald-500 text-white shadow-2xl shadow-emerald-500/40'
+                : 'bg-gray-100 dark:bg-white/5 text-gray-500 dark:text-gray-400'
+          }`}
+        >
+          {task.status === 'К выполнению' && (
+            <>
+              <span className="uppercase tracking-widest">Начать работу</span>
+              <Icon name="rocket_launch" className="text-[24px]" />
+            </>
+          )}
+          {task.status === 'В процессе' && (
+            <>
+              <span className="uppercase tracking-widest">Завершить</span>
+              <Icon name="check_circle" className="text-[24px]" />
+            </>
+          )}
+          {task.status === 'Готово' && (
+            <>
+              <span className="uppercase tracking-widest">Вернуть в работу</span>
+              <Icon name="refresh" className="text-[24px]" />
+            </>
+          )}
+        </button>
       </div>
     </div>
   );

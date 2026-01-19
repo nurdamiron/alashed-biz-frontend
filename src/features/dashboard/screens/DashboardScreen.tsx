@@ -12,7 +12,7 @@ const DashboardScreen = () => {
   return (
     <PullToRefresh
       onRefresh={refreshData}
-      className="flex-1 overflow-y-auto no-scrollbar transition-colors duration-300 bg-background-light dark:bg-background-dark"
+      className="h-full overflow-y-auto no-scrollbar transition-colors duration-300 bg-background-light dark:bg-background-dark"
     >
       {/* Header */}
       <header className="sticky top-0 z-30 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-800/50 transition-colors">
