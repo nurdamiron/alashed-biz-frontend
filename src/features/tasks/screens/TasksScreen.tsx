@@ -17,7 +17,7 @@ const TasksScreen = () => {
   const [selectedAssignee, setSelectedAssignee] = useState<string | null>(null);
 
   const navigate = useNavigate();
-  const { tasks, updateTaskStatus, employees, refreshData } = useAppContext();
+  const { tasks, updateTaskStatus, employees, refreshData, isDataLoading } = useAppContext();
 
   // Сохраняем выбранный вид в localStorage
   const handleViewChange = (newView: 'List' | 'Kanban') => {
@@ -25,8 +25,8 @@ const TasksScreen = () => {
     localStorage.setItem('alash_tasks_view', newView);
   };
 
-  // Локальное состояние загрузки для этой страницы
-  const isLoading = !tasks || tasks.length === 0;
+  // Используем глобальное состояние загрузки из контекста
+  const isLoading = isDataLoading && (!tasks || tasks.length === 0);
 
   // Фильтрация задач
   const filteredTasks = Array.isArray(tasks) ? tasks.filter((t) => {
