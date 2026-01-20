@@ -5,13 +5,11 @@ import { useAppContext } from '@/shared/context/AppContext';
 
 const SettingsScreen = () => {
   const navigate = useNavigate();
-  const { theme, logout, appName, businessDomain, setAppConfig, user, refreshData } = useAppContext();
+  const { logout, appName, businessDomain, setAppConfig, user, refreshData } = useAppContext();
 
   const [localName, setLocalName] = useState(appName);
   const [localDomain, setLocalDomain] = useState(businessDomain);
   const [isEditingConfig, setIsEditingConfig] = useState(false);
-
-  const isDark = theme === 'dark';
 
   const handleLogout = () => {
     logout();
@@ -25,38 +23,35 @@ const SettingsScreen = () => {
 
   return (
     <div className="flex flex-col h-full bg-background-light dark:bg-background-dark transition-colors duration-300">
-      <header className="sticky top-0 z-30 backdrop-blur-xl px-6 pt-12 pb-4 bg-background-light/80 dark:bg-background-dark/80">
-        <h1 className={`text-2xl font-black tracking-tight ${
-          isDark ? 'text-white' : 'text-slate-800'
-        }`}>
-          Настройки
-        </h1>
+      <header className="sticky top-0 z-30 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-800/50">
+        <div
+          className="px-5 pb-3"
+          style={{
+            paddingTop: 'max(1.25rem, calc(1.25rem + env(safe-area-inset-top)))'
+          }}
+        >
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
+            Настройки
+          </h1>
+        </div>
       </header>
 
-      <PullToRefresh onRefresh={refreshData} className="flex-1 overflow-y-auto no-scrollbar p-6 space-y-6 pb-40">
+      <PullToRefresh onRefresh={refreshData} className="flex-1 overflow-y-auto no-scrollbar px-5 pt-4 space-y-6 pb-40">
         {/* Profile Section */}
-        <section className={`rounded-2xl p-5 ${
-          isDark
-            ? 'bg-surface-dark border border-white/5'
-            : 'bg-white border border-slate-200/50 shadow-sm'
-        }`}>
+        <section className="bg-white dark:bg-surface-dark rounded-[2rem] p-5 shadow-sm border border-gray-100 dark:border-white/5">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-blue-500 flex items-center justify-center text-white font-bold text-xl">
+            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center text-white font-black text-xl shadow-lg shadow-primary/20">
               {user?.name?.charAt(0) || 'A'}
             </div>
             <div className="flex-1">
-              <h3 className={`font-bold ${isDark ? 'text-white' : 'text-slate-800'}`}>
+              <h3 className="font-bold text-slate-900 dark:text-white">
                 {user?.name || 'Администратор'}
               </h3>
-              <p className={`text-sm ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
                 {user?.email || 'admin@alashed.kz'}
               </p>
             </div>
-            <div className={`px-3 py-1 rounded-lg text-xs font-semibold ${
-              isDark
-                ? 'bg-blue-500/10 text-blue-400'
-                : 'bg-blue-50 text-blue-600'
-            }`}>
+            <div className="px-3 py-1.5 rounded-xl text-xs font-bold bg-primary/10 text-primary">
               {user?.role || 'Admin'}
             </div>
           </div>
@@ -66,15 +61,9 @@ const SettingsScreen = () => {
         <ThemeToggle variant="card" />
 
         {/* Push Notifications Section */}
-        <section className={`rounded-2xl overflow-hidden ${
-          isDark
-            ? 'bg-surface-dark border border-white/5'
-            : 'bg-white border border-slate-200/50 shadow-sm'
-        }`}>
+        <section className="bg-white dark:bg-surface-dark rounded-[2rem] shadow-sm border border-gray-100 dark:border-white/5">
           <div className="p-5">
-            <h3 className={`text-xs font-semibold uppercase tracking-wider mb-4 ${
-              isDark ? 'text-slate-500' : 'text-slate-400'
-            }`}>
+            <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-4">
               Уведомления
             </h3>
             <PushNotificationToggle />
@@ -82,21 +71,15 @@ const SettingsScreen = () => {
         </section>
 
         {/* App Config Section */}
-        <section className={`rounded-2xl overflow-hidden ${
-          isDark
-            ? 'bg-surface-dark border border-white/5'
-            : 'bg-white border border-slate-200/50 shadow-sm'
-        }`}>
+        <section className="bg-white dark:bg-surface-dark rounded-[2rem] shadow-sm border border-gray-100 dark:border-white/5">
           <div className="p-5">
             <div className="flex items-center justify-between mb-4">
-              <h3 className={`text-xs font-semibold uppercase tracking-wider ${
-                isDark ? 'text-slate-500' : 'text-slate-400'
-              }`}>
+              <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
                 Настройки приложения
               </h3>
               <button
                 onClick={() => (isEditingConfig ? saveConfig() : setIsEditingConfig(true))}
-                className="text-blue-500 text-xs font-semibold"
+                className="text-primary text-xs font-bold"
               >
                 {isEditingConfig ? 'Сохранить' : 'Изменить'}
               </button>
@@ -104,26 +87,18 @@ const SettingsScreen = () => {
 
             <div className="space-y-4">
               <div>
-                <label className={`block text-xs font-medium mb-2 ${
-                  isDark ? 'text-slate-400' : 'text-slate-500'
-                }`}>
+                <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">
                   Название
                 </label>
                 <input
                   disabled={!isEditingConfig}
                   value={localName}
                   onChange={(e) => setLocalName(e.target.value)}
-                  className={`w-full h-12 px-4 rounded-xl text-sm font-medium transition-colors disabled:opacity-60 ${
-                    isDark
-                      ? 'bg-surface-dark border border-white/5 text-white'
-                      : 'bg-slate-50 border border-slate-200 text-slate-800'
-                  }`}
+                  className="w-full h-14 px-5 rounded-2xl bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/5 text-base font-medium text-slate-900 dark:text-white transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-primary/20"
                 />
               </div>
               <div>
-                <label className={`block text-xs font-medium mb-2 ${
-                  isDark ? 'text-slate-400' : 'text-slate-500'
-                }`}>
+                <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">
                   Описание бизнеса
                 </label>
                 <input
@@ -131,11 +106,7 @@ const SettingsScreen = () => {
                   value={localDomain}
                   onChange={(e) => setLocalDomain(e.target.value)}
                   placeholder="Например: Магазин электроники"
-                  className={`w-full h-12 px-4 rounded-xl text-sm font-medium transition-colors disabled:opacity-60 ${
-                    isDark
-                      ? 'bg-surface-dark border border-white/5 text-white placeholder:text-slate-600'
-                      : 'bg-slate-50 border border-slate-200 text-slate-800 placeholder:text-slate-400'
-                  }`}
+                  className="w-full h-14 px-5 rounded-2xl bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/5 text-base font-medium text-slate-900 dark:text-white placeholder-gray-400 transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-primary/20"
                 />
               </div>
             </div>
@@ -143,15 +114,9 @@ const SettingsScreen = () => {
         </section>
 
         {/* Navigation Links */}
-        <section className={`rounded-2xl overflow-hidden ${
-          isDark
-            ? 'bg-surface-dark border border-white/5'
-            : 'bg-white border border-slate-200/50 shadow-sm'
-        }`}>
+        <section className="bg-white dark:bg-surface-dark rounded-[2rem] shadow-sm border border-gray-100 dark:border-white/5">
           <div className="p-5">
-            <h3 className={`text-xs font-semibold uppercase tracking-wider mb-4 ${
-              isDark ? 'text-slate-500' : 'text-slate-400'
-            }`}>
+            <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-4">
               Разделы
             </h3>
 
@@ -165,25 +130,17 @@ const SettingsScreen = () => {
                 <button
                   key={item.path}
                   onClick={() => navigate(item.path)}
-                  className={`w-full flex items-center justify-between p-3 rounded-xl transition-all active:scale-[0.98] ${
-                    isDark
-                      ? 'hover:bg-white/5'
-                      : 'hover:bg-slate-50'
-                  }`}
+                  className="w-full flex items-center justify-between p-3 rounded-xl transition-all active:scale-[0.98] hover:bg-gray-50 dark:hover:bg-white/5"
                 >
                   <div className="flex items-center gap-3">
-                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                      isDark ? 'bg-white/5' : 'bg-slate-100'
-                    }`}>
-                      <Icon name={item.icon} className={`text-lg ${
-                        isDark ? 'text-slate-400' : 'text-slate-500'
-                      }`} />
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-gray-100 dark:bg-white/5">
+                      <Icon name={item.icon} className="text-lg text-gray-500 dark:text-gray-400" />
                     </div>
-                    <span className={`font-medium ${isDark ? 'text-white' : 'text-slate-800'}`}>
+                    <span className="font-medium text-slate-900 dark:text-white">
                       {item.label}
                     </span>
                   </div>
-                  <Icon name="chevron_right" className={isDark ? 'text-slate-600' : 'text-slate-300'} />
+                  <Icon name="chevron_right" className="text-gray-300 dark:text-gray-600" />
                 </button>
               ))}
             </div>
@@ -191,24 +148,18 @@ const SettingsScreen = () => {
         </section>
 
         {/* Logout Section */}
-        <section className={`rounded-2xl overflow-hidden ${
-          isDark
-            ? 'bg-surface-dark border border-white/5'
-            : 'bg-white border border-slate-200/50 shadow-sm'
-        }`}>
+        <section className="bg-white dark:bg-surface-dark rounded-[2rem] shadow-sm border border-gray-100 dark:border-white/5 overflow-hidden">
           <button
             onClick={handleLogout}
-            className={`w-full flex items-center justify-between p-5 transition-all active:scale-[0.98] ${
-              isDark ? 'hover:bg-red-500/5' : 'hover:bg-red-50'
-            }`}
+            className="w-full flex items-center justify-between p-5 transition-all active:scale-[0.98] hover:bg-red-50 dark:hover:bg-red-500/5"
           >
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-red-500/10 flex items-center justify-center">
                 <Icon name="logout" className="text-red-500 text-2xl" />
               </div>
               <div className="text-left">
-                <p className="font-semibold text-red-500">Выйти</p>
-                <p className={`text-xs ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
+                <p className="font-bold text-red-500">Выйти</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
                   Завершить сессию
                 </p>
               </div>
@@ -219,7 +170,7 @@ const SettingsScreen = () => {
 
         {/* Version */}
         <div className="text-center py-6">
-          <p className={`text-xs ${isDark ? 'text-slate-700' : 'text-slate-300'}`}>
+          <p className="text-xs text-gray-300 dark:text-gray-700">
             Alashed Business v2.5.0
           </p>
         </div>

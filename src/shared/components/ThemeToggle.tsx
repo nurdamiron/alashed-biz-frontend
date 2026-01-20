@@ -86,19 +86,11 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
   // Default 'card' variant
   return (
     <section
-      className={`rounded-2xl overflow-hidden ${
-        isDark
-          ? 'bg-slate-800/50 border border-white/5'
-          : 'bg-white border border-slate-200/50 shadow-sm'
-      } ${className}`}
+      className={`bg-white dark:bg-surface-dark rounded-[2rem] shadow-sm border border-gray-100 dark:border-white/5 ${className}`}
     >
       <div className="p-5">
-        <h3
-          className={`text-xs font-semibold uppercase tracking-wider mb-4 ${
-            isDark ? 'text-slate-500' : 'text-slate-400'
-          }`}
-        >
-          Appearance
+        <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-4">
+          Оформление
         </h3>
 
         <div className="flex items-center justify-between">
@@ -113,20 +105,20 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
               <Icon name={isDark ? 'dark_mode' : 'light_mode'} className="text-2xl" />
             </div>
             <div>
-              <p className={`font-semibold ${isDark ? 'text-white' : 'text-slate-800'}`}>
-                {isDark ? 'Dark Mode' : 'Light Mode'}
+              <p className="font-bold text-slate-900 dark:text-white">
+                {isDark ? 'Темная тема' : 'Светлая тема'}
               </p>
-              <p className={`text-xs ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
-                {isDark ? 'Enabled' : 'Disabled'}
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                {isDark ? 'Включена' : 'Выключена'}
               </p>
             </div>
           </div>
           <button
             onClick={toggleTheme}
             className={`w-14 h-8 rounded-full relative transition-all duration-300 active:scale-95 ${
-              isDark ? 'bg-blue-500' : 'bg-slate-200'
+              isDark ? 'bg-primary' : 'bg-gray-200'
             }`}
-            aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
+            aria-label={`Переключить на ${isDark ? 'светлую' : 'темную'} тему`}
           >
             <div
               className={`absolute top-1 w-6 h-6 rounded-full bg-white shadow-lg transition-all duration-300 ${
