@@ -1,4 +1,4 @@
-import type { Order, Task, Product, Employee, AuditLog, DashboardStats, Notification, Supplier, FiscalReceipt } from '../types';
+import type { Order, Task, Product, Employee, AuditLog, DashboardStats, Notification, Supplier, FiscalReceipt, Customer } from '../types';
 
 const API_BASE = import.meta.env.VITE_API_URL || '/api';
 
@@ -254,6 +254,21 @@ export const api = {
     markAllRead: async () => {
       await request('/events/read', { method: 'PUT' });
     },
+  },
+
+  customers: {
+    search: async (query: string): Promise<Customer[]> => {
+      try {
+        const res = await request<{ success: boolean; data: Customer[] }>(
+          `/customers/search?q=${encodeURIComponent(query)}`
+        );
+        return res.data || [];
+      } catch {
+        return [];
+      }
+    },
+    getById: (id: string) => request<Customer>(`/customers/${id}`),
+    list: () => request<Customer[]>('/customers'),
   },
 
   warehouse: {

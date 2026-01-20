@@ -1,10 +1,10 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Icon } from '@/shared/components';
 import { useAppContext } from '@/shared/context/AppContext';
 import { api } from '@/shared/lib/api';
 import { validatePhone, handlePhoneInput } from '@/shared/lib/validators';
-import type { Product, OrderItem } from '@/shared/types';
+import type { Product, OrderItem, Customer } from '@/shared/types';
 
 interface InternalOrderItem {
   product: Product;
@@ -57,6 +57,12 @@ const CreateOrderModal = () => {
   const [searchResults, setSearchResults] = useState<Product[]>([]);
   const [isSearching, setIsSearching] = useState(false);
 
+  // Customer search state
+  const [customerResults, setCustomerResults] = useState<Customer[]>([]);
+  const [isSearchingCustomer, setIsSearchingCustomer] = useState(false);
+  const [showCustomerDropdown, setShowCustomerDropdown] = useState(false);
+  const customerInputRef = useRef<HTMLInputElement>(null);
+
   const handlePhoneChange = (value: string) => {
     const formatted = handlePhoneInput(value);
     setPhone(formatted);
@@ -65,6 +71,46 @@ const CreateOrderModal = () => {
     const validation = validatePhone(formatted);
     setPhoneError(validation.error);
   };
+
+  // Customer search handler
+  const handleClientNameChange = (value: string) => {
+    setClientName(value);
+    setShowCustomerDropdown(value.length >= 2);
+  };
+
+  // Select customer from dropdown
+  const selectCustomer = (customer: Customer) => {
+    setClientName(customer.name);
+    if (customer.phone) {
+      setPhone(customer.phone);
+      const validation = validatePhone(customer.phone);
+      setPhoneError(validation.error);
+    }
+    setShowCustomerDropdown(false);
+  };
+
+  // Search customers when typing
+  useEffect(() => {
+    if (clientName.length < 2) {
+      setCustomerResults([]);
+      return;
+    }
+
+    const timer = setTimeout(async () => {
+      setIsSearchingCustomer(true);
+      try {
+        const results = await api.customers.search(clientName);
+        setCustomerResults(results);
+      } catch (e) {
+        console.error('Customer search failed', e);
+        setCustomerResults([]);
+      } finally {
+        setIsSearchingCustomer(false);
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [clientName]);
 
   const totalAmount = useMemo(
     () => selectedItems.reduce((sum, item) => sum + item.product.priceSell * item.quantity, 0),
@@ -190,12 +236,57 @@ const CreateOrderModal = () => {
               </button>
             ))}
           </div>
-          <input
-            value={clientName}
-            onChange={(e) => setClientName(e.target.value)}
-            placeholder="ФИО Клиента"
-            className="w-full h-14 px-5 rounded-2xl bg-white dark:bg-surface-dark border border-gray-100 dark:border-white/5 text-base font-bold text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/20 shadow-sm"
-          />
+          <div className="relative">
+            <input
+              ref={customerInputRef}
+              value={clientName}
+              onChange={(e) => handleClientNameChange(e.target.value)}
+              onFocus={() => clientName.length >= 2 && setShowCustomerDropdown(true)}
+              onBlur={() => setTimeout(() => setShowCustomerDropdown(false), 200)}
+              placeholder="ФИО Клиента"
+              autoComplete="off"
+              className="w-full h-14 px-5 rounded-2xl bg-white dark:bg-surface-dark border border-gray-100 dark:border-white/5 text-base font-bold text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/20 shadow-sm"
+            />
+            {isSearchingCustomer && (
+              <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                <div className="animate-spin h-5 w-5 border-2 border-primary border-t-transparent rounded-full" />
+              </div>
+            )}
+            {/* Customer dropdown */}
+            {showCustomerDropdown && customerResults.length > 0 && (
+              <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-surface-dark rounded-2xl shadow-xl border border-gray-100 dark:border-white/10 overflow-hidden z-50 max-h-60 overflow-y-auto">
+                {customerResults.map((customer) => (
+                  <button
+                    key={customer.id}
+                    type="button"
+                    onClick={() => selectCustomer(customer)}
+                    className="w-full flex items-center gap-3 p-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors text-left border-b border-gray-100 dark:border-white/5 last:border-b-0"
+                  >
+                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-bold">
+                      {customer.name.charAt(0).toUpperCase()}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-bold text-slate-900 dark:text-white truncate">
+                        {customer.name}
+                      </p>
+                      {customer.phone && (
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          {customer.phone}
+                        </p>
+                      )}
+                    </div>
+                    {customer.ordersCount !== undefined && customer.ordersCount > 0 && (
+                      <div className="text-right">
+                        <p className="text-[10px] font-bold text-primary">
+                          {customer.ordersCount} заказов
+                        </p>
+                      </div>
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
           <div>
             <input
               value={phone}
