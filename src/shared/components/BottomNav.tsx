@@ -40,26 +40,17 @@ const BottomNav = () => {
               onClick={() => navigate(item.path)}
               aria-label={item.label}
               aria-current={active ? 'page' : undefined}
-              className="flex flex-col items-center justify-center flex-1 py-2 transition-all active:scale-90"
+              className="flex items-center justify-center flex-1 py-2 transition-all active:scale-90"
             >
               <div
-                className={`flex items-center justify-center w-11 h-11 rounded-2xl mb-1 transition-all ${
+                className={`flex items-center justify-center w-12 h-12 rounded-2xl transition-all ${
                   active
                     ? 'bg-primary text-white shadow-lg shadow-primary/30'
                     : 'bg-gray-100 dark:bg-white/5 text-gray-400 dark:text-gray-500'
                 }`}
               >
-                <Icon name={item.icon} filled={active} className="text-[22px]" />
+                <Icon name={item.icon} filled={active} className="text-[24px]" />
               </div>
-              <span
-                className={`text-[9px] font-black uppercase tracking-wider transition-colors ${
-                  active
-                    ? 'text-primary'
-                    : 'text-gray-400 dark:text-gray-500'
-                }`}
-              >
-                {item.label}
-              </span>
             </button>
           );
         })}
