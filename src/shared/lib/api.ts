@@ -1,4 +1,5 @@
 import type { Order, Task, Product, Employee, AuditLog, DashboardStats, Notification, Supplier, FiscalReceipt, Customer } from '../types';
+import { wsClient } from './websocket';
 
 const API_BASE = import.meta.env.VITE_API_URL || '/api';
 
@@ -8,6 +9,96 @@ const getRefreshToken = () => localStorage.getItem('alash_refresh_token');
 // Flag to prevent multiple simultaneous refresh attempts
 let isRefreshing = false;
 let refreshPromise: Promise<boolean> | null = null;
+
+// Proactive refresh interval ID
+let proactiveRefreshInterval: number | null = null;
+
+// Session expired callback for UI notification
+let onSessionExpiredCallback: (() => void) | null = null;
+
+// Set callback for session expired event (used by UI to show modal)
+export function setSessionExpiredCallback(callback: () => void) {
+  onSessionExpiredCallback = callback;
+}
+
+// Decode JWT token to get expiration time
+function getTokenExpiration(token: string): number | null {
+  try {
+    const parts = token.split('.');
+    if (parts.length !== 3) return null;
+
+    const payload = JSON.parse(atob(parts[1]));
+    return payload.exp ? payload.exp * 1000 : null; // Convert to milliseconds
+  } catch {
+    return null;
+  }
+}
+
+// Check if token needs refresh (less than 1 hour remaining)
+function tokenNeedsRefresh(token: string): boolean {
+  const expiration = getTokenExpiration(token);
+  if (!expiration) return true;
+
+  const oneHour = 60 * 60 * 1000;
+  return Date.now() > expiration - oneHour;
+}
+
+// Check if token is expired
+function isTokenExpired(token: string): boolean {
+  const expiration = getTokenExpiration(token);
+  if (!expiration) return true;
+
+  return Date.now() > expiration;
+}
+
+// Proactively check and refresh token if needed
+async function checkAndRefreshToken(): Promise<void> {
+  const token = getToken();
+  if (!token) return;
+
+  // If token is completely expired, don't try proactive refresh
+  if (isTokenExpired(token)) {
+    return;
+  }
+
+  // If token needs refresh (less than 1 hour left), refresh it
+  if (tokenNeedsRefresh(token)) {
+    console.log('[Auth] Proactively refreshing token...');
+    await tryRefreshToken();
+  }
+}
+
+// Start proactive token refresh (called on app init)
+export function startProactiveRefresh() {
+  // Stop existing interval if any
+  stopProactiveRefresh();
+
+  // Check immediately
+  checkAndRefreshToken();
+
+  // Check every 5 minutes
+  proactiveRefreshInterval = window.setInterval(checkAndRefreshToken, 5 * 60 * 1000);
+
+  // Also check when user returns to the tab
+  document.addEventListener('visibilitychange', handleVisibilityChange);
+}
+
+// Stop proactive token refresh
+export function stopProactiveRefresh() {
+  if (proactiveRefreshInterval) {
+    clearInterval(proactiveRefreshInterval);
+    proactiveRefreshInterval = null;
+  }
+  document.removeEventListener('visibilitychange', handleVisibilityChange);
+}
+
+// Handle tab visibility change
+function handleVisibilityChange() {
+  if (document.visibilityState === 'visible') {
+    // User returned to the tab, check token
+    checkAndRefreshToken();
+  }
+}
 
 // Try to refresh the access token
 async function tryRefreshToken(): Promise<boolean> {
@@ -29,6 +120,13 @@ async function tryRefreshToken(): Promise<boolean> {
       if (data.refreshToken) {
         localStorage.setItem('alash_refresh_token', data.refreshToken);
       }
+
+      // Reconnect WebSocket with new token
+      if (wsClient.isConnected()) {
+        wsClient.forceReconnect();
+      }
+
+      console.log('[Auth] Token refreshed successfully');
       return true;
     }
     return false;
@@ -37,16 +135,28 @@ async function tryRefreshToken(): Promise<boolean> {
   }
 }
 
-// Handle session expiration - clear storage and redirect to login
+// Handle session expiration - clear storage and notify UI
 function handleSessionExpired() {
+  // Stop proactive refresh
+  stopProactiveRefresh();
+
+  // Disconnect WebSocket
+  wsClient.disconnect();
+
+  // Clear auth data
   localStorage.removeItem('alash_token');
   localStorage.removeItem('alash_refresh_token');
   localStorage.removeItem('alash_auth');
 
-  // Redirect to login if not already there
-  if (!window.location.hash.includes('/login')) {
-    window.location.hash = '/login';
-    window.location.reload();
+  // Notify UI via callback (to show modal)
+  if (onSessionExpiredCallback) {
+    onSessionExpiredCallback();
+  } else {
+    // Fallback: redirect to login if no callback set
+    if (!window.location.hash.includes('/login')) {
+      window.location.hash = '/login';
+      window.location.reload();
+    }
   }
 }
 

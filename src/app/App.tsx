@@ -1,11 +1,12 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Toaster } from 'react-hot-toast';
-import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { HashRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { AppProvider, useAppContext } from '@/shared/context/AppContext';
-import { BottomNav, NotFoundScreen, ErrorBoundary } from '@/shared/components';
+import { BottomNav, NotFoundScreen, ErrorBoundary, SessionExpiredModal } from '@/shared/components';
 import { PushPrompt } from '@/shared/components/PushPrompt';
 import Loading from '@/shared/components/Loading';
 import { initializePush } from '@/shared/lib/push';
+import { startProactiveRefresh, stopProactiveRefresh, setSessionExpiredCallback } from '@/shared/lib/api';
 
 // Features - Screens
 import { LoginScreen } from '@/features/auth';
@@ -36,7 +37,33 @@ const ProtectedRoute = ({ children }: { children?: React.ReactNode }) => {
 };
 
 const AppRoutes = () => {
-  const { theme, isAuthenticated, isDataLoading } = useAppContext();
+  const { theme, isAuthenticated, isDataLoading, logout } = useAppContext();
+  const [showSessionExpired, setShowSessionExpired] = useState(false);
+  const navigate = useNavigate();
+
+  // Set up proactive token refresh and session expired callback
+  useEffect(() => {
+    // Set callback for session expired
+    setSessionExpiredCallback(() => {
+      setShowSessionExpired(true);
+    });
+
+    // Start proactive refresh when authenticated
+    if (isAuthenticated) {
+      startProactiveRefresh();
+    }
+
+    return () => {
+      stopProactiveRefresh();
+    };
+  }, [isAuthenticated]);
+
+  // Handle login redirect from session expired modal
+  const handleSessionExpiredLogin = () => {
+    setShowSessionExpired(false);
+    logout();
+    navigate('/login');
+  };
 
   if (isDataLoading) {
     return <Loading />;
@@ -265,6 +292,11 @@ const AppRoutes = () => {
       </div>
       {isAuthenticated && <PushPrompt />}
       <BottomNav />
+
+      {/* Session expired modal */}
+      {showSessionExpired && (
+        <SessionExpiredModal onLogin={handleSessionExpiredLogin} />
+      )}
     </div>
   );
 };

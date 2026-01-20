@@ -27,22 +27,71 @@ const WS_CLOSED = 3;
 class WebSocketClient {
   private socket: WebSocket | null = null;
   private reconnectAttempts = 0;
-  private maxReconnectAttempts = 5;
+  private maxReconnectAttempts = 10; // Increased from 5
   private reconnectDelay = 1000;
   private pingInterval: ReturnType<typeof setInterval> | null = null;
   private listeners: Map<WebSocketEventType | '*', Set<EventCallback>> = new Map();
   private url: string = '';
-  private token: string = '';
+  private visibilityHandler: (() => void) | null = null;
+  private connectionStableTimeout: ReturnType<typeof setTimeout> | null = null;
 
-  connect(token: string): void {
+  // Get fresh token from localStorage
+  private getFreshToken(): string | null {
+    return localStorage.getItem('alash_token');
+  }
+
+  connect(token?: string): void {
     if (this.socket?.readyState === WS_OPEN) {
       return;
     }
 
-    this.token = token;
+    // Use provided token or get from localStorage
+    const actualToken = token || this.getFreshToken();
+    if (!actualToken) {
+      console.log('[WebSocket] No token available, skipping connection');
+      return;
+    }
+
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     const host = import.meta.env.VITE_API_URL?.replace(/^https?:\/\//, '').replace(/\/api\/?$/, '') || window.location.host;
-    this.url = `${protocol}//${host}/ws?token=${encodeURIComponent(token)}`;
+    this.url = `${protocol}//${host}/ws?token=${encodeURIComponent(actualToken)}`;
+
+    this.initializeConnection();
+    this.setupVisibilityHandler();
+  }
+
+  private setupVisibilityHandler(): void {
+    // Remove old handler if exists
+    if (this.visibilityHandler) {
+      document.removeEventListener('visibilitychange', this.visibilityHandler);
+    }
+
+    // Create new handler for visibility change
+    this.visibilityHandler = () => {
+      if (document.visibilityState === 'visible') {
+        // User returned to the tab, check connection and reconnect if needed
+        if (this.socket?.readyState !== WS_OPEN) {
+          console.log('[WebSocket] Tab became visible, reconnecting...');
+          this.reconnectAttempts = 0; // Reset attempts on visibility change
+          this.reconnectWithFreshToken();
+        }
+      }
+    };
+
+    document.addEventListener('visibilitychange', this.visibilityHandler);
+  }
+
+  // Reconnect with fresh token from localStorage
+  private reconnectWithFreshToken(): void {
+    const freshToken = this.getFreshToken();
+    if (!freshToken) {
+      console.log('[WebSocket] No token for reconnection');
+      return;
+    }
+
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const host = import.meta.env.VITE_API_URL?.replace(/^https?:\/\//, '').replace(/\/api\/?$/, '') || window.location.host;
+    this.url = `${protocol}//${host}/ws?token=${encodeURIComponent(freshToken)}`;
 
     this.initializeConnection();
   }
@@ -55,6 +104,11 @@ class WebSocketClient {
         console.log('[WebSocket] Connected');
         this.reconnectAttempts = 0;
         this.startPingInterval();
+
+        // Mark connection as stable after 30 seconds
+        this.connectionStableTimeout = setTimeout(() => {
+          console.log('[WebSocket] Connection stable');
+        }, 30000);
       };
 
       this.socket.onmessage = (event) => {
@@ -71,8 +125,14 @@ class WebSocketClient {
         console.log('[WebSocket] Disconnected:', event.code, event.reason);
         this.stopPingInterval();
 
-        // Attempt reconnection if not intentionally closed
-        if (event.code !== 1000 && this.reconnectAttempts < this.maxReconnectAttempts) {
+        // Clear stable timeout
+        if (this.connectionStableTimeout) {
+          clearTimeout(this.connectionStableTimeout);
+          this.connectionStableTimeout = null;
+        }
+
+        // Attempt reconnection if not intentionally closed and we have a token
+        if (event.code !== 1000 && this.reconnectAttempts < this.maxReconnectAttempts && this.getFreshToken()) {
           this.scheduleReconnect();
         }
       };
@@ -88,13 +148,13 @@ class WebSocketClient {
 
   private scheduleReconnect(): void {
     this.reconnectAttempts++;
-    const delay = this.reconnectDelay * Math.pow(2, this.reconnectAttempts - 1);
+    // Exponential backoff with max of 30 seconds
+    const delay = Math.min(this.reconnectDelay * Math.pow(2, this.reconnectAttempts - 1), 30000);
     console.log(`[WebSocket] Reconnecting in ${delay}ms (attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts})`);
 
     setTimeout(() => {
-      if (this.token) {
-        this.initializeConnection();
-      }
+      // Always get fresh token on reconnect
+      this.reconnectWithFreshToken();
     }, delay);
   }
 
@@ -119,11 +179,23 @@ class WebSocketClient {
 
   disconnect(): void {
     this.stopPingInterval();
+
+    // Clear stable timeout
+    if (this.connectionStableTimeout) {
+      clearTimeout(this.connectionStableTimeout);
+      this.connectionStableTimeout = null;
+    }
+
+    // Remove visibility handler
+    if (this.visibilityHandler) {
+      document.removeEventListener('visibilitychange', this.visibilityHandler);
+      this.visibilityHandler = null;
+    }
+
     if (this.socket) {
       this.socket.close(1000, 'Client disconnect');
       this.socket = null;
     }
-    this.token = '';
     this.reconnectAttempts = this.maxReconnectAttempts; // Prevent auto-reconnect
   }
 
@@ -159,6 +231,26 @@ class WebSocketClient {
 
   getState(): number {
     return this.socket?.readyState ?? WS_CLOSED;
+  }
+
+  // Force reconnect with new token (call after token refresh)
+  forceReconnect(): void {
+    console.log('[WebSocket] Force reconnecting with new token...');
+
+    // Close existing connection
+    this.stopPingInterval();
+    if (this.connectionStableTimeout) {
+      clearTimeout(this.connectionStableTimeout);
+      this.connectionStableTimeout = null;
+    }
+    if (this.socket) {
+      this.socket.close(1000, 'Token refresh');
+      this.socket = null;
+    }
+
+    // Reset attempts and reconnect
+    this.reconnectAttempts = 0;
+    this.reconnectWithFreshToken();
   }
 }
 
