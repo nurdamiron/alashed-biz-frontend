@@ -27,11 +27,12 @@ const SettingsScreen = () => {
     <div className="flex flex-col h-full bg-background-light dark:bg-background-dark transition-colors duration-300">
       <header className="sticky top-0 z-30 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-800/50">
         <div
-          className="flex items-center justify-center px-5 pb-3"
+          className="flex items-center justify-between px-5 pb-3"
           style={{
             paddingTop: 'max(1rem, calc(1rem + env(safe-area-inset-top)))'
           }}
         >
+          <div className="w-10" />
           <div className="flex flex-col items-center">
             <span className="text-[9px] font-black text-primary uppercase tracking-[0.2em] mb-0.5">
               Меню
@@ -40,6 +41,12 @@ const SettingsScreen = () => {
               Настройки
             </h1>
           </div>
+          <button
+            onClick={() => navigate('/notifications')}
+            className="flex items-center justify-center w-10 h-10 rounded-2xl bg-white dark:bg-surface-dark border border-gray-100 dark:border-white/5 shadow-sm text-slate-900 dark:text-white active:scale-90 transition-all"
+          >
+            <Icon name="notifications" className="text-[20px]" />
+          </button>
         </div>
       </header>
 
