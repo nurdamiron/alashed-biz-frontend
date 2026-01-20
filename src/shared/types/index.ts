@@ -134,13 +134,19 @@ export interface Transaction {
 }
 
 // Notification Types
+export type NotificationType = 'new_order' | 'new_task' | 'low_stock' | 'out_of_stock' | 'task_overdue' | 'order_status_changed' | 'alert' | 'info';
+
 export interface Notification {
   id: string;
-  type: string;
+  type: NotificationType | string;
   title: string;
   message: string;
   read: boolean;
   createdAt: string;
+  // Navigation fields - backend should provide these for clickable notifications
+  relatedType?: 'order' | 'task' | 'product' | 'inventory';
+  relatedId?: string;
+  url?: string; // Direct URL path, e.g., '/task/123'
 }
 
 // Stats Types

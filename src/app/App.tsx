@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AppProvider, useAppContext } from '@/shared/context/AppContext';
-import { BottomNav } from '@/shared/components';
+import { BottomNav, NotFoundScreen } from '@/shared/components';
 import { PushPrompt } from '@/shared/components/PushPrompt';
 import Loading from '@/shared/components/Loading';
 import { initializePush } from '@/shared/lib/push';
@@ -253,7 +253,14 @@ const AppRoutes = () => {
               </ProtectedRoute>
             }
           />
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route
+            path="*"
+            element={
+              <ProtectedRoute>
+                <NotFoundScreen />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </div>
       {isAuthenticated && <PushPrompt />}

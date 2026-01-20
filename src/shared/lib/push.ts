@@ -272,9 +272,14 @@ export async function initializePush(): Promise<void> {
   navigator.serviceWorker.addEventListener('message', (event) => {
     if (event.data?.type === 'NOTIFICATION_CLICK') {
       // Navigate to the URL from the notification
-      const url = event.data.url;
-      if (url && url !== window.location.pathname) {
-        window.location.hash = url;
+      const path = event.data.url;
+      // Get current route from hash (e.g., '#/tasks' -> '/tasks')
+      const currentRoute = window.location.hash.slice(1) || '/';
+
+      if (path && path !== currentRoute) {
+        console.log('[Push] Navigating to:', path);
+        // For HashRouter, setting hash will trigger navigation
+        window.location.hash = path;
       }
     }
   });

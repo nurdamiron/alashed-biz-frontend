@@ -2,11 +2,14 @@ export type WebSocketEventType =
   | 'connected'
   | 'new_order'
   | 'new_task'
+  | 'task_completed'
+  | 'task_assigned'
   | 'low_stock'
   | 'out_of_stock'
   | 'new_notification'
   | 'task_overdue'
   | 'order_status_changed'
+  | 'order_completed'
   | 'pong';
 
 export interface WebSocketEvent {

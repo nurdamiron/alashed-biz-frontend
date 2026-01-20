@@ -281,6 +281,18 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         toast('Новая задача!', { icon: '📋' });
         refreshData();
         break;
+      case 'task_completed':
+        toast.success(
+          event.data?.completedBy
+            ? `${event.data.completedBy} выполнил задачу: ${event.data?.title || ''}`
+            : `Задача выполнена: ${event.data?.title || ''}`
+        );
+        refreshData();
+        break;
+      case 'task_assigned':
+        toast(`Вам назначена задача: ${event.data?.title || ''}`, { icon: '👤' });
+        refreshData();
+        break;
       case 'low_stock':
         toast.error(`Низкий остаток: ${event.data?.productName || 'товар'}`);
         refreshData();
@@ -298,6 +310,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         break;
       case 'order_status_changed':
         toast(`Заказ #${event.data?.orderId || ''}: ${event.data?.status || 'обновлен'}`, { icon: '🔄' });
+        refreshData();
+        break;
+      case 'order_completed':
+        toast.success(`Заказ #${event.data?.orderId || ''} выполнен!`);
         refreshData();
         break;
     }

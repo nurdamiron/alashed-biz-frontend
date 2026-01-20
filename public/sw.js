@@ -81,8 +81,13 @@ self.addEventListener('notificationclick', (event) => {
 
   event.notification.close();
 
-  // Get the URL to open
-  const urlToOpen = event.notification.data?.url || '/';
+  // Get the URL/path to open (e.g., '/task/123')
+  const path = event.notification.data?.url || '/';
+
+  // Build full URL with hash for HashRouter
+  // e.g., '/task/123' becomes 'https://domain.com/#/task/123'
+  const baseUrl = self.location.origin;
+  const hashUrl = `${baseUrl}/#${path}`;
 
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
@@ -91,18 +96,18 @@ self.addEventListener('notificationclick', (event) => {
       // Try to find an existing window/tab
       for (const client of clientList) {
         if ('focus' in client) {
-          console.log('[SW] Focusing existing client');
+          console.log('[SW] Focusing existing client and navigating to:', path);
           client.postMessage({
             type: 'NOTIFICATION_CLICK',
-            url: urlToOpen,
+            url: path,
           });
           return client.focus();
         }
       }
 
-      // No existing window found, open a new one
-      console.log('[SW] Opening new window:', urlToOpen);
-      return clients.openWindow(urlToOpen);
+      // No existing window found, open a new one with hash URL
+      console.log('[SW] Opening new window:', hashUrl);
+      return clients.openWindow(hashUrl);
     })
   );
 });

@@ -41,7 +41,6 @@ const CreateProductModal = () => {
     }
 
     addProduct({
-      id: Date.now().toString(),
       name,
       sku: sku || `SKU-${Date.now().toString().slice(-6)}`,
       category: category || 'Без категории',
