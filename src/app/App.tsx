@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AppProvider, useAppContext } from '@/shared/context/AppContext';
-import { BottomNav, NotFoundScreen } from '@/shared/components';
+import { BottomNav, NotFoundScreen, ErrorBoundary } from '@/shared/components';
 import { PushPrompt } from '@/shared/components/PushPrompt';
 import Loading from '@/shared/components/Loading';
 import { initializePush } from '@/shared/lib/push';
@@ -271,33 +271,35 @@ const AppRoutes = () => {
 
 const App = () => {
   return (
-    <AppProvider>
-      <Toaster
-        position="top-right"
-        toastOptions={{
-          className: 'text-sm font-bold',
-          style: {
-            borderRadius: '1rem',
-            padding: '1rem',
-          },
-          success: {
-            iconTheme: {
-              primary: '#22c55e',
-              secondary: '#fff',
+    <ErrorBoundary>
+      <AppProvider>
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            className: 'text-sm font-bold',
+            style: {
+              borderRadius: '1rem',
+              padding: '1rem',
             },
-          },
-          error: {
-            iconTheme: {
-              primary: '#ef4444',
-              secondary: '#fff',
+            success: {
+              iconTheme: {
+                primary: '#22c55e',
+                secondary: '#fff',
+              },
             },
-          },
-        }}
-      />
-      <HashRouter>
-        <AppRoutes />
-      </HashRouter>
-    </AppProvider>
+            error: {
+              iconTheme: {
+                primary: '#ef4444',
+                secondary: '#fff',
+              },
+            },
+          }}
+        />
+        <HashRouter>
+          <AppRoutes />
+        </HashRouter>
+      </AppProvider>
+    </ErrorBoundary>
   );
 };
 

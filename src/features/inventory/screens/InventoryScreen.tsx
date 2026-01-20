@@ -1,7 +1,8 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Icon, PullToRefresh } from '@/shared/components';
+import { Icon, PullToRefresh, LoadMore } from '@/shared/components';
 import { useAppContext } from '@/shared/context/AppContext';
+import { usePagination } from '@/shared/hooks/usePagination';
 
 // Custom debounce hook
 function useDebounce<T>(value: T, delay: number): T {
@@ -39,6 +40,16 @@ const InventoryScreen = () => {
       return matchesSearch && matchesCategory && matchesLowStock;
     });
   }, [products, debouncedSearchTerm, activeCategory, showOnlyLowStock]);
+
+  // Pagination
+  const { visibleItems, hasMore, loadMore, reset } = usePagination(filteredProducts, {
+    initialPageSize: 15,
+  });
+
+  // Reset pagination when filters change
+  useEffect(() => {
+    reset();
+  }, [debouncedSearchTerm, activeCategory, showOnlyLowStock]);
 
   return (
     <div className="flex flex-col h-full bg-background-light dark:bg-background-dark transition-colors duration-300">
@@ -112,62 +123,70 @@ const InventoryScreen = () => {
         </div>
 
         {filteredProducts.length > 0 ? (
-          filteredProducts.map((product) => {
-            const isLow = product.stock <= product.minStock;
-            return (
-              <div
-                key={product.id}
-                onClick={() => navigate(`/inventory/${product.id}`)}
-                className="flex flex-col bg-white dark:bg-surface-dark rounded-[2.2rem] p-5 shadow-sm border border-gray-100 dark:border-white/5 active:scale-[0.98] transition-all hover:shadow-xl"
-              >
-                <div className="flex gap-5">
-                  <div className="h-20 w-20 rounded-2xl bg-gray-50 dark:bg-background-dark p-2 shrink-0 border border-gray-100 dark:border-white/5 shadow-inner">
-                    <img
-                      src={product.img}
-                      alt={product.name}
-                      className="w-full h-full object-cover rounded-xl"
-                    />
-                  </div>
-
-                  <div className="flex-1 min-w-0 flex flex-col justify-between">
-                    <div className="flex justify-between items-start">
-                      <h4 className="text-sm font-black text-slate-900 dark:text-white truncate pr-4">
-                        {product.name}
-                      </h4>
-                      <div
-                        className={`px-2 py-1 rounded-lg text-[8px] font-black uppercase tracking-tighter ${isLow ? 'bg-red-500/10 text-red-500' : 'bg-emerald-500/10 text-emerald-500'
-                          }`}
-                      >
-                        {isLow ? 'Дефицит' : 'ОК'}
-                      </div>
+          <>
+            {visibleItems.map((product) => {
+              const isLow = product.stock <= product.minStock;
+              return (
+                <div
+                  key={product.id}
+                  onClick={() => navigate(`/inventory/${product.id}`)}
+                  className="flex flex-col bg-white dark:bg-surface-dark rounded-[2.2rem] p-5 shadow-sm border border-gray-100 dark:border-white/5 active:scale-[0.98] transition-all hover:shadow-xl"
+                >
+                  <div className="flex gap-5">
+                    <div className="h-20 w-20 rounded-2xl bg-gray-50 dark:bg-background-dark p-2 shrink-0 border border-gray-100 dark:border-white/5 shadow-inner">
+                      <img
+                        src={product.img}
+                        alt={product.name}
+                        className="w-full h-full object-cover rounded-xl"
+                      />
                     </div>
 
-                    <div className="flex items-end justify-between mt-4">
-                      <div>
-                        <p className="text-[8px] font-black text-gray-600 dark:text-gray-400 uppercase tracking-widest mb-0.5">
-                          Цена продажи
-                        </p>
-                        <p className="text-sm font-black text-slate-900 dark:text-white">
-                          {formatPrice(product.priceSell)}
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-[8px] font-black text-gray-600 dark:text-gray-400 uppercase tracking-widest mb-0.5">
-                          На Складе
-                        </p>
-                        <p
-                          className={`text-sm font-black ${isLow ? 'text-red-500' : 'text-slate-900 dark:text-white'
+                    <div className="flex-1 min-w-0 flex flex-col justify-between">
+                      <div className="flex justify-between items-start">
+                        <h4 className="text-sm font-black text-slate-900 dark:text-white truncate pr-4">
+                          {product.name}
+                        </h4>
+                        <div
+                          className={`px-2 py-1 rounded-lg text-[8px] font-black uppercase tracking-tighter ${isLow ? 'bg-red-500/10 text-red-500' : 'bg-emerald-500/10 text-emerald-500'
                             }`}
                         >
-                          {product.stock} {product.unit}
-                        </p>
+                          {isLow ? 'Дефицит' : 'ОК'}
+                        </div>
+                      </div>
+
+                      <div className="flex items-end justify-between mt-4">
+                        <div>
+                          <p className="text-[8px] font-black text-gray-600 dark:text-gray-400 uppercase tracking-widest mb-0.5">
+                            Цена продажи
+                          </p>
+                          <p className="text-sm font-black text-slate-900 dark:text-white">
+                            {formatPrice(product.priceSell)}
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-[8px] font-black text-gray-600 dark:text-gray-400 uppercase tracking-widest mb-0.5">
+                            На Складе
+                          </p>
+                          <p
+                            className={`text-sm font-black ${isLow ? 'text-red-500' : 'text-slate-900 dark:text-white'
+                              }`}
+                          >
+                            {product.stock} {product.unit}
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            );
-          })
+              );
+            })}
+            <LoadMore
+              onLoadMore={loadMore}
+              hasMore={hasMore}
+              loadedCount={visibleItems.length}
+              totalCount={filteredProducts.length}
+            />
+          </>
         ) : (
           <div className="flex flex-col items-center justify-center py-16 px-6">
             <div className="w-20 h-20 rounded-3xl bg-gray-100 dark:bg-white/5 flex items-center justify-center mb-4">

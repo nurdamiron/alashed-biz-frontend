@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Icon, PullToRefresh } from '@/shared/components';
+import { Icon, PullToRefresh, LoadMore } from '@/shared/components';
 import { useAppContext } from '@/shared/context/AppContext';
 import { getOrderStatusColor } from '@/shared/lib/utils';
+import { usePagination } from '@/shared/hooks/usePagination';
 
 const OrdersScreen = () => {
   const navigate = useNavigate();
@@ -23,6 +24,16 @@ const OrdersScreen = () => {
       (!dateRange.end || o.date <= dateRange.end);
     return matchStatus && matchSource && matchDate;
   }) : [];
+
+  // Pagination - show 15 items initially, load 15 more on each click
+  const { visibleItems, hasMore, loadMore, reset } = usePagination(filteredOrders, {
+    initialPageSize: 15,
+  });
+
+  // Reset pagination when filters change
+  useEffect(() => {
+    reset();
+  }, [activeFilter, sourceFilter, dateRange.start, dateRange.end]);
 
   return (
     <div className="flex flex-col h-full bg-background-light dark:bg-background-dark transition-colors duration-300">
@@ -136,7 +147,7 @@ const OrdersScreen = () => {
         onRefresh={refreshData}
         className="flex-1 overflow-y-auto no-scrollbar px-5 pt-4 space-y-4"
       >
-        {filteredOrders.map((order) => {
+        {visibleItems.map((order) => {
           const isCancelled = order.status === 'Отменено';
           return (
             <div
@@ -186,12 +197,21 @@ const OrdersScreen = () => {
             </div>
           );
         })}
-        {filteredOrders.length === 0 && (
+        {filteredOrders.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 opacity-50">
             <Icon name="search_off" className="text-6xl text-gray-300 dark:text-gray-600 mb-4" />
             <p className="text-gray-500 dark:text-gray-400">Ничего не найдено</p>
           </div>
+        ) : (
+          <LoadMore
+            onLoadMore={loadMore}
+            hasMore={hasMore}
+            loadedCount={visibleItems.length}
+            totalCount={filteredOrders.length}
+          />
         )}
+        {/* Bottom padding for FAB */}
+        <div className="h-24" />
       </PullToRefresh>
 
       <button

@@ -477,19 +477,19 @@ const ListView = ({ urgent, todo, inProgress, completed, navigate }: any) => (
 );
 
 const KanbanColumn = ({ title, tasks, updateStatus, nextStatus, navigate, color }: any) => (
-  <div className="flex flex-col w-[85vw] h-full shrink-0 snap-center first:pl-6 last:pr-6">
-    <div className="flex items-center justify-between mb-4 px-2">
+  <div className="flex flex-col w-[85vw] lg:w-full h-full shrink-0 snap-center lg:snap-align-none first:pl-6 last:pr-6 lg:first:pl-0 lg:last:pr-0">
+    <div className="flex items-center justify-between mb-3 px-2">
       <div className="flex items-center gap-2">
-        <h3 className="font-black text-slate-900 dark:text-white text-lg tracking-tighter uppercase">
+        <div className={`h-2 w-2 rounded-full ${color}`}></div>
+        <h3 className="font-bold text-slate-900 dark:text-white text-sm tracking-tight">
           {title}
         </h3>
-        <span className="h-6 px-2 flex items-center justify-center bg-white dark:bg-slate-800 border border-gray-200 dark:border-white/10 rounded-lg text-[10px] font-black text-slate-900 dark:text-white shadow-sm">
+        <span className="h-5 px-1.5 flex items-center justify-center bg-gray-100 dark:bg-slate-800 rounded text-[10px] font-bold text-slate-600 dark:text-slate-400">
           {tasks.length}
         </span>
       </div>
-      <div className={`h-2 w-2 rounded-full ${color} animate-pulse`}></div>
     </div>
-    <div className="flex-1 overflow-y-auto no-scrollbar space-y-3 pb-40 rounded-2xl bg-gray-50 dark:bg-slate-800/50 p-3 border border-gray-200 dark:border-white/10">
+    <div className="flex-1 overflow-y-auto no-scrollbar space-y-2 pb-40 rounded-xl bg-gray-50/50 dark:bg-slate-800/30 p-2">
       {tasks.map((t: Task) => {
         const priorityStyle = getPriorityIconBadge(t.priority);
         const isOverdue = t.deadline && t.status !== 'Готово' && new Date(t.deadline) < new Date();
@@ -498,88 +498,55 @@ const KanbanColumn = ({ title, tasks, updateStatus, nextStatus, navigate, color 
           : null;
         const commentsCount = t.comments?.length || 0;
         const deadlineText = t.deadline ? formatDeadline(t.deadline) : null;
-        const createdAt = t.createdAt ? new Date(t.createdAt).toLocaleDateString('ru-RU', {
-          day: 'numeric',
-          month: 'short'
-        }) : null;
 
         return (
           <div
             key={t.id}
             onClick={() => navigate(`/task/${t.id}`)}
-            className={`p-3 rounded-xl shadow-md border-2 active:scale-[0.98] transition-all cursor-pointer group hover:shadow-xl ${isOverdue
-                ? 'bg-red-50 dark:bg-red-900/20 border-red-300 dark:border-red-500/30'
-                : 'bg-white dark:bg-surface-dark border-gray-200 dark:border-white/10'
+            className={`p-2.5 rounded-lg shadow-sm border active:scale-[0.98] transition-all cursor-pointer group ${isOverdue
+                ? 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-500/30'
+                : 'bg-white dark:bg-surface-dark border-gray-100 dark:border-white/5'
               }`}
           >
-            {/* Заголовок и приоритет */}
-            <div className="flex items-start gap-2 mb-2">
-              <div className={`h-7 w-7 rounded-lg ${priorityStyle.color} text-white flex items-center justify-center shadow-md shrink-0`}>
-                <Icon name={priorityStyle.icon} className="text-[16px]" />
+            {/* Компактный заголовок */}
+            <div className="flex items-start gap-2">
+              <div className={`h-5 w-5 rounded ${priorityStyle.color} text-white flex items-center justify-center shrink-0`}>
+                <Icon name={priorityStyle.icon} className="text-[12px]" />
               </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-black text-slate-900 dark:text-white leading-tight group-hover:text-primary transition-colors line-clamp-2">
-                  {t.title}
-                </p>
-                {isOverdue && (
-                  <div className="flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-red-500 text-white shadow-sm mt-1 w-fit">
-                    <Icon name="schedule" className="text-[10px]" />
-                    <span className="text-[8px] font-black uppercase">Просрочено</span>
-                  </div>
-                )}
-              </div>
+              <p className="text-xs font-semibold text-slate-900 dark:text-white leading-snug line-clamp-2 flex-1">
+                {t.title}
+              </p>
             </div>
 
-            {/* Информационные блоки */}
-            <div className="flex items-center gap-1.5 flex-wrap mb-2">
+            {/* Компактные бейджи в одну строку */}
+            <div className="flex items-center gap-1 mt-2 flex-wrap">
+              {isOverdue && (
+                <span className="px-1.5 py-0.5 rounded bg-red-500 text-white text-[8px] font-bold">Просрочено</span>
+              )}
               {deadlineText && !isOverdue && (
-                <div className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/20">
-                  <Icon name="schedule" className="text-[10px] text-blue-500" />
-                  <span className="text-[8px] font-black text-blue-600 dark:text-blue-400">{deadlineText}</span>
-                </div>
+                <span className="px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 text-[8px] font-bold">{deadlineText}</span>
+              )}
+              {checklistProgress !== null && (
+                <span className="px-1.5 py-0.5 rounded bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 text-[8px] font-bold">
+                  {checklistProgress}%
+                </span>
               )}
               {commentsCount > 0 && (
-                <div className="flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20">
-                  <Icon name="chat_bubble" className="text-[10px] text-amber-500" />
-                  <span className="text-[8px] font-black text-amber-600 dark:text-amber-400">{commentsCount}</span>
-                </div>
-              )}
-              {createdAt && (
-                <div className="flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-gray-100 dark:bg-slate-800 border border-gray-200 dark:border-white/10">
-                  <Icon name="today" className="text-[10px] text-gray-400" />
-                  <span className="text-[8px] font-black text-gray-500 dark:text-gray-400">{createdAt}</span>
-                </div>
+                <span className="flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 text-[8px] font-bold">
+                  <Icon name="chat_bubble" className="text-[8px]" />{commentsCount}
+                </span>
               )}
             </div>
 
-            {/* Прогресс чеклиста */}
-            {checklistProgress !== null && (
-              <div className="mb-2 p-2 rounded-lg bg-gray-50 dark:bg-slate-800/50 border border-gray-200 dark:border-white/10">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-[8px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider">Прогресс</span>
-                  <span className="text-[8px] font-black text-primary">{checklistProgress}%</span>
-                </div>
-                <div className="h-1.5 bg-gray-200 dark:bg-slate-700 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-gradient-to-r from-primary to-blue-500 transition-all duration-300"
-                    style={{ width: `${checklistProgress}%` }}
-                  />
-                </div>
-                <span className="text-[8px] font-black text-gray-400 uppercase mt-0.5 block">
-                  {t.checklist?.filter((i) => i.done).length}/{t.checklist?.length} задач
-                </span>
-              </div>
-            )}
-
-            <div className="flex justify-between items-center pt-2 border-t border-gray-100 dark:border-white/10">
+            {/* Компактный футер */}
+            <div className="flex justify-between items-center mt-2 pt-2 border-t border-gray-100 dark:border-white/5">
               <div className="flex items-center gap-1.5">
-                <div className="h-6 w-6 rounded-lg bg-gradient-to-br from-primary to-blue-500 text-white flex items-center justify-center text-[9px] font-black shadow-md">
+                <div className="h-5 w-5 rounded bg-gradient-to-br from-primary to-blue-500 text-white flex items-center justify-center text-[8px] font-bold">
                   {t.assignee ? t.assignee[0] : 'A'}
                 </div>
-                <div className="flex flex-col">
-                  <span className="text-[10px] font-black text-slate-900 dark:text-white">{t.assignee || 'Админ'}</span>
-                  <span className="text-[7px] font-bold text-gray-400 uppercase">Исполнитель</span>
-                </div>
+                <span className="text-[9px] font-medium text-slate-600 dark:text-slate-400 truncate max-w-[80px]">
+                  {t.assignee || 'Админ'}
+                </span>
               </div>
               {nextStatus && (
                 <button
@@ -587,9 +554,9 @@ const KanbanColumn = ({ title, tasks, updateStatus, nextStatus, navigate, color 
                     e.stopPropagation();
                     updateStatus(t.id, nextStatus);
                   }}
-                  className="h-7 px-3 rounded-lg bg-gradient-to-r from-primary to-blue-500 text-white text-[8px] font-black uppercase tracking-wider shadow-md shadow-primary/30 active:scale-90 transition-all"
+                  className="h-5 w-5 rounded bg-primary/10 text-primary flex items-center justify-center active:scale-90 transition-all"
                 >
-                  Далее →
+                  <Icon name="arrow_forward" className="text-[12px]" />
                 </button>
               )}
             </div>
@@ -598,9 +565,9 @@ const KanbanColumn = ({ title, tasks, updateStatus, nextStatus, navigate, color 
       })}
 
       {tasks.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-20 opacity-30">
-          <Icon name="inbox" className="text-6xl text-gray-300 dark:text-gray-600 mb-4" />
-          <p className="text-sm font-bold text-gray-400">Нет задач</p>
+        <div className="flex flex-col items-center justify-center py-12 opacity-40">
+          <Icon name="inbox" className="text-3xl text-gray-400 dark:text-gray-600 mb-2" />
+          <p className="text-xs font-medium text-gray-400">Нет задач</p>
         </div>
       )}
     </div>
@@ -608,7 +575,7 @@ const KanbanColumn = ({ title, tasks, updateStatus, nextStatus, navigate, color 
 );
 
 const KanbanView = (props: any) => (
-  <div className="flex h-full w-full overflow-x-auto no-scrollbar gap-4 snap-x snap-mandatory pb-4">
+  <div className="flex h-full w-full overflow-x-auto lg:overflow-x-visible no-scrollbar gap-4 snap-x snap-mandatory lg:snap-none pb-4 lg:px-6 lg:grid lg:grid-cols-3">
     <KanbanColumn
       title="Ожидание"
       color="bg-orange-500"
@@ -639,36 +606,34 @@ const KanbanView = (props: any) => (
 const TasksSkeleton = ({ view }: { view: 'List' | 'Kanban' }) => {
   if (view === 'Kanban') {
     return (
-      <div className="flex h-full w-full overflow-x-auto no-scrollbar gap-4 snap-x snap-mandatory pb-4">
+      <div className="flex h-full w-full overflow-x-auto lg:overflow-x-visible no-scrollbar gap-4 snap-x snap-mandatory lg:snap-none pb-4 lg:px-6 lg:grid lg:grid-cols-3">
         {[1, 2, 3].map((col) => (
-          <div key={col} className="flex flex-col w-[85vw] h-full shrink-0 snap-center first:pl-6 last:pr-6">
-            <div className="flex items-center justify-between mb-4 px-2">
-              <div className="h-6 w-24 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse" />
+          <div key={col} className="flex flex-col w-[85vw] lg:w-full h-full shrink-0 snap-center lg:snap-align-none first:pl-6 last:pr-6 lg:first:pl-0 lg:last:pr-0">
+            <div className="flex items-center gap-2 mb-3 px-2">
               <div className="h-2 w-2 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse" />
+              <div className="h-4 w-16 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+              <div className="h-5 w-6 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
             </div>
-            <div className="flex-1 overflow-y-auto no-scrollbar space-y-3 pb-40 rounded-2xl bg-gray-50 dark:bg-slate-800/50 p-3 border border-gray-200 dark:border-white/10">
-              {[1, 2, 3].map((card) => (
-                <div key={card} className="p-3 rounded-xl bg-white dark:bg-slate-900 border-2 border-gray-200 dark:border-white/10 space-y-2 animate-pulse">
+            <div className="flex-1 overflow-y-auto no-scrollbar space-y-2 pb-40 rounded-xl bg-gray-50/50 dark:bg-slate-800/30 p-2">
+              {[1, 2, 3, 4].map((card) => (
+                <div key={card} className="p-2.5 rounded-lg bg-white dark:bg-slate-900 border border-gray-100 dark:border-white/5 space-y-2 animate-pulse">
                   <div className="flex items-start gap-2">
-                    <div className="h-7 w-7 rounded-lg bg-gray-200 dark:bg-gray-700" />
-                    <div className="flex-1 space-y-1.5">
-                      <div className="h-3.5 w-3/4 bg-gray-200 dark:bg-gray-700 rounded" />
-                      <div className="h-3 w-1/2 bg-gray-200 dark:bg-gray-700 rounded" />
+                    <div className="h-5 w-5 rounded bg-gray-200 dark:bg-gray-700" />
+                    <div className="flex-1 space-y-1">
+                      <div className="h-3 w-full bg-gray-200 dark:bg-gray-700 rounded" />
+                      <div className="h-3 w-2/3 bg-gray-200 dark:bg-gray-700 rounded" />
                     </div>
                   </div>
-                  <div className="flex gap-1.5">
-                    <div className="h-5 w-14 bg-gray-200 dark:bg-gray-700 rounded" />
-                    <div className="h-5 w-12 bg-gray-200 dark:bg-gray-700 rounded" />
+                  <div className="flex gap-1">
+                    <div className="h-4 w-12 bg-gray-200 dark:bg-gray-700 rounded" />
+                    <div className="h-4 w-8 bg-gray-200 dark:bg-gray-700 rounded" />
                   </div>
-                  <div className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800">
-                    <div className="h-1.5 w-full bg-gray-200 dark:bg-gray-700 rounded-full" />
-                  </div>
-                  <div className="flex justify-between items-center pt-2 border-t border-gray-100 dark:border-white/10">
+                  <div className="flex justify-between items-center pt-2 border-t border-gray-100 dark:border-white/5">
                     <div className="flex items-center gap-1.5">
-                      <div className="h-6 w-6 rounded-lg bg-gray-200 dark:bg-gray-700" />
-                      <div className="h-3 w-16 bg-gray-200 dark:bg-gray-700 rounded" />
+                      <div className="h-5 w-5 rounded bg-gray-200 dark:bg-gray-700" />
+                      <div className="h-2.5 w-12 bg-gray-200 dark:bg-gray-700 rounded" />
                     </div>
-                    <div className="h-7 w-16 bg-gray-200 dark:bg-gray-700 rounded-lg" />
+                    <div className="h-5 w-5 rounded bg-gray-200 dark:bg-gray-700" />
                   </div>
                 </div>
               ))}
