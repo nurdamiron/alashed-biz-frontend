@@ -5,6 +5,23 @@ import { useAppContext } from '@/shared/context/AppContext';
 import { formatDeadline, getPriorityIconBadge } from '@/shared/lib/utils';
 import type { Task } from '@/shared/types';
 
+// Helper to get assignee display name from task
+const getAssigneeName = (task: Task): string => {
+  if (task.assignees && task.assignees.length > 0) {
+    return task.assignees.map(a => a.name).join(', ');
+  }
+  return task.assignee || 'Не назначен';
+};
+
+// Helper to get assignee initials
+const getAssigneeInitials = (task: Task): string => {
+  if (task.assignees && task.assignees.length > 0) {
+    const firstName = task.assignees[0].name;
+    return firstName ? firstName[0].toUpperCase() : 'A';
+  }
+  return task.assignee ? task.assignee[0].toUpperCase() : 'A';
+};
+
 const TasksScreen = () => {
   // Загружаем сохраненный вид из localStorage или используем List по умолчанию
   const [view, setView] = useState<'List' | 'Kanban'>(() => {
@@ -54,8 +71,9 @@ const TasksScreen = () => {
       return false;
     }
     // Фильтр по исполнителю
-    if (selectedAssignee && t.assigneeId !== selectedAssignee) {
-      return false;
+    if (selectedAssignee) {
+      const hasMatchingAssignee = t.assignees?.some(a => String(a.id) === selectedAssignee) || t.assigneeId === selectedAssignee;
+      if (!hasMatchingAssignee) return false;
     }
     return true;
   }) : [];
@@ -372,11 +390,11 @@ const TaskCard: React.FC<{ task: Task; navigate: any }> = ({ task, navigate }) =
       <div className="flex items-center justify-between pt-3 border-t border-gray-100 dark:border-white/10">
         <div className="flex items-center gap-2">
           <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-primary to-blue-500 text-white flex items-center justify-center text-[10px] font-black shadow-md">
-            {task.assignee ? task.assignee[0] : 'A'}
+            {getAssigneeInitials(task)}
           </div>
           <div className="flex flex-col">
             <span className="text-[11px] font-black text-slate-900 dark:text-white">
-              {task.assignee || 'Админ'}
+              {getAssigneeName(task)}
             </span>
             <span className="text-[8px] font-bold text-gray-400 uppercase tracking-wider">Исполнитель</span>
           </div>
@@ -542,10 +560,10 @@ const KanbanColumn = ({ title, tasks, updateStatus, nextStatus, navigate, color 
             <div className="flex justify-between items-center mt-2 pt-2 border-t border-gray-100 dark:border-white/5">
               <div className="flex items-center gap-1.5">
                 <div className="h-5 w-5 rounded bg-gradient-to-br from-primary to-blue-500 text-white flex items-center justify-center text-[8px] font-bold">
-                  {t.assignee ? t.assignee[0] : 'A'}
+                  {getAssigneeInitials(t)}
                 </div>
                 <span className="text-[9px] font-medium text-slate-600 dark:text-slate-400 truncate max-w-[80px]">
-                  {t.assignee || 'Админ'}
+                  {getAssigneeName(t)}
                 </span>
               </div>
               {nextStatus && (

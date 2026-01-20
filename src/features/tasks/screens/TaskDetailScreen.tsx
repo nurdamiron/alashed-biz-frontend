@@ -3,6 +3,29 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Icon } from '@/shared/components';
 import { useAppContext } from '@/shared/context/AppContext';
 import { getPriorityIconBadge, formatDeadline } from '@/shared/lib/utils';
+import type { Task } from '@/shared/types';
+
+// Helper to get assignee display name from task
+const getAssigneeName = (task: Task): string => {
+  if (task.assignees && task.assignees.length > 0) {
+    return task.assignees.map(a => a.name).join(', ');
+  }
+  return task.assignee || 'Не назначен';
+};
+
+// Helper to get assignee initials
+const getAssigneeInitials = (task: Task): string => {
+  if (task.assignees && task.assignees.length > 0) {
+    const name = task.assignees[0].name;
+    const parts = name.split(' ');
+    return parts.map(p => p[0]).join('').slice(0, 2).toUpperCase();
+  }
+  if (task.assignee) {
+    const parts = task.assignee.split(' ');
+    return parts.map(p => p[0]).join('').slice(0, 2).toUpperCase();
+  }
+  return 'А';
+};
 
 const TaskDetailScreen = () => {
   const navigate = useNavigate();
@@ -192,12 +215,12 @@ const TaskDetailScreen = () => {
           <div className="grid grid-cols-2 gap-4 pt-5 border-t border-gray-100 dark:border-white/5">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-blue-600 text-white flex items-center justify-center font-black shadow-lg shadow-primary/20">
-                {task.assignee ? task.assignee.split(' ').map(n => n[0]).join('').slice(0, 2) : 'А'}
+                {getAssigneeInitials(task)}
               </div>
               <div>
                 <p className="text-[9px] font-black text-gray-400 uppercase tracking-wider">Исполнитель</p>
                 <p className="text-sm font-bold text-slate-900 dark:text-white truncate">
-                  {task.assignee || 'Не назначен'}
+                  {getAssigneeName(task)}
                 </p>
               </div>
             </div>
