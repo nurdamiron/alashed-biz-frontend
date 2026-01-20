@@ -45,26 +45,33 @@ const OrderDetailScreen = () => {
   ];
 
   return (
-    <div className="flex flex-col min-h-screen bg-background-light dark:bg-background-dark transition-colors duration-300">
-      <header className="sticky top-0 z-30 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-xl px-6 py-6 border-b border-gray-200/50 dark:border-white/5 flex items-center justify-between">
-        <button
-          onClick={() => navigate(-1)}
-          className="flex items-center justify-center w-12 h-12 rounded-[1.2rem] bg-white dark:bg-surface-dark border border-gray-100 dark:border-white/5 shadow-sm active:scale-90 transition-all"
+    <div className="flex flex-col h-full bg-background-light dark:bg-background-dark transition-colors duration-300">
+      <header className="sticky top-0 z-30 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-800/50">
+        <div
+          className="flex items-center justify-between px-5 pb-3"
+          style={{
+            paddingTop: 'max(1rem, calc(1rem + env(safe-area-inset-top)))'
+          }}
         >
-          <Icon name="arrow_back_ios_new" className="text-[20px]" />
-        </button>
-        <div className="text-center">
-          <p className="text-[9px] font-black text-primary uppercase tracking-[0.4em] mb-1">
-            Детали Заказа
-          </p>
-          <h2 className="text-xl font-black text-slate-900 dark:text-white tracking-tighter uppercase">
-            {order.id}
-          </h2>
+          <button
+            onClick={() => navigate(-1)}
+            className="flex items-center justify-center w-10 h-10 rounded-2xl bg-white dark:bg-surface-dark border border-gray-100 dark:border-white/5 shadow-sm text-slate-900 dark:text-white active:scale-90 transition-all"
+          >
+            <Icon name="arrow_back_ios_new" className="text-[18px]" />
+          </button>
+          <div className="flex flex-col items-center">
+            <span className="text-[9px] font-black text-primary uppercase tracking-[0.2em] mb-0.5">
+              Детали
+            </span>
+            <h2 className="text-base font-black text-slate-900 dark:text-white tracking-tight uppercase">
+              {order.id}
+            </h2>
+          </div>
+          <div className="w-10"></div>
         </div>
-        <div className="w-12"></div>
       </header>
 
-      <main className="flex-1 p-6 space-y-8 pb-48">
+      <main className="flex-1 overflow-y-auto no-scrollbar px-5 pt-4 space-y-6 pb-40">
         <section className="bg-gradient-to-br from-blue-500 to-blue-600 dark:from-surface-dark dark:to-background-dark rounded-[2.5rem] p-8 text-white shadow-2xl relative overflow-hidden group border border-transparent dark:border-white/10">
           <div className="relative z-10">
             <div className="flex items-center justify-between mb-8">
@@ -111,12 +118,10 @@ const OrderDetailScreen = () => {
         </section>
 
         <section>
-          <div className="flex items-center justify-between mb-4 px-2">
-            <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">
-              Данные Клиента
-            </h3>
-          </div>
-          <div className="bg-white dark:bg-surface-dark rounded-[2.5rem] p-6 shadow-sm border border-gray-100 dark:border-white/5">
+          <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-4 px-1">
+            Данные Клиента
+          </h3>
+          <div className="bg-white dark:bg-surface-dark rounded-[2rem] p-5 shadow-sm border border-gray-100 dark:border-white/5">
             <div className="flex items-center gap-5 mb-8">
               <div className="h-24 w-24 rounded-[2.2rem] bg-gray-50 dark:bg-background-dark p-1 border-2 border-primary/20 shrink-0">
                 <img
@@ -152,15 +157,15 @@ const OrderDetailScreen = () => {
 
         {order.items && order.items.length > 0 && (
           <section>
-            <div className="flex items-center justify-between mb-4 px-2">
-              <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">
+            <div className="flex items-center justify-between mb-4 px-1">
+              <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
                 Товары в заказе
               </h3>
-              <span className="text-[10px] font-black text-primary uppercase tracking-widest">
+              <span className="text-[10px] font-black text-primary uppercase tracking-wider">
                 {order.items.length} шт
               </span>
             </div>
-            <div className="bg-white dark:bg-surface-dark rounded-[2.5rem] p-4 shadow-sm border border-gray-100 dark:border-white/5 space-y-3">
+            <div className="bg-white dark:bg-surface-dark rounded-[2rem] p-4 shadow-sm border border-gray-100 dark:border-white/5 space-y-3">
               {order.items.map((item, index) => {
                 const product = products.find((p) => p.id === item.productId);
                 const subtotal = item.quantity * item.priceAtOrder;
@@ -194,39 +199,38 @@ const OrderDetailScreen = () => {
           </section>
         )}
 
-        <section className="bg-white dark:bg-surface-dark rounded-[2.5rem] p-8 shadow-sm border border-gray-100 dark:border-white/5">
-          <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">
+        <section className="bg-white dark:bg-surface-dark rounded-[2rem] p-6 shadow-sm border border-gray-100 dark:border-white/5">
+          <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">
             Итоговая Сумма
           </p>
-          <h2 className="text-4xl font-black text-slate-900 dark:text-white tracking-tighter">
+          <h2 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">
             {formatPrice(order.amount)}
           </h2>
-          <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-2">
+          <p className="text-[10px] font-bold text-gray-400 mt-2">
             Источник: {order.source}
           </p>
         </section>
       </main>
 
-      <div className="fixed bottom-0 left-0 w-full p-6 pb-12 bg-background-light dark:bg-background-dark z-40">
-        <div className="flex gap-4 max-w-sm mx-auto">
-          <button
-            onClick={() => {
-              const next =
-                order.status === 'Ожидание'
-                  ? 'Отправлено'
-                  : order.status === 'Отправлено'
-                    ? 'Доставлено'
-                    : 'Ожидание';
-              updateOrderStatus(order.id, next as any);
-            }}
-            className="flex-1 h-16 rounded-[1.8rem] bg-blue-500 text-white font-bold text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-3 shadow-2xl shadow-primary/40 active:scale-95 transition-all"
-          >
-            <span>
-              {order.status === 'Ожидание' ? 'Начать доставку' : 'Изменить статус'}
-            </span>
-            <Icon name="arrow_forward" className="text-[22px]" />
-          </button>
-        </div>
+      {/* Footer Action Button */}
+      <div className="flex-none p-5 pb-8 bg-background-light dark:bg-background-dark">
+        <button
+          onClick={() => {
+            const next =
+              order.status === 'Ожидание'
+                ? 'Отправлено'
+                : order.status === 'Отправлено'
+                  ? 'Доставлено'
+                  : 'Ожидание';
+            updateOrderStatus(order.id, next as any);
+          }}
+          className="w-full h-16 rounded-[2rem] bg-primary text-white font-black text-base flex items-center justify-center gap-3 shadow-2xl shadow-primary/40 active:scale-95 transition-all"
+        >
+          <span className="uppercase tracking-widest">
+            {order.status === 'Ожидание' ? 'Начать доставку' : 'Изменить статус'}
+          </span>
+          <Icon name="arrow_forward" className="text-[24px]" />
+        </button>
       </div>
     </div>
   );

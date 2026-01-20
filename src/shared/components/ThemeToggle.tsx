@@ -52,7 +52,7 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
       <div className={`flex items-center justify-between ${className}`}>
         <div className="flex items-center gap-3">
           <div
-            className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+            className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 ${
               isDark
                 ? 'bg-indigo-500/10 text-indigo-400'
                 : 'bg-amber-500/10 text-amber-500'
@@ -61,17 +61,17 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
             <Icon name={isDark ? 'dark_mode' : 'light_mode'} className="text-xl" />
           </div>
           {showLabel && (
-            <span className={`font-medium ${isDark ? 'text-white' : 'text-slate-800'}`}>
-              {isDark ? 'Dark Mode' : 'Light Mode'}
+            <span className="font-medium text-slate-900 dark:text-white">
+              {isDark ? 'Темная тема' : 'Светлая тема'}
             </span>
           )}
         </div>
         <button
           onClick={toggleTheme}
-          className={`w-14 h-8 rounded-full relative transition-all duration-300 ${
-            isDark ? 'bg-blue-500' : 'bg-slate-200'
+          className={`w-14 h-8 rounded-full relative transition-all duration-300 active:scale-95 ${
+            isDark ? 'bg-primary' : 'bg-gray-200'
           }`}
-          aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
+          aria-label={`Переключить на ${isDark ? 'светлую' : 'темную'} тему`}
         >
           <div
             className={`absolute top-1 w-6 h-6 rounded-full bg-white shadow-lg transition-all duration-300 ${

@@ -49,25 +49,38 @@ const InventoryDetailScreen = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-background-light dark:bg-background-dark pb-[140px] transition-colors duration-300 relative">
-      <header className="sticky top-0 z-30 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-xl px-5 py-4 flex items-center justify-between border-b border-gray-200/50 dark:border-gray-800/50">
-        <button
-          onClick={() => navigate('/inventory')}
-          className="text-slate-900 dark:text-white flex items-center justify-center w-11 h-11 rounded-2xl bg-white dark:bg-surface-dark border border-gray-100 dark:border-gray-800 shadow-sm active:scale-90 transition-all"
+    <div className="flex flex-col h-full bg-background-light dark:bg-background-dark transition-colors duration-300">
+      <header className="sticky top-0 z-30 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-800/50">
+        <div
+          className="flex items-center justify-between px-5 pb-3"
+          style={{
+            paddingTop: 'max(1rem, calc(1rem + env(safe-area-inset-top)))'
+          }}
         >
-          <Icon name="arrow_back_ios_new" className="text-[20px]" />
-        </button>
-        <div className="flex-1 px-4 text-center">
-          <h2 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
-            Asset Analytics
-          </h2>
+          <button
+            onClick={() => navigate('/inventory')}
+            className="flex items-center justify-center w-10 h-10 rounded-2xl bg-white dark:bg-surface-dark border border-gray-100 dark:border-white/5 shadow-sm text-slate-900 dark:text-white active:scale-90 transition-all"
+          >
+            <Icon name="arrow_back_ios_new" className="text-[18px]" />
+          </button>
+          <div className="flex flex-col items-center">
+            <span className="text-[9px] font-black text-primary uppercase tracking-[0.2em] mb-0.5">
+              Детали
+            </span>
+            <h2 className="text-base font-black text-slate-900 dark:text-white tracking-tight uppercase">
+              Товар
+            </h2>
+          </div>
+          <button
+            onClick={() => navigate(`/inventory/${id}/edit`)}
+            className="flex items-center justify-center w-10 h-10 rounded-2xl bg-white dark:bg-surface-dark border border-gray-100 dark:border-white/5 shadow-sm text-primary active:scale-90 transition-all"
+          >
+            <Icon name="edit" className="text-[20px]" />
+          </button>
         </div>
-        <button className="text-primary flex items-center justify-center w-11 h-11 rounded-2xl bg-white dark:bg-surface-dark border border-gray-100 dark:border-gray-800 shadow-sm active:scale-90 transition-all">
-          <Icon name="edit_note" className="text-[26px]" />
-        </button>
       </header>
 
-      <main className="flex-1 px-5 pt-6 space-y-8">
+      <main className="flex-1 overflow-y-auto no-scrollbar px-5 pt-4 space-y-6 pb-40">
         <div className="flex items-center gap-5">
           <div className="h-28 w-28 rounded-[2rem] bg-white dark:bg-surface-dark p-3 shadow-xl border border-gray-100 dark:border-gray-800 shrink-0">
             <img src={product.img} alt="" className="w-full h-full object-cover rounded-2xl" />
@@ -87,33 +100,34 @@ const InventoryDetailScreen = () => {
           </div>
         </div>
 
-        <section className="rounded-[2.5rem] bg-primary p-8 text-white shadow-2xl shadow-primary/30 relative overflow-hidden group">
-          <div className="absolute top-0 right-0 p-10 opacity-10">
-            <Icon name="robot_2" className="text-[120px]" />
+        <section className="rounded-[2rem] bg-gradient-to-br from-primary to-blue-600 p-6 text-white shadow-2xl shadow-primary/30 relative overflow-hidden">
+          <div className="absolute top-0 right-0 p-6 opacity-10">
+            <Icon name="inventory_2" className="text-[80px]" />
           </div>
           <div className="relative z-10">
-            <p className="text-blue-100 text-[10px] font-black mb-2 uppercase tracking-[0.2em] opacity-80">
-              Stock Available
+            <p className="text-blue-100 text-[10px] font-black mb-2 uppercase tracking-[0.2em]">
+              На складе
             </p>
             <div className="flex items-end gap-3">
-              <h1 className="text-6xl font-black tracking-tighter">{product.stock}</h1>
-              <span className="text-xl font-bold mb-2 opacity-60 uppercase tracking-widest">
+              <h1 className="text-5xl font-black tracking-tight">{product.stock}</h1>
+              <span className="text-lg font-bold mb-1.5 opacity-70 uppercase">
                 {product.unit || 'шт'}
               </span>
             </div>
-            <div className="mt-8 flex items-center gap-4">
+            <div className="mt-6 flex items-center gap-4">
               <div
-                className={`backdrop-blur-xl px-4 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 border border-white/20 ${product.stock <= product.minStock ? 'bg-red-500/30' : 'bg-white/20'
-                  }`}
+                className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider flex items-center gap-2 ${
+                  product.stock <= product.minStock ? 'bg-red-500/30' : 'bg-white/20'
+                }`}
               >
                 <Icon
-                  name={product.stock <= product.minStock ? 'warning' : 'auto_mode'}
-                  className="text-[16px] animate-pulse"
+                  name={product.stock <= product.minStock ? 'warning' : 'check_circle'}
+                  className="text-[16px]"
                 />
-                {product.stock <= product.minStock ? 'Low Stock' : 'In Stock'}
+                {product.stock <= product.minStock ? 'Мало' : 'В наличии'}
               </div>
               <span className="text-xs text-blue-100 font-bold opacity-70">
-                THRESHOLD: {product.minStock}
+                Мин: {product.minStock}
               </span>
             </div>
           </div>
@@ -121,12 +135,10 @@ const InventoryDetailScreen = () => {
 
         {product.specs && Object.keys(product.specs).length > 0 && (
           <section>
-            <div className="flex items-center justify-between mb-4 px-1">
-              <h3 className="font-black text-lg text-slate-900 dark:text-white tracking-tight uppercase">
-                Характеристики
-              </h3>
-            </div>
-            <div className="bg-white dark:bg-surface-dark rounded-[2.5rem] p-4 shadow-sm border border-gray-100 dark:border-gray-800">
+            <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-4 px-1">
+              Характеристики
+            </h3>
+            <div className="bg-white dark:bg-surface-dark rounded-[2rem] p-4 shadow-sm border border-gray-100 dark:border-white/5">
               <div className="grid grid-cols-2 gap-3">
                 {Object.entries(product.specs).map(([key, value]) => (
                   <div
@@ -152,12 +164,10 @@ const InventoryDetailScreen = () => {
         )}
 
         <section>
-          <div className="flex items-center justify-between mb-4 px-1">
-            <h3 className="font-black text-lg text-slate-900 dark:text-white tracking-tight uppercase">
-              История Движений
-            </h3>
-          </div>
-          <div className="bg-white dark:bg-surface-dark rounded-[2.5rem] p-2 shadow-sm border border-gray-100 dark:border-gray-800 divide-y dark:divide-white/5">
+          <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-4 px-1">
+            История Движений
+          </h3>
+          <div className="bg-white dark:bg-surface-dark rounded-[2rem] p-2 shadow-sm border border-gray-100 dark:border-white/5 divide-y divide-gray-100 dark:divide-white/5">
             {logs.length > 0 ? (
               logs.slice(0, 5).map((log) => (
                 <div
@@ -208,18 +218,19 @@ const InventoryDetailScreen = () => {
         </section>
       </main>
 
-      <div className="fixed bottom-0 left-0 w-full bg-white/80 dark:bg-surface-dark/80 backdrop-blur-2xl border-t border-gray-200 dark:border-gray-800 p-6 pb-10 z-30">
-        <div className="flex gap-4 max-w-lg mx-auto">
+      {/* Footer Action Buttons */}
+      <div className="flex-none p-5 pb-8 bg-background-light dark:bg-background-dark">
+        <div className="flex gap-4">
           <button
             onClick={() => setModalType('out')}
-            className="flex-1 h-16 rounded-[1.8rem] border-2 border-gray-200 dark:border-gray-700 text-slate-900 dark:text-white font-black text-base active:scale-95 transition-all flex items-center justify-center gap-2"
+            className="flex-1 h-16 rounded-[2rem] border-2 border-gray-200 dark:border-white/10 text-slate-900 dark:text-white font-black text-sm uppercase tracking-wider active:scale-95 transition-all flex items-center justify-center gap-2"
           >
             <Icon name="remove_circle" className="text-[22px]" />
             <span>Списать</span>
           </button>
           <button
             onClick={() => setModalType('in')}
-            className="flex-1 h-16 rounded-[1.8rem] bg-blue-500 text-white font-bold text-base shadow-xl flex items-center justify-center gap-2 active:scale-95 transition-all"
+            className="flex-1 h-16 rounded-[2rem] bg-primary text-white font-black text-sm uppercase tracking-wider shadow-2xl shadow-primary/40 flex items-center justify-center gap-2 active:scale-95 transition-all"
           >
             <Icon name="add_circle" className="text-[22px]" />
             <span>Приход</span>
@@ -228,51 +239,53 @@ const InventoryDetailScreen = () => {
       </div>
 
       {modalType && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/60 backdrop-blur-md animate-in fade-in duration-300">
-          <div className="w-full max-w-sm bg-white dark:bg-surface-dark rounded-[3rem] p-8 shadow-2xl border border-white/10 animate-in zoom-in-95 duration-300">
-            <div className="flex flex-col items-center mb-8">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/60 backdrop-blur-md">
+          <div className="w-full max-w-sm bg-white dark:bg-surface-dark rounded-[2rem] p-6 shadow-2xl border border-gray-100 dark:border-white/5">
+            <div className="flex flex-col items-center mb-6">
               <div
-                className={`h-20 w-20 rounded-[1.8rem] flex items-center justify-center mb-6 shadow-2xl ${modalType === 'in'
+                className={`h-16 w-16 rounded-2xl flex items-center justify-center mb-4 ${
+                  modalType === 'in'
                     ? 'bg-emerald-500/10 text-emerald-500'
                     : 'bg-red-500/10 text-red-500'
-                  }`}
+                }`}
               >
                 <Icon
-                  name={modalType === 'in' ? 'post_add' : 'inventory_2'}
-                  className="text-[40px]"
+                  name={modalType === 'in' ? 'add_circle' : 'remove_circle'}
+                  className="text-[32px]"
                 />
               </div>
-              <h3 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">
-                {modalType === 'in' ? 'Приемка товара' : 'Списание актива'}
+              <h3 className="text-xl font-black text-slate-900 dark:text-white tracking-tight">
+                {modalType === 'in' ? 'Приемка товара' : 'Списание товара'}
               </h3>
             </div>
-            <div className="relative mb-8">
+            <div className="relative mb-6">
               <input
                 type="number"
                 autoFocus
                 value={quantity}
                 onChange={(e) => setQuantity(e.target.value)}
-                className="block w-full bg-gray-50 dark:bg-background-dark border-2 border-gray-100 dark:border-white/5 rounded-[1.5rem] py-6 text-center text-4xl font-black text-slate-900 dark:text-white outline-none shadow-inner"
+                className="w-full h-20 bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/5 rounded-2xl text-center text-4xl font-black text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-primary/20"
                 placeholder="0"
               />
             </div>
-            <div className="flex gap-4">
+            <div className="flex gap-3">
               <button
                 onClick={() => {
                   setModalType(null);
                   setQuantity('');
                 }}
-                className="flex-1 py-4 rounded-[1.5rem] font-black text-[10px] uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-white/5 active:scale-95 transition-all"
+                className="flex-1 h-14 rounded-2xl font-bold text-sm text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-white/5 active:scale-95 transition-all"
               >
-                Cancel
+                Отмена
               </button>
               <button
                 onClick={handleAction}
                 disabled={!quantity || parseInt(quantity) <= 0}
-                className={`flex-1 py-4 rounded-[1.5rem] font-black text-[10px] uppercase tracking-[0.2em] text-white shadow-xl transition-all active:scale-95 disabled:opacity-30 ${modalType === 'in' ? 'bg-emerald-500' : 'bg-red-500'
-                  }`}
+                className={`flex-1 h-14 rounded-2xl font-bold text-sm text-white shadow-xl transition-all active:scale-95 disabled:opacity-30 ${
+                  modalType === 'in' ? 'bg-emerald-500 shadow-emerald-500/30' : 'bg-red-500 shadow-red-500/30'
+                }`}
               >
-                Confirm
+                Подтвердить
               </button>
             </div>
           </div>

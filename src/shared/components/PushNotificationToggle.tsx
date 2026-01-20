@@ -11,8 +11,7 @@ import {
 import toast from 'react-hot-toast';
 
 const PushNotificationToggle = () => {
-  const { theme, user } = useAppContext();
-  const isDark = theme === 'dark';
+  const { user } = useAppContext();
 
   const [state, setState] = useState<PushNotificationState>({
     isSupported: false,
@@ -91,58 +90,40 @@ const PushNotificationToggle = () => {
 
   if (!state.isSupported) {
     return (
-      <div
-        className={`p-4 rounded-2xl ${
-          isDark ? 'bg-zinc-900' : 'bg-slate-100'
-        }`}
-      >
-        <div className="flex items-center gap-3">
-          <div
-            className={`w-10 h-10 rounded-full flex items-center justify-center ${
-              isDark ? 'bg-zinc-800' : 'bg-slate-200'
-            }`}
-          >
-            <Icon name="notifications_off" className="text-slate-500" />
-          </div>
-          <div className="flex-1">
-            <p className={`font-medium ${isDark ? 'text-white' : 'text-slate-900'}`}>
-              Push-уведомления
-            </p>
-            <p className={`text-sm ${isDark ? 'text-zinc-500' : 'text-slate-500'}`}>
-              Не поддерживается на этом устройстве
-            </p>
-          </div>
+      <div className="flex items-center gap-4">
+        <div className="w-12 h-12 rounded-xl bg-gray-100 dark:bg-white/5 flex items-center justify-center">
+          <Icon name="notifications_off" className="text-gray-400 text-2xl" />
+        </div>
+        <div className="flex-1">
+          <p className="font-bold text-slate-900 dark:text-white">
+            Push-уведомления
+          </p>
+          <p className="text-xs text-gray-500 dark:text-gray-400">
+            Не поддерживается
+          </p>
         </div>
       </div>
     );
   }
 
   return (
-    <div
-      className={`p-4 rounded-2xl ${
-        isDark ? 'bg-zinc-900' : 'bg-slate-100'
-      }`}
-    >
-      <div className="flex items-center gap-3">
-        <div
-          className={`w-10 h-10 rounded-full flex items-center justify-center ${
-            state.isSubscribed
-              ? 'bg-blue-500/20'
-              : isDark
-              ? 'bg-zinc-800'
-              : 'bg-slate-200'
-          }`}
-        >
+    <div className="space-y-4">
+      <div className="flex items-center gap-4">
+        <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
+          state.isSubscribed
+            ? 'bg-primary/10'
+            : 'bg-gray-100 dark:bg-white/5'
+        }`}>
           <Icon
             name={state.isSubscribed ? 'notifications_active' : 'notifications'}
-            className={state.isSubscribed ? 'text-blue-500' : 'text-slate-500'}
+            className={`text-2xl ${state.isSubscribed ? 'text-primary' : 'text-gray-400'}`}
           />
         </div>
         <div className="flex-1">
-          <p className={`font-medium ${isDark ? 'text-white' : 'text-slate-900'}`}>
+          <p className="font-bold text-slate-900 dark:text-white">
             Push-уведомления
           </p>
-          <p className={`text-sm ${isDark ? 'text-zinc-500' : 'text-slate-500'}`}>
+          <p className="text-xs text-gray-500 dark:text-gray-400">
             {state.permission === 'denied'
               ? 'Заблокированы в браузере'
               : state.isSubscribed
@@ -153,12 +134,10 @@ const PushNotificationToggle = () => {
         <button
           onClick={handleToggle}
           disabled={loading || state.permission === 'denied'}
-          className={`relative w-14 h-8 rounded-full transition-colors ${
+          className={`relative w-14 h-8 rounded-full transition-all active:scale-95 ${
             state.isSubscribed
-              ? 'bg-blue-500'
-              : isDark
-              ? 'bg-zinc-700'
-              : 'bg-slate-300'
+              ? 'bg-primary'
+              : 'bg-gray-200 dark:bg-white/10'
           } ${loading || state.permission === 'denied' ? 'opacity-50' : ''}`}
         >
           <span
@@ -170,7 +149,7 @@ const PushNotificationToggle = () => {
       </div>
 
       {state.permission === 'denied' && (
-        <p className="mt-3 text-sm text-amber-500">
+        <p className="text-sm text-amber-500 font-medium">
           Разрешите уведомления в настройках браузера для этого сайта
         </p>
       )}
@@ -179,11 +158,9 @@ const PushNotificationToggle = () => {
         <button
           onClick={handleTestPush}
           disabled={loading}
-          className={`mt-3 w-full py-2 rounded-xl text-sm font-medium transition-colors ${
-            isDark
-              ? 'bg-zinc-800 text-white hover:bg-zinc-700'
-              : 'bg-slate-200 text-slate-700 hover:bg-slate-300'
-          } ${loading ? 'opacity-50' : ''}`}
+          className={`w-full py-3 rounded-xl text-sm font-bold transition-all active:scale-[0.98] bg-gray-100 dark:bg-white/5 text-slate-900 dark:text-white hover:bg-gray-200 dark:hover:bg-white/10 ${
+            loading ? 'opacity-50' : ''
+          }`}
         >
           {loading ? 'Отправка...' : 'Отправить тестовое уведомление'}
         </button>

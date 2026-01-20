@@ -42,6 +42,8 @@ interface AppContextType {
   appName: string;
   businessDomain: string;
   setAppConfig: (name: string, domain: string) => void;
+  currency: string;
+  setCurrency: (currency: string) => void;
 
   // Auth
   login: (username: string, password: string) => Promise<boolean>;
@@ -128,6 +130,16 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
   const [appName, setAppName] = useState('ALASHED');
   const [businessDomain, setBusinessDomain] = useState('Склад электроники и робототехники');
+  const [currency, setCurrencyState] = useState<string>(() => {
+    const savedCurrency = localStorage.getItem('alash_currency');
+    return savedCurrency || 'KZT';
+  });
+
+  const setCurrency = (newCurrency: string) => {
+    setCurrencyState(newCurrency);
+    localStorage.setItem('alash_currency', newCurrency);
+    toast.success('Валюта обновлена');
+  };
 
   const refreshData = async () => {
     try {
@@ -601,6 +613,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     appName,
     businessDomain,
     setAppConfig,
+    currency,
+    setCurrency,
     login,
     logout,
     toggleTheme,
