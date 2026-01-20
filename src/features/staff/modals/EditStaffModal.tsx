@@ -69,23 +69,31 @@ const EditStaffModal = () => {
   }
 
   return (
-    <div className="flex flex-col h-full bg-background-light dark:bg-background-dark">
-      <header className="sticky top-0 z-20 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-xl px-6 py-4 border-b border-gray-100 dark:border-white/5">
-        <div className="flex items-center justify-between">
-          <button
-            onClick={() => navigate('/staff')}
-            className="h-10 w-10 rounded-xl bg-white dark:bg-surface-dark border border-gray-100 dark:border-white/5 flex items-center justify-center active:scale-90 transition-all"
-          >
-            <Icon name="arrow_back" className="text-[20px]" />
-          </button>
-          <h1 className="text-lg font-black text-slate-900 dark:text-white">
+    <div className="flex flex-col h-full bg-background-light dark:bg-background-dark overflow-hidden">
+      {/* Pill indicator */}
+      <div className="flex-none pt-3 pb-1 flex justify-center">
+        <div className="h-1.5 w-14 rounded-full bg-gray-200 dark:bg-white/10"></div>
+      </div>
+
+      <header className="flex-none flex items-center justify-between px-6 pb-4 pt-2">
+        <button
+          onClick={() => navigate('/staff')}
+          className="flex items-center justify-center w-10 h-10 rounded-2xl bg-white dark:bg-surface-dark border border-gray-100 dark:border-white/5 shadow-sm text-gray-400 active:scale-90 transition-all"
+        >
+          <Icon name="close" className="text-[20px]" />
+        </button>
+        <div className="flex flex-col items-center">
+          <span className="text-[9px] font-black text-primary uppercase tracking-[0.2em] mb-0.5">
             Редактирование
+          </span>
+          <h1 className="text-slate-900 dark:text-white text-lg font-black tracking-tight uppercase">
+            Сотрудник
           </h1>
-          <div className="w-10" />
         </div>
+        <div className="w-10" />
       </header>
 
-      <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto no-scrollbar px-6 py-6 pb-40">
+      <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto no-scrollbar px-6 py-4 pb-48">
         <div className="space-y-6">
           {/* Avatar Preview */}
           <div className="flex justify-center">
@@ -106,7 +114,7 @@ const EditStaffModal = () => {
 
           {/* Name */}
           <div>
-            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">
+            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">
               ФИО *
             </label>
             <input
@@ -121,7 +129,7 @@ const EditStaffModal = () => {
 
           {/* Department */}
           <div>
-            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">
+            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">
               Отдел
             </label>
             <div className="grid grid-cols-3 gap-2">
@@ -144,7 +152,7 @@ const EditStaffModal = () => {
 
           {/* Role */}
           <div>
-            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">
+            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">
               Роль в системе
             </label>
             <div className="grid grid-cols-3 gap-2">
@@ -167,7 +175,7 @@ const EditStaffModal = () => {
 
           {/* Phone */}
           <div>
-            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">
+            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">
               Телефон
             </label>
             <input
@@ -181,7 +189,7 @@ const EditStaffModal = () => {
 
           {/* Email */}
           <div>
-            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">
+            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">
               Email
             </label>
             <input
@@ -194,14 +202,14 @@ const EditStaffModal = () => {
           </div>
 
           {/* Employee Info */}
-          <div className="bg-gray-50 dark:bg-white/5 rounded-2xl p-4">
-            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">
+          <div className="bg-white dark:bg-surface-dark rounded-[2rem] p-5 border border-gray-100 dark:border-white/5">
+            <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3">
               Статистика
             </p>
             <div className="flex items-center gap-4">
               <div>
                 <p className="text-2xl font-black text-primary">{employee.activeTasks}</p>
-                <p className="text-xs text-gray-500">Активных задач</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Активных задач</p>
               </div>
             </div>
           </div>
@@ -209,19 +217,26 @@ const EditStaffModal = () => {
       </form>
 
       {/* Submit Button */}
-      <div className="fixed bottom-0 left-0 right-0 p-6 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-xl border-t border-gray-100 dark:border-white/5">
+      <div className="flex-none p-6 pb-12 z-10">
         <button
           onClick={handleSubmit}
           disabled={!formData.name.trim() || isSubmitting}
-          className="w-full h-14 rounded-2xl bg-blue-500 text-white font-bold text-base shadow-xl shadow-primary/30 active:scale-[0.98] transition-all disabled:opacity-50 disabled:shadow-none flex items-center justify-center gap-2"
+          className="group relative flex w-full items-center justify-center h-16 rounded-[2rem] bg-primary overflow-hidden shadow-2xl shadow-primary/40 active:scale-95 transition-all disabled:opacity-30 disabled:grayscale"
         >
           {isSubmitting ? (
-            <div className="h-5 w-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            <div className="flex items-center gap-3">
+              <div className="h-5 w-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              <span className="text-base font-black text-white uppercase tracking-widest">
+                Сохранение...
+              </span>
+            </div>
           ) : (
-            <>
-              <Icon name="save" className="text-[20px]" />
-              Сохранить изменения
-            </>
+            <div className="relative flex items-center gap-3">
+              <span className="text-base font-black text-white uppercase tracking-widest">
+                Сохранить изменения
+              </span>
+              <Icon name="save" className="text-[24px] text-white" />
+            </div>
           )}
         </button>
       </div>

@@ -12,82 +12,89 @@ const NotificationsScreen = () => {
     activeTab === 'unread' ? notifications.filter((n: any) => !n.read) : notifications;
 
   return (
-    <div className="flex flex-col h-screen bg-background-light dark:bg-background-dark transition-colors duration-300 overflow-hidden">
-      <header className="flex-none bg-white dark:bg-surface-dark px-6 pt-8 pb-6 border-b border-gray-100 dark:border-white/5 z-20">
-        <div className="flex items-center justify-between mb-6">
-          <button
-            onClick={() => navigate(-1)}
-            className="h-11 w-11 rounded-2xl bg-gray-50 dark:bg-background-dark flex items-center justify-center border border-gray-100 dark:border-white/5"
-          >
-            <Icon name="arrow_back_ios_new" className="text-[18px]" />
-          </button>
-          <div className="text-center">
-            <p className="text-[9px] font-black text-primary uppercase tracking-widest mb-0.5">
-              Event Hub
-            </p>
-            <h2 className="text-xl font-black text-slate-900 dark:text-white uppercase">
-              Уведомления
-            </h2>
+    <div className="flex flex-col h-full bg-background-light dark:bg-background-dark transition-colors duration-300">
+      <header className="sticky top-0 z-30 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-800/50">
+        <div
+          className="px-5 pb-4"
+          style={{
+            paddingTop: 'max(1rem, calc(1rem + env(safe-area-inset-top)))'
+          }}
+        >
+          <div className="flex items-center justify-between mb-4">
+            <button
+              onClick={() => navigate(-1)}
+              className="flex items-center justify-center w-10 h-10 rounded-2xl bg-white dark:bg-surface-dark border border-gray-100 dark:border-white/5 shadow-sm text-slate-900 dark:text-white active:scale-90 transition-all"
+            >
+              <Icon name="arrow_back_ios_new" className="text-[18px]" />
+            </button>
+            <div className="text-center">
+              <p className="text-[9px] font-black text-primary uppercase tracking-[0.2em] mb-0.5">
+                Центр событий
+              </p>
+              <h2 className="text-base font-black text-slate-900 dark:text-white uppercase tracking-tight">
+                Уведомления
+              </h2>
+            </div>
+            <button
+              onClick={clearNotifications}
+              className="flex items-center justify-center w-10 h-10 rounded-2xl bg-white dark:bg-surface-dark border border-gray-100 dark:border-white/5 shadow-sm text-primary active:scale-90 transition-all"
+            >
+              <Icon name="done_all" className="text-[18px]" />
+            </button>
           </div>
-          <button
-            onClick={clearNotifications}
-            className="h-11 w-11 rounded-2xl bg-gray-50 dark:bg-background-dark flex items-center justify-center border border-gray-100 dark:border-white/5 text-primary"
-          >
-            <Icon name="done_all" className="text-[18px]" />
-          </button>
-        </div>
-        <div className="flex bg-gray-100 dark:bg-background-dark p-1 rounded-2xl">
-          <button
-            onClick={() => setActiveTab('all')}
-            className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase ${
-              activeTab === 'all'
-                ? 'bg-white dark:bg-surface-dark text-primary shadow-sm'
-                : 'text-gray-400'
-            }`}
-          >
-            Все ({notifications.length})
-          </button>
-          <button
-            onClick={() => setActiveTab('unread')}
-            className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase ${
-              activeTab === 'unread'
-                ? 'bg-white dark:bg-surface-dark text-primary shadow-sm'
-                : 'text-gray-400'
-            }`}
-          >
-            Новые ({notifications.filter((n: any) => !n.read).length})
-          </button>
+          <div className="flex bg-gray-100 dark:bg-white/5 p-1 rounded-2xl">
+            <button
+              onClick={() => setActiveTab('all')}
+              className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all ${
+                activeTab === 'all'
+                  ? 'bg-white dark:bg-surface-dark text-primary shadow-sm'
+                  : 'text-gray-400'
+              }`}
+            >
+              Все ({notifications.length})
+            </button>
+            <button
+              onClick={() => setActiveTab('unread')}
+              className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all ${
+                activeTab === 'unread'
+                  ? 'bg-white dark:bg-surface-dark text-primary shadow-sm'
+                  : 'text-gray-400'
+              }`}
+            >
+              Новые ({notifications.filter((n: any) => !n.read).length})
+            </button>
+          </div>
         </div>
       </header>
 
-      <PullToRefresh onRefresh={refreshData} className="flex-1 overflow-y-auto no-scrollbar p-6 space-y-6 pb-32">
+      <PullToRefresh onRefresh={refreshData} className="flex-1 overflow-y-auto no-scrollbar px-5 pt-4 space-y-4 pb-32">
         {filtered.length > 0 ? (
           filtered.map((n: any) => (
             <div
               key={n.id}
-              className={`relative rounded-[2.2rem] bg-white dark:bg-surface-dark p-6 shadow-sm border transition-all ${
-                !n.read ? 'border-primary/20 bg-primary/5' : 'border-gray-100 dark:border-white/5'
+              className={`rounded-[2rem] bg-white dark:bg-surface-dark p-5 shadow-sm border transition-all ${
+                !n.read ? 'border-primary/30' : 'border-gray-100 dark:border-white/5'
               }`}
             >
-              <div className="flex gap-5">
+              <div className="flex gap-4">
                 <div
-                  className={`h-14 w-14 rounded-2xl flex items-center justify-center shrink-0 ${
+                  className={`h-12 w-12 rounded-xl flex items-center justify-center shrink-0 ${
                     n.type === 'alert' ? 'bg-red-500/10 text-red-500' : 'bg-primary/10 text-primary'
                   }`}
                 >
-                  <Icon name="notifications" filled className="text-[26px]" />
+                  <Icon name="notifications" filled className="text-[24px]" />
                 </div>
-                <div className="flex-1">
+                <div className="flex-1 min-w-0">
                   <div className="flex justify-between items-start mb-1">
-                    <span className="text-[8px] font-black uppercase text-gray-400">{n.type}</span>
+                    <span className="text-[9px] font-black uppercase text-gray-400 tracking-wider">{n.type}</span>
                     <span className="text-[10px] font-bold text-gray-400">
-                      {new Date(n.createdAt).toLocaleDateString()}
+                      {new Date(n.createdAt).toLocaleDateString('ru-RU')}
                     </span>
                   </div>
-                  <h4 className="text-sm font-black text-slate-900 dark:text-white mb-2">
+                  <h4 className="text-sm font-bold text-slate-900 dark:text-white mb-1">
                     {n.title}
                   </h4>
-                  <p className="text-xs text-slate-500 dark:text-text-secondary leading-relaxed">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
                     {n.message}
                   </p>
                 </div>
@@ -95,9 +102,9 @@ const NotificationsScreen = () => {
             </div>
           ))
         ) : (
-          <div className="py-20 text-center opacity-30">
-            <Icon name="notifications_off" className="text-6xl mb-4" />
-            <p className="text-sm font-black uppercase tracking-widest">Нет событий</p>
+          <div className="py-20 text-center">
+            <Icon name="notifications_off" className="text-5xl text-gray-300 dark:text-gray-700 mb-3" />
+            <p className="text-sm font-bold text-gray-400">Нет уведомлений</p>
           </div>
         )}
       </PullToRefresh>

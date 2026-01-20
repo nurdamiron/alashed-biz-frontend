@@ -67,135 +67,164 @@ const EditTaskModal = () => {
   };
 
   return (
-    <div className="relative flex h-screen w-full flex-col bg-background-light dark:bg-background-dark overflow-hidden z-50">
-      <div className="flex-none pt-2 pb-2 bg-background-light dark:bg-background-dark w-full">
-        <div className="flex flex-col items-center justify-center">
-          <div className="h-1.5 w-12 rounded-full bg-gray-300 dark:bg-[#324467]"></div>
-        </div>
-      </div>
-      <div className="flex-none flex items-center justify-between px-4 pb-4 pt-2 bg-background-light dark:bg-background-dark border-b border-transparent dark:border-[#324467]/30">
-        <button onClick={() => navigate(-1)} className="text-primary text-base font-medium active:opacity-70">
-          Отмена
-        </button>
-        <h2 className="text-gray-900 dark:text-white text-lg font-bold leading-tight tracking-tight">
-          Редактирование
-        </h2>
-        <button onClick={handleSave} className="text-primary text-base font-bold active:opacity-70">
-          Готово
-        </button>
+    <div className="flex flex-col h-full bg-background-light dark:bg-background-dark overflow-hidden">
+      {/* Pill indicator */}
+      <div className="flex-none pt-3 pb-1 flex justify-center">
+        <div className="h-1.5 w-14 rounded-full bg-gray-200 dark:bg-white/10"></div>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-6">
-        <div className="space-y-2">
-          <label className="text-gray-900 dark:text-white text-sm font-medium leading-normal">
-            Название
-          </label>
-          <input
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="w-full rounded-xl text-gray-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-gray-200 dark:border-border-dark bg-white dark:bg-surface-dark h-12 px-4 text-base font-normal transition-colors"
-            placeholder="Например, Собрать робо-набор..."
-          />
+      <header className="flex-none flex items-center justify-between px-6 pb-4 pt-2">
+        <button
+          onClick={() => navigate(-1)}
+          className="flex items-center justify-center w-10 h-10 rounded-2xl bg-white dark:bg-surface-dark border border-gray-100 dark:border-white/5 shadow-sm text-gray-400 active:scale-90 transition-all"
+        >
+          <Icon name="close" className="text-[20px]" />
+        </button>
+        <div className="flex flex-col items-center">
+          <span className="text-[9px] font-black text-primary uppercase tracking-[0.2em] mb-0.5">
+            Редактирование
+          </span>
+          <h1 className="text-slate-900 dark:text-white text-lg font-black tracking-tight uppercase">
+            Задача
+          </h1>
         </div>
-        <div className="space-y-2">
-          <label className="text-gray-900 dark:text-white text-sm font-medium leading-normal">
-            Описание
-          </label>
-          <textarea
-            value={desc}
-            onChange={(e) => setDesc(e.target.value)}
-            className="w-full resize-none rounded-xl text-gray-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-gray-200 dark:border-border-dark bg-white dark:bg-surface-dark min-h-[120px] p-4 text-base font-normal leading-relaxed transition-colors"
-            placeholder="Детали задачи..."
-          ></textarea>
-        </div>
+        <div className="w-10" />
+      </header>
 
-        <div className="space-y-3">
-          <p className="text-gray-900 dark:text-white text-sm font-medium leading-normal">Приоритет</p>
-          <div className="flex items-center gap-3">
-            {['Низкий', 'Средний', 'Высокий'].map((level) => (
-              <label key={level} className="flex-1 cursor-pointer">
-                <input
-                  type="radio"
-                  name="priority"
-                  className="peer sr-only"
-                  checked={priority === level}
-                  onChange={() => setPriority(level as any)}
-                />
-                <div className="flex items-center justify-center py-2.5 px-3 rounded-lg border border-gray-200 dark:border-border-dark bg-white dark:bg-surface-dark text-gray-500 dark:text-text-secondary peer-checked:border-primary peer-checked:bg-primary/10 peer-checked:text-primary transition-all">
-                  <span className="text-sm font-medium">{level}</span>
-                </div>
-              </label>
-            ))}
+      <form className="flex-1 overflow-y-auto no-scrollbar px-6 py-4 pb-48">
+        <div className="space-y-6">
+          {/* Название */}
+          <div>
+            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">
+              Название *
+            </label>
+            <input
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="w-full h-14 px-5 rounded-2xl bg-white dark:bg-surface-dark border border-gray-100 dark:border-white/5 text-base font-medium text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/20"
+              placeholder="Например, Собрать робо-набор..."
+            />
           </div>
-        </div>
 
-        {/* Исполнитель */}
-        <div className="space-y-3">
-          <label className="text-gray-900 dark:text-white text-sm font-medium leading-normal">Исполнитель</label>
-          <div className="flex gap-3 overflow-x-auto no-scrollbar py-1">
-            {employees.map((emp) => {
-              const isSelected = selectedAssignee?.id === emp.id;
-              return (
+          {/* Описание */}
+          <div>
+            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">
+              Описание
+            </label>
+            <textarea
+              value={desc}
+              onChange={(e) => setDesc(e.target.value)}
+              className="w-full px-5 py-4 rounded-2xl bg-white dark:bg-surface-dark border border-gray-100 dark:border-white/5 text-base font-medium text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/20 resize-none min-h-[120px]"
+              placeholder="Детали задачи..."
+            ></textarea>
+          </div>
+
+          {/* Приоритет */}
+          <div>
+            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">
+              Приоритет
+            </label>
+            <div className="grid grid-cols-3 gap-2">
+              {['Низкий', 'Средний', 'Высокий'].map((level) => (
                 <button
-                  key={emp.id}
-                  onClick={() => setSelectedAssignee(emp)}
-                  className={`flex flex-col items-center gap-2 p-3 rounded-2xl border min-w-[100px] transition-all ${
-                    isSelected
-                      ? 'bg-primary text-white border-primary shadow-lg'
-                      : 'bg-white dark:bg-surface-dark border-gray-200 dark:border-border-dark'
+                  key={level}
+                  type="button"
+                  onClick={() => setPriority(level as any)}
+                  className={`py-3 rounded-xl text-xs font-bold transition-all ${
+                    priority === level
+                      ? 'bg-primary text-white shadow-lg shadow-primary/20'
+                      : 'bg-white dark:bg-surface-dark border border-gray-100 dark:border-white/5 text-gray-600 dark:text-gray-400'
                   }`}
                 >
-                  <img
-                    src={emp.avatar}
-                    alt={emp.name}
-                    className="h-10 w-10 rounded-xl object-cover"
-                  />
-                  <span className={`text-xs font-bold ${isSelected ? 'text-white' : 'text-gray-900 dark:text-white'}`}>
-                    {emp.name.split(' ')[0]}
-                  </span>
+                  {level}
                 </button>
-              );
-            })}
+              ))}
+            </div>
           </div>
-        </div>
 
-        {/* Дедлайн */}
-        <div className="space-y-3">
-          <label className="text-gray-900 dark:text-white text-sm font-medium leading-normal">Дедлайн</label>
-          <div className="flex gap-3">
-            <input
-              type="date"
-              value={selectedDate.toISOString().split('T')[0]}
-              onChange={(e) => setSelectedDate(new Date(e.target.value))}
-              className="flex-1 rounded-xl border border-gray-200 dark:border-border-dark bg-white dark:bg-surface-dark px-4 py-3 text-sm font-medium text-gray-900 dark:text-white"
-            />
-            <input
-              type="time"
-              value={selectedTime}
-              onChange={(e) => setSelectedTime(e.target.value)}
-              className="w-32 rounded-xl border border-gray-200 dark:border-border-dark bg-white dark:bg-surface-dark px-4 py-3 text-sm font-medium text-gray-900 dark:text-white"
-            />
+          {/* Исполнитель */}
+          <div>
+            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">
+              Исполнитель
+            </label>
+            <div className="flex gap-3 overflow-x-auto no-scrollbar py-1">
+              {employees.map((emp) => {
+                const isSelected = selectedAssignee?.id === emp.id;
+                return (
+                  <button
+                    key={emp.id}
+                    type="button"
+                    onClick={() => setSelectedAssignee(emp)}
+                    className={`flex flex-col items-center gap-2 p-3 rounded-2xl border min-w-[100px] transition-all ${
+                      isSelected
+                        ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20'
+                        : 'bg-white dark:bg-surface-dark border-gray-100 dark:border-white/5'
+                    }`}
+                  >
+                    <div className={`h-14 w-14 rounded-xl flex items-center justify-center ${
+                      isSelected
+                        ? 'bg-white/20'
+                        : 'bg-gradient-to-br from-primary to-blue-600'
+                    }`}>
+                      <span className="text-white font-black text-lg">
+                        {emp.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                      </span>
+                    </div>
+                    <span className={`text-xs font-bold ${isSelected ? 'text-white' : 'text-slate-900 dark:text-white'}`}>
+                      {emp.name.split(' ')[0]}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
+
+          {/* Дедлайн */}
+          <div>
+            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">
+              Дедлайн
+            </label>
+            <div className="flex gap-3">
+              <input
+                type="date"
+                value={selectedDate.toISOString().split('T')[0]}
+                onChange={(e) => setSelectedDate(new Date(e.target.value))}
+                className="flex-1 h-14 rounded-2xl border border-gray-100 dark:border-white/5 bg-white dark:bg-surface-dark px-5 text-base font-medium text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/20"
+              />
+              <input
+                type="time"
+                value={selectedTime}
+                onChange={(e) => setSelectedTime(e.target.value)}
+                className="w-28 h-14 rounded-2xl border border-gray-100 dark:border-white/5 bg-white dark:bg-surface-dark px-4 text-base font-medium text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/20"
+              />
+            </div>
+          </div>
+
+          {/* Кнопка удаления */}
+          <button
+            type="button"
+            onClick={() => setShowDeleteConfirm(true)}
+            className="w-full flex items-center justify-center gap-2 h-14 rounded-2xl bg-red-500/10 text-red-500 font-bold text-sm active:scale-95 transition-all"
+          >
+            <Icon name="delete" className="text-[20px]" />
+            Удалить задачу
+          </button>
         </div>
+      </form>
 
-        {/* Кнопка удаления */}
-        <button
-          onClick={() => setShowDeleteConfirm(true)}
-          className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-red-500/10 text-red-500 font-bold text-sm active:scale-95 transition-all"
-        >
-          <Icon name="delete" className="text-[20px]" />
-          Удалить задачу
-        </button>
-
-        <div className="h-6"></div>
-      </div>
-
-      <div className="flex-none p-4 pb-8 bg-background-light dark:bg-background-dark border-t border-transparent dark:border-[#324467]/30">
+      {/* Submit Button */}
+      <div className="flex-none p-6 pb-12 z-10">
         <button
           onClick={handleSave}
-          className="flex w-full items-center justify-center rounded-xl bg-primary py-3.5 text-base font-semibold text-white shadow-lg shadow-primary/20 hover:bg-primary/90 active:scale-[0.98] transition-all"
+          disabled={!title}
+          className="group relative flex w-full items-center justify-center h-16 rounded-[2rem] bg-primary overflow-hidden shadow-2xl shadow-primary/40 active:scale-95 transition-all disabled:opacity-30 disabled:grayscale"
         >
-          Сохранить изменения
+          <div className="relative flex items-center gap-3">
+            <span className="text-base font-black text-white uppercase tracking-widest">
+              Сохранить изменения
+            </span>
+            <Icon name="save" className="text-[24px] text-white" />
+          </div>
         </button>
       </div>
 

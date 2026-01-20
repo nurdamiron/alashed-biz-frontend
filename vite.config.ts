@@ -7,7 +7,11 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      registerType: 'autoUpdate',
+      registerType: 'prompt',
+      injectRegister: null, // Don't inject SW registration - we use custom sw.js
+      strategies: 'injectManifest',
+      srcDir: 'public',
+      filename: 'sw.js',
       includeAssets: ['favicon.png', 'apple-touch-icon.png', 'logo-dark.png', 'logo-light.png'],
       manifest: {
         name: 'ALASHED Business',
@@ -32,10 +36,8 @@ export default defineConfig({
           }
         ]
       },
-      workbox: {
-        cleanupOutdatedCaches: true,
-        skipWaiting: true,
-        clientsClaim: true
+      injectManifest: {
+        injectionPoint: undefined // Don't inject workbox code
       }
     })
   ],

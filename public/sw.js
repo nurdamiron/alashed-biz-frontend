@@ -30,73 +30,68 @@ self.addEventListener('activate', (event) => {
 });
 
 // Push event - handle incoming push notifications
+// iOS-compatible: minimal options, no actions/vibrate
 self.addEventListener('push', (event) => {
-  console.log('[SW] Push received:', event);
+  console.log('[SW] Push received');
 
-  let data = {
-    title: 'ALASHED Business',
-    body: 'Новое уведомление',
-    icon: '/icon-192x192.png',
-    badge: '/icon-192x192.png',
-    tag: 'default',
-    data: { url: '/' },
-  };
+  let title = 'ALASHED Business';
+  let body = 'Новое уведомление';
+  let icon = '/icon-192x192.png';
+  let tag = 'alashed-notification';
+  let data = { url: '/' };
 
   if (event.data) {
     try {
       const payload = event.data.json();
-      data = {
-        title: payload.title || data.title,
-        body: payload.body || data.body,
-        icon: payload.icon || data.icon,
-        badge: payload.badge || data.badge,
-        tag: payload.tag || data.tag,
-        data: payload.data || data.data,
-      };
+      console.log('[SW] Push payload:', JSON.stringify(payload));
+      title = payload.title || title;
+      body = payload.body || body;
+      icon = payload.icon || icon;
+      tag = payload.tag || tag;
+      if (payload.data) {
+        data = payload.data;
+      }
     } catch (e) {
       console.error('[SW] Error parsing push data:', e);
-      data.body = event.data.text();
+      body = event.data.text() || body;
     }
   }
 
+  // iOS-compatible notification options (minimal)
   const options = {
-    body: data.body,
-    icon: data.icon,
-    badge: data.badge,
-    tag: data.tag,
-    data: data.data,
-    vibrate: [100, 50, 100],
-    requireInteraction: false,
-    actions: [
-      { action: 'open', title: 'Открыть' },
-      { action: 'close', title: 'Закрыть' },
-    ],
+    body: body,
+    icon: icon,
+    tag: tag,
+    data: data,
+    // Note: badge, actions, vibrate, requireInteraction are NOT supported on iOS Safari
   };
 
+  console.log('[SW] Showing notification:', title, options);
+
   event.waitUntil(
-    self.registration.showNotification(data.title, options)
+    self.registration.showNotification(title, options)
+      .then(() => console.log('[SW] Notification shown successfully'))
+      .catch((err) => console.error('[SW] Failed to show notification:', err))
   );
 });
 
 // Notification click event - handle user interaction
 self.addEventListener('notificationclick', (event) => {
-  console.log('[SW] Notification clicked:', event);
+  console.log('[SW] Notification clicked');
 
   event.notification.close();
-
-  if (event.action === 'close') {
-    return;
-  }
 
   // Get the URL to open
   const urlToOpen = event.notification.data?.url || '/';
 
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+      console.log('[SW] Found', clientList.length, 'client(s)');
+
       // Try to find an existing window/tab
       for (const client of clientList) {
-        if (client.url.includes(self.location.origin) && 'focus' in client) {
-          // Navigate existing client to the URL
+        if ('focus' in client) {
+          console.log('[SW] Focusing existing client');
           client.postMessage({
             type: 'NOTIFICATION_CLICK',
             url: urlToOpen,
@@ -106,9 +101,8 @@ self.addEventListener('notificationclick', (event) => {
       }
 
       // No existing window found, open a new one
-      if (clients.openWindow) {
-        return clients.openWindow(urlToOpen);
-      }
+      console.log('[SW] Opening new window:', urlToOpen);
+      return clients.openWindow(urlToOpen);
     })
   );
 });
