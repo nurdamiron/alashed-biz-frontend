@@ -5,7 +5,7 @@ import Icon from './Icon';
 const BottomNav = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { isAuthenticated, theme } = useAppContext();
+  const { isAuthenticated } = useAppContext();
 
   if (!isAuthenticated) return null;
 
@@ -16,28 +16,22 @@ const BottomNav = () => {
 
   if (isHiddenRoute || isDetailRoute || isNewRoute) return null;
 
-  const isDark = theme === 'dark';
-
   const navItems = [
     { name: 'Home', label: 'Главная', icon: 'home', path: '/' },
     { name: 'Orders', label: 'Заказы', icon: 'shopping_bag', path: '/orders' },
     { name: 'Tasks', label: 'Задачи', icon: 'check_circle', path: '/tasks' },
     { name: 'Stock', label: 'Склад', icon: 'inventory_2', path: '/inventory' },
-    { name: 'Settings', label: 'Настройки', icon: 'settings', path: '/settings' },
+    { name: 'Settings', label: 'Меню', icon: 'menu', path: '/settings' },
   ];
 
   return (
     <div
-      className="fixed bottom-0 left-0 right-0 z-50 flex justify-center px-6"
+      className="fixed bottom-0 left-0 right-0 z-50 flex justify-center px-4"
       style={{
-        paddingBottom: 'max(2rem, calc(2rem + env(safe-area-inset-bottom)))'
+        paddingBottom: 'max(1.5rem, calc(1.5rem + env(safe-area-inset-bottom)))'
       }}
     >
-      <nav className={`w-full max-w-sm backdrop-blur-2xl border rounded-[2rem] shadow-lg flex items-center justify-between p-1.5 transition-colors ${
-        isDark
-          ? 'bg-slate-900/90 border-white/10'
-          : 'bg-white/90 border-slate-200/50 shadow-slate-200/50'
-      }`}>
+      <nav className="w-full max-w-md bg-white dark:bg-surface-dark backdrop-blur-2xl border border-gray-200 dark:border-white/10 rounded-[2rem] shadow-2xl shadow-black/10 dark:shadow-black/30 flex items-center justify-between p-2 transition-colors">
         {navItems.map((item) => {
           const active = location.pathname === item.path;
           return (
@@ -46,16 +40,26 @@ const BottomNav = () => {
               onClick={() => navigate(item.path)}
               aria-label={item.label}
               aria-current={active ? 'page' : undefined}
-              className={`flex flex-col items-center justify-center h-12 flex-1 rounded-2xl transition-all touch-target ${
-                active
-                  ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/25'
-                  : isDark
-                    ? 'text-slate-500 hover:text-white'
-                    : 'text-slate-400 hover:text-slate-700'
-              }`}
+              className="flex flex-col items-center justify-center flex-1 py-2 transition-all active:scale-90"
             >
-              <Icon name={item.icon} filled={active} className="text-[20px]" />
-              <span className="sr-only">{item.label}</span>
+              <div
+                className={`flex items-center justify-center w-11 h-11 rounded-2xl mb-1 transition-all ${
+                  active
+                    ? 'bg-primary text-white shadow-lg shadow-primary/30'
+                    : 'bg-gray-100 dark:bg-white/5 text-gray-400 dark:text-gray-500'
+                }`}
+              >
+                <Icon name={item.icon} filled={active} className="text-[22px]" />
+              </div>
+              <span
+                className={`text-[9px] font-black uppercase tracking-wider transition-colors ${
+                  active
+                    ? 'text-primary'
+                    : 'text-gray-400 dark:text-gray-500'
+                }`}
+              >
+                {item.label}
+              </span>
             </button>
           );
         })}

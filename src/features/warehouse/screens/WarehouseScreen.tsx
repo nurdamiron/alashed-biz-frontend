@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Icon, PullToRefresh } from '@/shared/components';
 import { api } from '@/shared/lib/api';
@@ -24,13 +24,16 @@ const WarehouseScreen = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [showInactive, setShowInactive] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const isInitialLoad = useRef(true);
 
   useEffect(() => {
     loadLocations();
   }, [showInactive]);
 
   const loadLocations = async () => {
-    setIsLoading(true);
+    if (isInitialLoad.current) {
+      setIsLoading(true);
+    }
     try {
       const data = await api.warehouse.getLocations(showInactive ? undefined : true);
       setLocations(data);
@@ -39,6 +42,7 @@ const WarehouseScreen = () => {
       toast.error('Ошибка загрузки локаций');
     } finally {
       setIsLoading(false);
+      isInitialLoad.current = false;
     }
   };
 
