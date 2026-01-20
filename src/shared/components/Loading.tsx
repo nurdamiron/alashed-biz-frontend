@@ -1,8 +1,8 @@
-import { useAppContext } from '../context/AppContext';
-
 const Loading = () => {
-  const { theme } = useAppContext();
-  const isDark = theme === 'dark';
+  // Get theme from localStorage or system preference (no context dependency)
+  const isDark =
+    localStorage.getItem('alash_theme') === 'dark' ||
+    (!localStorage.getItem('alash_theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
 
   return (
     <div
