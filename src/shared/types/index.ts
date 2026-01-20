@@ -20,6 +20,18 @@ export interface Order {
   items?: OrderItem[];
 }
 
+// Customer Types
+export interface Customer {
+  id: string;
+  name: string;
+  phone?: string;
+  email?: string;
+  address?: string;
+  ordersCount?: number;
+  totalSpent?: number;
+  lastOrderDate?: string;
+}
+
 // Task Types
 export interface TaskComment {
   id: string;

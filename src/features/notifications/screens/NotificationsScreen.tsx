@@ -120,8 +120,11 @@ type FilterType = 'all' | 'orders' | 'tasks' | 'stock';
 
 const NotificationsScreen = () => {
   const navigate = useNavigate();
-  const { notifications, clearNotifications, refreshData } = useAppContext();
+  const { notifications: rawNotifications, clearNotifications, refreshData } = useAppContext();
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
+
+  // Ensure notifications is always an array
+  const notifications = Array.isArray(rawNotifications) ? rawNotifications : [];
 
   // Filter notifications
   const filtered = useMemo(() => {
