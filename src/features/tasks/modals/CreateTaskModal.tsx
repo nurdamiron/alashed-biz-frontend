@@ -59,7 +59,7 @@ const CreateTaskModal = () => {
   const [desc, setDesc] = useState('');
   const [priority, setPriority] = useState<'Высокий' | 'Средний' | 'Низкий'>('Средний');
   const [selectedTag, setSelectedTag] = useState('Общее');
-  const [selectedAssignee, setSelectedAssignee] = useState<Employee | null>(null);
+  const [selectedAssignees, setSelectedAssignees] = useState<Employee[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date>(() => {
     const d = new Date();
     d.setDate(d.getDate() + 1);
@@ -104,8 +104,9 @@ const CreateTaskModal = () => {
         status: 'К выполнению',
         deadline: deadlineDate.toISOString(),
         time: selectedTime,
-        assignee: selectedAssignee?.name || 'Админ',
-        assigneeId: selectedAssignee?.id,
+        assignee: selectedAssignees.length > 0 ? selectedAssignees.map(a => a.name).join(', ') : 'Админ',
+        assigneeId: selectedAssignees.length > 0 ? selectedAssignees[0].id : undefined,
+        assigneeIds: selectedAssignees.map(a => a.id),
         tag: selectedTag,
         checklist: checklist.length > 0 ? checklist : undefined,
       });
@@ -188,12 +189,20 @@ const CreateTaskModal = () => {
         <div className="space-y-4">
           <div className="flex items-center justify-between px-1">
             <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-4">
-              Исполнитель и нагрузка
+              Исполнители ({selectedAssignees.length})
             </label>
+            {selectedAssignees.length > 0 && (
+              <button
+                onClick={() => setSelectedAssignees([])}
+                className="text-[9px] font-black text-red-500 uppercase tracking-widest"
+              >
+                Сбросить
+              </button>
+            )}
           </div>
           <div className="flex gap-4 overflow-x-auto no-scrollbar py-2 px-1">
             {Array.isArray(employees) && employees.map((emp) => {
-              const isSelected = selectedAssignee?.id === emp.id;
+              const isSelected = selectedAssignees.some(a => a.id === emp.id);
               const workloadColor =
                 emp.activeTasks > 4
                   ? 'bg-red-500'
@@ -203,7 +212,13 @@ const CreateTaskModal = () => {
               return (
                 <button
                   key={emp.id}
-                  onClick={() => setSelectedAssignee(emp)}
+                  onClick={() => {
+                    if (isSelected) {
+                      setSelectedAssignees(selectedAssignees.filter(a => a.id !== emp.id));
+                    } else {
+                      setSelectedAssignees([...selectedAssignees, emp]);
+                    }
+                  }}
                   className={`flex flex-col items-center gap-2.5 p-3.5 rounded-xl border min-w-[90px] transition-all duration-300 ${
                     isSelected
                       ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20 scale-105'
@@ -225,6 +240,11 @@ const CreateTaskModal = () => {
                     >
                       {emp.activeTasks}
                     </span>
+                    {isSelected && (
+                      <span className="absolute -bottom-1 -right-1 h-5 w-5 rounded-full bg-emerald-500 flex items-center justify-center border-2 border-white dark:border-surface-dark">
+                        <Icon name="check" className="text-[12px] text-white" />
+                      </span>
+                    )}
                   </div>
                   <p
                     className={`text-[11px] font-bold leading-tight ${

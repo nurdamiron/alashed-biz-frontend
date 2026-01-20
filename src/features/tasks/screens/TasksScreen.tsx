@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Icon, PullToRefresh } from '@/shared/components';
 import { useAppContext } from '@/shared/context/AppContext';
@@ -15,9 +15,24 @@ const TasksScreen = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedPriority, setSelectedPriority] = useState<string | null>(null);
   const [selectedAssignee, setSelectedAssignee] = useState<string | null>(null);
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
 
   const navigate = useNavigate();
   const { tasks, updateTaskStatus, employees, refreshData, isDataLoading } = useAppContext();
+
+  // Отслеживаем состояние сети
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
 
   // Сохраняем выбранный вид в localStorage
   const handleViewChange = (newView: 'List' | 'Kanban') => {
@@ -224,7 +239,9 @@ const TasksScreen = () => {
         onRefresh={refreshData}
         className="flex-1 overflow-y-auto no-scrollbar relative pt-2"
       >
-        {isLoading ? (
+        {!isOnline && (!tasks || tasks.length === 0) ? (
+          <OfflineState onRetry={refreshData} />
+        ) : isLoading ? (
           <TasksSkeleton view={view} />
         ) : view === 'List' ? (
           <ListView
@@ -694,5 +711,27 @@ const TasksSkeleton = ({ view }: { view: 'List' | 'Kanban' }) => {
     </div>
   );
 };
+
+// Offline State Component
+const OfflineState = ({ onRetry }: { onRetry: () => void }) => (
+  <div className="flex flex-col items-center justify-center h-full px-6 py-20">
+    <div className="w-20 h-20 rounded-full bg-gray-100 dark:bg-white/5 flex items-center justify-center mb-6">
+      <Icon name="wifi_off" className="text-4xl text-gray-400" />
+    </div>
+    <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">
+      Нет подключения
+    </h3>
+    <p className="text-sm text-gray-500 dark:text-gray-400 text-center mb-6 max-w-xs">
+      Проверьте интернет-соединение и попробуйте снова
+    </p>
+    <button
+      onClick={onRetry}
+      className="flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-white font-bold text-sm shadow-lg shadow-primary/30 active:scale-95 transition-all"
+    >
+      <Icon name="refresh" className="text-lg" />
+      Повторить
+    </button>
+  </div>
+);
 
 export default TasksScreen;

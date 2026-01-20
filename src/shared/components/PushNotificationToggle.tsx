@@ -1,17 +1,14 @@
 import { useState, useEffect } from 'react';
-import { useAppContext } from '../context/AppContext';
 import Icon from './Icon';
 import {
   getPushState,
   subscribeToPush,
   unsubscribeFromPush,
-  sendTestPush,
   type PushNotificationState,
 } from '../lib/push';
 import toast from 'react-hot-toast';
 
 const PushNotificationToggle = () => {
-  const { user } = useAppContext();
 
   const [state, setState] = useState<PushNotificationState>({
     isSupported: false,
@@ -62,27 +59,6 @@ const PushNotificationToggle = () => {
     } catch (error) {
       console.error('Toggle error:', error);
       toast.error('Произошла ошибка');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleTestPush = async () => {
-    if (!state.isSubscribed) {
-      toast.error('Сначала включите уведомления');
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const success = await sendTestPush();
-      if (success) {
-        toast.success('Тестовое уведомление отправлено');
-      } else {
-        toast.error('Не удалось отправить тестовое уведомление');
-      }
-    } catch (error) {
-      toast.error('Ошибка отправки');
     } finally {
       setLoading(false);
     }
@@ -154,17 +130,6 @@ const PushNotificationToggle = () => {
         </p>
       )}
 
-      {state.isSubscribed && user?.role === 'admin' && (
-        <button
-          onClick={handleTestPush}
-          disabled={loading}
-          className={`w-full py-3 rounded-xl text-sm font-bold transition-all active:scale-[0.98] bg-gray-100 dark:bg-white/5 text-slate-900 dark:text-white hover:bg-gray-200 dark:hover:bg-white/10 ${
-            loading ? 'opacity-50' : ''
-          }`}
-        >
-          {loading ? 'Отправка...' : 'Отправить тестовое уведомление'}
-        </button>
-      )}
     </div>
   );
 };

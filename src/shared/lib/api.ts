@@ -142,7 +142,7 @@ export const api = {
       return result.tasks;
     },
     getById: (id: string) => request<Task>(`/tasks/${id}`),
-    create: async (task: Partial<Task>) => {
+    create: async (task: Partial<Task> & { assigneeIds?: string[] }) => {
       const res = await request<{ success: boolean; data: any }>('/tasks', {
         method: 'POST',
         body: JSON.stringify({
@@ -150,13 +150,14 @@ export const api = {
           description: task.description,
           priority: task.priority,
           assigneeId: task.assigneeId ? Number(task.assigneeId) : undefined,
+          assigneeIds: task.assigneeIds?.map(id => Number(id)),
           deadline: task.deadline,
           checklist: task.checklist || [],
         }),
       });
       return res.data;
     },
-    update: async (id: string, updates: Partial<Task>) => {
+    update: async (id: string, updates: Partial<Task> & { assigneeIds?: string[] }) => {
       await request(`/tasks/${id}`, {
         method: 'PUT',
         body: JSON.stringify({
@@ -164,6 +165,7 @@ export const api = {
           description: updates.description,
           priority: updates.priority,
           assigneeId: updates.assigneeId ? Number(updates.assigneeId) : undefined,
+          assigneeIds: updates.assigneeIds?.map(id => Number(id)),
           deadline: updates.deadline,
           checklist: updates.checklist,
         }),

@@ -47,6 +47,11 @@ export interface ChecklistItem {
   done: boolean;
 }
 
+export interface TaskAssignee {
+  id: string;
+  name: string;
+}
+
 export interface Task {
   id: string;
   title: string;
@@ -55,6 +60,8 @@ export interface Task {
   status: 'К выполнению' | 'В процессе' | 'Готово';
   assignee?: string;
   assigneeId?: string;
+  assignees?: TaskAssignee[];
+  assigneeIds?: string[];
   deadline?: string;
   time?: string;
   tag?: string;

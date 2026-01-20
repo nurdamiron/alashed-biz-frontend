@@ -14,7 +14,7 @@ const EditTaskModal = () => {
   const [title, setTitle] = useState('');
   const [desc, setDesc] = useState('');
   const [priority, setPriority] = useState<'Высокий' | 'Средний' | 'Низкий'>('Средний');
-  const [selectedAssignee, setSelectedAssignee] = useState<Employee | null>(null);
+  const [selectedAssignees, setSelectedAssignees] = useState<Employee[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [selectedTime, setSelectedTime] = useState('18:00');
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -25,9 +25,15 @@ const EditTaskModal = () => {
       setDesc(task.description || '');
       setPriority(task.priority);
 
-      if (task.assigneeId) {
+      // Загружаем исполнителей из task.assignees (новый формат) или из assigneeId (старый формат)
+      if (task.assignees && task.assignees.length > 0) {
+        const assigneeList = task.assignees
+          .map(a => employees.find(e => e.id === a.id))
+          .filter((e): e is Employee => e !== undefined);
+        setSelectedAssignees(assigneeList);
+      } else if (task.assigneeId) {
         const assignee = employees.find(e => e.id === task.assigneeId);
-        if (assignee) setSelectedAssignee(assignee);
+        if (assignee) setSelectedAssignees([assignee]);
       }
 
       if (task.deadline) {
@@ -49,16 +55,30 @@ const EditTaskModal = () => {
     const day = selectedDate.getDate();
     const deadlineDate = new Date(year, month, day, hours, minutes, 0, 0);
 
+    const primaryAssignee = selectedAssignees.length > 0 ? selectedAssignees[0] : null;
+
     await updateTask({
       ...task,
       title,
       description: desc,
       priority,
-      assigneeId: selectedAssignee?.id,
-      assignee: selectedAssignee?.name,
+      assigneeId: primaryAssignee?.id,
+      assignee: primaryAssignee?.name,
+      assigneeIds: selectedAssignees.map(a => a.id),
       deadline: deadlineDate.toISOString(),
     });
     navigate(-1);
+  };
+
+  const toggleAssignee = (emp: Employee) => {
+    setSelectedAssignees(prev => {
+      const isSelected = prev.some(a => a.id === emp.id);
+      if (isSelected) {
+        return prev.filter(a => a.id !== emp.id);
+      } else {
+        return [...prev, emp];
+      }
+    });
   };
 
   const handleDelete = async () => {
@@ -142,25 +162,30 @@ const EditTaskModal = () => {
             </div>
           </div>
 
-          {/* Исполнитель */}
+          {/* Исполнители */}
           <div>
             <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">
-              Исполнитель
+              Исполнители {selectedAssignees.length > 0 && `(${selectedAssignees.length})`}
             </label>
             <div className="flex gap-3 overflow-x-auto no-scrollbar py-1">
               {employees.map((emp) => {
-                const isSelected = selectedAssignee?.id === emp.id;
+                const isSelected = selectedAssignees.some(a => a.id === emp.id);
                 return (
                   <button
                     key={emp.id}
                     type="button"
-                    onClick={() => setSelectedAssignee(emp)}
-                    className={`flex flex-col items-center gap-2 p-3 rounded-2xl border min-w-[100px] transition-all ${
+                    onClick={() => toggleAssignee(emp)}
+                    className={`relative flex flex-col items-center gap-2 p-3 rounded-2xl border min-w-[100px] transition-all ${
                       isSelected
                         ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20'
                         : 'bg-white dark:bg-surface-dark border-gray-100 dark:border-white/5'
                     }`}
                   >
+                    {isSelected && (
+                      <div className="absolute -top-1 -right-1 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                        <Icon name="check" className="text-white text-xs" />
+                      </div>
+                    )}
                     <div className={`h-14 w-14 rounded-xl flex items-center justify-center ${
                       isSelected
                         ? 'bg-white/20'
