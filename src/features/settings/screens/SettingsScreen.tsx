@@ -5,21 +5,13 @@ import { useAppContext } from '@/shared/context/AppContext';
 
 const SettingsScreen = () => {
   const navigate = useNavigate();
-  const { logout, appName, businessDomain, setAppConfig, user, refreshData, currency, setCurrency } = useAppContext();
+  const { logout, user, refreshData, currency, setCurrency } = useAppContext();
 
-  const [localName, setLocalName] = useState(appName);
-  const [localDomain, setLocalDomain] = useState(businessDomain);
-  const [isEditingConfig, setIsEditingConfig] = useState(false);
   const [showCurrencyModal, setShowCurrencyModal] = useState(false);
 
   const handleLogout = () => {
     logout();
     navigate('/login');
-  };
-
-  const saveConfig = () => {
-    setAppConfig(localName, localDomain);
-    setIsEditingConfig(false);
   };
 
   const currencies = [
@@ -118,46 +110,6 @@ const SettingsScreen = () => {
               </div>
               <Icon name="chevron_right" className="text-gray-300 dark:text-gray-600" />
             </button>
-          </div>
-        </section>
-
-        {/* App Config Section */}
-        <section>
-          <div className="flex items-center justify-between mb-4 px-1">
-            <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
-              Бизнес
-            </h3>
-            <button
-              onClick={() => (isEditingConfig ? saveConfig() : setIsEditingConfig(true))}
-              className="text-primary text-xs font-black uppercase tracking-wider"
-            >
-              {isEditingConfig ? 'Сохранить' : 'Изменить'}
-            </button>
-          </div>
-          <div className="bg-white dark:bg-surface-dark rounded-[2rem] shadow-sm border border-gray-100 dark:border-white/5 p-5 space-y-4">
-            <div>
-              <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">
-                Название компании
-              </label>
-              <input
-                disabled={!isEditingConfig}
-                value={localName}
-                onChange={(e) => setLocalName(e.target.value)}
-                className="w-full h-14 px-5 rounded-2xl bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/5 text-base font-medium text-slate-900 dark:text-white transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-primary/20"
-              />
-            </div>
-            <div>
-              <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">
-                Сфера деятельности
-              </label>
-              <input
-                disabled={!isEditingConfig}
-                value={localDomain}
-                onChange={(e) => setLocalDomain(e.target.value)}
-                placeholder="Магазин электроники, Кафе и т.д."
-                className="w-full h-14 px-5 rounded-2xl bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/5 text-base font-medium text-slate-900 dark:text-white placeholder-gray-400 transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-primary/20"
-              />
-            </div>
           </div>
         </section>
 
