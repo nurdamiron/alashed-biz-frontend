@@ -44,8 +44,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     try {
       const response = await api.auth.login(username, password);
       if (response.success && response.data) {
-        const { accessToken, user: userData } = response.data;
+        const { accessToken, refreshToken, user: userData } = response.data;
         localStorage.setItem('alash_token', accessToken);
+        if (refreshToken) {
+          localStorage.setItem('alash_refresh_token', refreshToken);
+        }
         localStorage.setItem('alash_auth', JSON.stringify(userData));
         setIsAuthenticated(true);
         setUser(userData);
@@ -62,6 +65,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const logout = () => {
     localStorage.removeItem('alash_token');
+    localStorage.removeItem('alash_refresh_token');
     localStorage.removeItem('alash_auth');
     setIsAuthenticated(false);
     setUser(null);

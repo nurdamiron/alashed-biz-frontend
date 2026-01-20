@@ -3,8 +3,54 @@ import type { Order, Task, Product, Employee, AuditLog, DashboardStats, Notifica
 const API_BASE = import.meta.env.VITE_API_URL || '/api';
 
 const getToken = () => localStorage.getItem('alash_token');
+const getRefreshToken = () => localStorage.getItem('alash_refresh_token');
 
-async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
+// Flag to prevent multiple simultaneous refresh attempts
+let isRefreshing = false;
+let refreshPromise: Promise<boolean> | null = null;
+
+// Try to refresh the access token
+async function tryRefreshToken(): Promise<boolean> {
+  const refreshToken = getRefreshToken();
+  if (!refreshToken) return false;
+
+  try {
+    const res = await fetch(`${API_BASE}/auth/refresh`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refreshToken }),
+    });
+
+    if (!res.ok) return false;
+
+    const data = await res.json();
+    if (data.accessToken) {
+      localStorage.setItem('alash_token', data.accessToken);
+      if (data.refreshToken) {
+        localStorage.setItem('alash_refresh_token', data.refreshToken);
+      }
+      return true;
+    }
+    return false;
+  } catch {
+    return false;
+  }
+}
+
+// Handle session expiration - clear storage and redirect to login
+function handleSessionExpired() {
+  localStorage.removeItem('alash_token');
+  localStorage.removeItem('alash_refresh_token');
+  localStorage.removeItem('alash_auth');
+
+  // Redirect to login if not already there
+  if (!window.location.hash.includes('/login')) {
+    window.location.hash = '/login';
+    window.location.reload();
+  }
+}
+
+async function request<T>(path: string, options: RequestInit = {}, isRetry = false): Promise<T> {
   const token = getToken();
 
   const res = await fetch(`${API_BASE}${path}`, {
@@ -15,6 +61,28 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
       ...options.headers,
     },
   });
+
+  // Handle 401 Unauthorized
+  if (res.status === 401 && !isRetry && !path.includes('/auth/login') && !path.includes('/auth/refresh')) {
+    // Try to refresh token (only one refresh at a time)
+    if (!isRefreshing) {
+      isRefreshing = true;
+      refreshPromise = tryRefreshToken();
+    }
+
+    const refreshed = await refreshPromise;
+    isRefreshing = false;
+    refreshPromise = null;
+
+    if (refreshed) {
+      // Retry the original request with new token
+      return request<T>(path, options, true);
+    } else {
+      // Refresh failed - session expired
+      handleSessionExpired();
+      throw new Error('Session expired');
+    }
+  }
 
   const data = await res.json();
 
