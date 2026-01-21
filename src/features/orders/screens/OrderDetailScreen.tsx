@@ -167,7 +167,7 @@ const OrderDetailScreen = () => {
             </div>
             <div className="bg-white dark:bg-surface-dark rounded-[2rem] p-4 shadow-sm border border-gray-100 dark:border-white/5 space-y-3">
               {order.items.map((item, index) => {
-                const product = products.find((p) => p.id === item.productId);
+                const product = products?.find((p) => p.id === item.productId);
                 const subtotal = item.quantity * item.priceAtOrder;
                 return (
                   <div
