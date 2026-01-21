@@ -49,7 +49,7 @@ jobs:
           COMMAND_ID=$(aws ssm send-command \
             --instance-ids "i-08eb56616ddb569bc" \
             --document-name "AWS-RunShellScript" \
-            --parameters "commands=[\"cd /home/ubuntu && rm -rf public && mkdir -p public && curl -o fe.tar.gz '${{ steps.presign.outputs.url }}' && tar -xzf fe.tar.gz && mv dist/* public/ && rm -rf dist fe.tar.gz && chown -R ubuntu:ubuntu public && echo Frontend deployed\"]" \
+            --parameters "commands=[\"cd /home/ubuntu && rm -rf public dist fe.tar.gz && mkdir -p public && curl -o fe.tar.gz '${{ steps.presign.outputs.url }}' && tar -xzf fe.tar.gz && mv dist/* public/ && rm -rf dist fe.tar.gz && chown -R ubuntu:ubuntu public && echo Frontend deployed\"]" \
             --query "Command.CommandId" \
             --output text)
 
