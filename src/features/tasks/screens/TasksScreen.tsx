@@ -593,7 +593,7 @@ const KanbanColumn = ({ title, tasks, updateStatus, nextStatus, navigate, color 
 );
 
 const KanbanView = (props: any) => (
-  <div className="flex h-full w-full overflow-x-auto lg:overflow-x-visible no-scrollbar gap-4 snap-x snap-mandatory lg:snap-none pb-4 lg:px-6 lg:grid lg:grid-cols-3">
+  <div className="flex h-full w-full overflow-x-auto lg:overflow-x-visible gap-4 snap-x snap-mandatory lg:snap-none pb-4 lg:px-6 lg:grid lg:grid-cols-3 touch-pan-x overscroll-x-contain" style={{ WebkitOverflowScrolling: 'touch' }}>
     <KanbanColumn
       title="Ожидание"
       color="bg-orange-500"

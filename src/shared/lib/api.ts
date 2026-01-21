@@ -227,7 +227,10 @@ export const api = {
   },
 
   orders: {
-    list: () => request<Order[]>('/orders'),
+    list: async () => {
+      const result = await request<{ orders: Order[]; total: number }>('/orders');
+      return result.orders || [];
+    },
     getById: (id: string) => request<Order>(`/orders/${id}`),
     create: async (order: Partial<Order>) => {
       const res = await request<{ success: boolean; data: any }>('/orders', {

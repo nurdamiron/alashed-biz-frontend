@@ -7,8 +7,8 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      registerType: 'prompt',
-      injectRegister: null, // Don't inject SW registration - we use custom sw.js
+      registerType: 'autoUpdate',
+      injectRegister: false, // We register manually in main.tsx
       strategies: 'injectManifest',
       srcDir: 'public',
       filename: 'sw.js',
@@ -38,6 +38,9 @@ export default defineConfig({
       },
       injectManifest: {
         injectionPoint: undefined // Don't inject workbox code
+      },
+      devOptions: {
+        enabled: false
       }
     })
   ],

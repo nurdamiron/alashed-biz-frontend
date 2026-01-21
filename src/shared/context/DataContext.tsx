@@ -114,7 +114,22 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           api.suppliers.list(true).then(res => res.suppliers).catch(() => []),
         ]);
 
-      setOrders(ordersData);
+      // Transform orders from backend format
+      const ordersFormatted: Order[] = (ordersData || []).map((order: any) => ({
+        id: String(order.id),
+        client: order.customerName || 'Без имени',
+        email: order.customerEmail,
+        phone: order.customerPhone,
+        desc: order.notes || (order.items?.map((i: any) => i.productName).join(', ') || ''),
+        amount: order.totalAmount || 0,
+        status: order.status || 'Ожидание',
+        date: order.createdAt || new Date().toISOString(),
+        source: order.source || 'Магазин',
+        img: order.items?.[0]?.productImage || 'https://cdn-icons-png.flaticon.com/512/1006/1006771.png',
+        items: order.items,
+      }));
+
+      setOrders(ordersFormatted);
 
       // Transform tasks from backend format
       const tasksFormatted = tasksData.map((task: any) => ({

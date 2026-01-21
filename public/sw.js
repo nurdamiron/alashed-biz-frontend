@@ -1,36 +1,78 @@
 // ALASHED Business Service Worker
-// Handles Push Notifications and Caching
+// Handles Push Notifications and Auto-Updates
 
-const CACHE_NAME = 'alashed-v1';
-const OFFLINE_URL = '/offline.html';
+// Version changes with each build - forces SW update
+const SW_VERSION = Date.now().toString();
+const CACHE_NAME = `alashed-cache-${SW_VERSION}`;
 
-// Install event - cache essential assets
+console.log('[SW] Service Worker version:', SW_VERSION);
+
+// Install event - skip waiting immediately
 self.addEventListener('install', (event) => {
-  console.log('[SW] Installing service worker...');
+  console.log('[SW] Installing new version...');
+  // Force immediate activation
   self.skipWaiting();
 });
 
-// Activate event - clean up old caches
+// Activate event - clean up ALL old caches and take control
 self.addEventListener('activate', (event) => {
-  console.log('[SW] Activating service worker...');
+  console.log('[SW] Activating new version...');
   event.waitUntil(
     Promise.all([
       // Take control of all clients immediately
       self.clients.claim(),
-      // Clean up old caches
+      // Delete ALL old caches
       caches.keys().then((cacheNames) => {
         return Promise.all(
-          cacheNames
-            .filter((cacheName) => cacheName !== CACHE_NAME)
-            .map((cacheName) => caches.delete(cacheName))
+          cacheNames.map((cacheName) => {
+            console.log('[SW] Deleting old cache:', cacheName);
+            return caches.delete(cacheName);
+          })
         );
       }),
-    ])
+    ]).then(() => {
+      // Notify all clients to reload
+      self.clients.matchAll().then((clients) => {
+        clients.forEach((client) => {
+          client.postMessage({ type: 'SW_UPDATED', version: SW_VERSION });
+        });
+      });
+    })
+  );
+});
+
+// Fetch event - Network First strategy for all requests
+self.addEventListener('fetch', (event) => {
+  // Skip non-GET requests
+  if (event.request.method !== 'GET') return;
+
+  // Skip API and WebSocket requests
+  const url = new URL(event.request.url);
+  if (url.pathname.startsWith('/api') || url.pathname.startsWith('/ws')) {
+    return;
+  }
+
+  // Network First: Always try network, fall back to cache
+  event.respondWith(
+    fetch(event.request)
+      .then((response) => {
+        // Clone and cache successful responses
+        if (response && response.status === 200) {
+          const responseClone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseClone);
+          });
+        }
+        return response;
+      })
+      .catch(() => {
+        // Network failed, try cache
+        return caches.match(event.request);
+      })
   );
 });
 
 // Push event - handle incoming push notifications
-// iOS-compatible: minimal options, no actions/vibrate
 self.addEventListener('push', (event) => {
   console.log('[SW] Push received');
 
@@ -57,13 +99,11 @@ self.addEventListener('push', (event) => {
     }
   }
 
-  // iOS-compatible notification options (minimal)
   const options = {
     body: body,
     icon: icon,
     tag: tag,
     data: data,
-    // Note: badge, actions, vibrate, requireInteraction are NOT supported on iOS Safari
   };
 
   console.log('[SW] Showing notification:', title, options);
@@ -75,38 +115,23 @@ self.addEventListener('push', (event) => {
   );
 });
 
-// Notification click event - handle user interaction
+// Notification click event
 self.addEventListener('notificationclick', (event) => {
   console.log('[SW] Notification clicked');
-
   event.notification.close();
 
-  // Get the URL/path to open (e.g., '/task/123')
   const path = event.notification.data?.url || '/';
-
-  // Build full URL with hash for HashRouter
-  // e.g., '/task/123' becomes 'https://domain.com/#/task/123'
   const baseUrl = self.location.origin;
   const hashUrl = `${baseUrl}/#${path}`;
 
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
-      console.log('[SW] Found', clientList.length, 'client(s)');
-
-      // Try to find an existing window/tab
       for (const client of clientList) {
         if ('focus' in client) {
-          console.log('[SW] Focusing existing client and navigating to:', path);
-          client.postMessage({
-            type: 'NOTIFICATION_CLICK',
-            url: path,
-          });
+          client.postMessage({ type: 'NOTIFICATION_CLICK', url: path });
           return client.focus();
         }
       }
-
-      // No existing window found, open a new one with hash URL
-      console.log('[SW] Opening new window:', hashUrl);
       return clients.openWindow(hashUrl);
     })
   );
@@ -114,7 +139,7 @@ self.addEventListener('notificationclick', (event) => {
 
 // Notification close event
 self.addEventListener('notificationclose', (event) => {
-  console.log('[SW] Notification closed:', event);
+  console.log('[SW] Notification closed');
 });
 
 // Message event - handle messages from main thread
@@ -124,26 +149,25 @@ self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }
+
+  if (event.data && event.data.type === 'GET_VERSION') {
+    event.ports[0].postMessage({ version: SW_VERSION });
+  }
 });
 
 // Push subscription change event
 self.addEventListener('pushsubscriptionchange', (event) => {
   console.log('[SW] Push subscription changed');
-
   event.waitUntil(
-    // Re-subscribe with the new subscription
     self.registration.pushManager
       .subscribe({
         userVisibleOnly: true,
         applicationServerKey: event.oldSubscription?.options?.applicationServerKey,
       })
       .then((subscription) => {
-        // Send new subscription to server
         return fetch('/api/push/subscribe', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ subscription }),
           credentials: 'include',
         });
@@ -154,4 +178,4 @@ self.addEventListener('pushsubscriptionchange', (event) => {
   );
 });
 
-console.log('[SW] Service Worker loaded');
+console.log('[SW] Service Worker loaded, version:', SW_VERSION);
