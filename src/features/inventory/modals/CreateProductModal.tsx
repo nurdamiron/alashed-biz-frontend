@@ -27,7 +27,7 @@ const CreateProductModal = () => {
   const recommendedBuyPrice = useMemo(() => {
     if (!isKit) return 0;
     return kitItems.reduce((acc, item) => {
-      const prod = products.find((p) => p.id === item.productId);
+      const prod = products?.find((p) => p.id === item.productId);
       return acc + (prod ? prod.priceBuy * item.quantity : 0);
     }, 0);
   }, [kitItems, products, isKit]);
@@ -95,7 +95,7 @@ const CreateProductModal = () => {
   // Уникальные категории из существующих товаров
   const existingCategories = useMemo(() => {
     const cats = new Set<string>();
-    products.forEach((p) => {
+    (products || []).forEach((p) => {
       if (p.category) cats.add(p.category);
     });
     return Array.from(cats);
@@ -234,7 +234,7 @@ const CreateProductModal = () => {
               {kitItems.length > 0 ? (
                 <div className="space-y-2">
                   {kitItems.map((item) => {
-                    const prod = products.find((p) => p.id === item.productId);
+                    const prod = products?.find((p) => p.id === item.productId);
                     if (!prod) return null;
                     return (
                       <div

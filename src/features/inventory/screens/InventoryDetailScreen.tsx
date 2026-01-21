@@ -20,7 +20,7 @@ const InventoryDetailScreen = () => {
   const { id } = useParams();
   const { products, updateProductStock, getProductLogs } = useAppContext();
 
-  const product = products.find((p) => p.id === id);
+  const product = products?.find((p) => p.id === id);
   const [logs, setLogs] = useState<AuditLog[]>([]);
   const [modalType, setModalType] = useState<'in' | 'out' | null>(null);
   const [quantity, setQuantity] = useState<string>('');

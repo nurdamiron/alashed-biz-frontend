@@ -35,8 +35,8 @@ const ReceiveGoodsModal = () => {
     s.tin?.toLowerCase().includes(supplierSearch.toLowerCase())
   );
 
-  const selectedProduct = products.find(p => p.id === formData.productId);
-  const selectedSupplier = suppliers.find(s => s.id === formData.supplierId);
+  const selectedProduct = products?.find(p => p.id === formData.productId);
+  const selectedSupplier = suppliers?.find(s => s.id === formData.supplierId);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

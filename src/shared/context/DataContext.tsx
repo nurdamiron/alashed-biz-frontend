@@ -149,7 +149,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       }));
 
       setTasks(tasksFormatted);
-      setProducts(productsData);
+      setProducts(productsData || []);
 
       // Transform employees response
       const employeesData: Employee[] = Array.isArray(staffResponse)
