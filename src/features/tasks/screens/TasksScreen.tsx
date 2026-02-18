@@ -22,8 +22,17 @@ const getAssigneeInitials = (task: Task): string => {
   return task.assignee ? task.assignee[0].toUpperCase() : 'A';
 };
 
+// Нормализация статусов (русские + английские)
+const isCompleted = (status: string) => ['Готово', 'completed'].includes(status);
+const isCancelled = (status: string) => ['Отменено', 'cancelled'].includes(status);
+const isInProgress = (status: string) => ['В процессе', 'in_progress'].includes(status);
+const isTodo = (status: string) => ['К выполнению', 'pending'].includes(status);
+const isArchived = (status: string) => isCompleted(status) || isCancelled(status);
+
+// Нормализация приоритетов
+const isUrgent = (priority: string) => ['Высокий', 'high', 'urgent'].includes(priority);
+
 const TasksScreen = () => {
-  // Загружаем сохраненный вид из localStorage или используем List по умолчанию
   const [view, setView] = useState<'List' | 'Kanban'>(() => {
     const saved = localStorage.getItem('alash_tasks_view');
     return (saved as 'List' | 'Kanban') || 'List';
@@ -37,40 +46,27 @@ const TasksScreen = () => {
   const navigate = useNavigate();
   const { tasks, updateTaskStatus, employees, refreshData, isDataLoading } = useAppContext();
 
-  // Отслеживаем состояние сети
   useEffect(() => {
     const handleOnline = () => setIsOnline(true);
     const handleOffline = () => setIsOnline(false);
-
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
-
     return () => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
     };
   }, []);
 
-  // Сохраняем выбранный вид в localStorage
   const handleViewChange = (newView: 'List' | 'Kanban') => {
     setView(newView);
     localStorage.setItem('alash_tasks_view', newView);
   };
 
-  // Используем глобальное состояние загрузки из контекста
   const isLoading = isDataLoading && (!tasks || tasks.length === 0);
 
-  // Фильтрация задач
   const filteredTasks = Array.isArray(tasks) ? tasks.filter((t) => {
-    // Поиск по названию
-    if (searchQuery && !t.title.toLowerCase().includes(searchQuery.toLowerCase())) {
-      return false;
-    }
-    // Фильтр по приоритету
-    if (selectedPriority && t.priority !== selectedPriority) {
-      return false;
-    }
-    // Фильтр по исполнителю
+    if (searchQuery && !t.title.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+    if (selectedPriority && t.priority !== selectedPriority) return false;
     if (selectedAssignee) {
       const hasMatchingAssignee = t.assignees?.some(a => String(a.id) === selectedAssignee) || t.assigneeId === selectedAssignee;
       if (!hasMatchingAssignee) return false;
@@ -78,11 +74,10 @@ const TasksScreen = () => {
     return true;
   }) : [];
 
-  
-  const urgentTasks = filteredTasks.filter((t) => t.priority === 'Высокий' && t.status !== 'Готово');
-  const inProgressTasks = filteredTasks.filter((t) => t.status === 'В процессе');
-  const todoTasks = filteredTasks.filter((t) => t.status === 'К выполнению');
-  const completedTasks = filteredTasks.filter((t) => t.status === 'Готово');
+  const urgentTasks = filteredTasks.filter((t) => isUrgent(t.priority) && !isArchived(t.status));
+  const inProgressTasks = filteredTasks.filter((t) => isInProgress(t.status));
+  const todoTasks = filteredTasks.filter((t) => isTodo(t.status));
+  const archivedTasks = filteredTasks.filter((t) => isArchived(t.status));
 
   return (
     <div className="flex flex-col h-full bg-background-light dark:bg-background-dark transition-colors duration-300">
@@ -266,14 +261,14 @@ const TasksScreen = () => {
             urgent={urgentTasks}
             todo={todoTasks}
             inProgress={inProgressTasks}
-            completed={completedTasks}
+            archived={archivedTasks}
             navigate={navigate}
           />
         ) : (
           <KanbanView
             todo={todoTasks}
             inProgress={inProgressTasks}
-            done={completedTasks}
+            archived={archivedTasks}
             updateStatus={updateTaskStatus}
             navigate={navigate}
           />
@@ -407,7 +402,39 @@ const TaskCard: React.FC<{ task: Task; navigate: any }> = ({ task, navigate }) =
   );
 };
 
-const ListView = ({ urgent, todo, inProgress, completed, navigate }: any) => (
+const ArchiveSection = ({ archived, navigate }: { archived: Task[]; navigate: any }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  if (archived.length === 0) return null;
+
+  return (
+    <section>
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center gap-2 mb-4 px-2 w-full group"
+      >
+        <Icon name="inventory_2" className="text-[14px] text-gray-400" />
+        <h3 className="text-[10px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-[0.3em]">
+          Архив
+        </h3>
+        <span className="text-[10px] font-black text-gray-500 dark:text-gray-400">({archived.length})</span>
+        <Icon
+          name={isOpen ? 'expand_less' : 'expand_more'}
+          className="text-[16px] text-gray-400 ml-auto transition-transform"
+        />
+      </button>
+      {isOpen && (
+        <div className="space-y-4 opacity-60">
+          {archived.map((t: Task) => (
+            <TaskCard key={t.id} task={t} navigate={navigate} />
+          ))}
+        </div>
+      )}
+    </section>
+  );
+};
+
+const ListView = ({ urgent, todo, inProgress, archived, navigate }: any) => (
   <div className="pb-40 px-6 space-y-8">
     {/* Срочно */}
     {urgent.length > 0 && (
@@ -469,28 +496,8 @@ const ListView = ({ urgent, todo, inProgress, completed, navigate }: any) => (
       )}
     </section>
 
-    {/* Завершенные */}
-    <section>
-      <div className="flex items-center gap-2 mb-4 px-2">
-        <Icon name="verified" className="text-[14px] text-emerald-500" />
-        <h3 className="text-[10px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-[0.3em]">
-          Завершенные
-        </h3>
-        <span className="text-[10px] font-black text-emerald-600 dark:text-emerald-400">({completed.length})</span>
-      </div>
-      {completed.length > 0 ? (
-        <div className="space-y-4">
-          {completed.map((t: Task) => (
-            <TaskCard key={t.id} task={t} navigate={navigate} />
-          ))}
-        </div>
-      ) : (
-        <div className="flex flex-col items-center justify-center py-12 px-6 rounded-[2rem] bg-emerald-50 dark:bg-emerald-500/5 border-2 border-dashed border-emerald-200 dark:border-emerald-500/20">
-          <Icon name="inbox" className="text-4xl text-emerald-300 dark:text-emerald-600 mb-2" />
-          <p className="text-xs font-bold text-emerald-400 dark:text-emerald-500">Нет завершенных задач</p>
-        </div>
-      )}
-    </section>
+    {/* Архив (сворачиваемый) */}
+    <ArchiveSection archived={archived} navigate={navigate} />
   </div>
 );
 
@@ -611,9 +618,9 @@ const KanbanView = (props: any) => (
       navigate={props.navigate}
     />
     <KanbanColumn
-      title="Готово"
-      color="bg-emerald-500"
-      tasks={props.done}
+      title="Архив"
+      color="bg-gray-400"
+      tasks={props.archived}
       updateStatus={props.updateStatus}
       navigate={props.navigate}
     />
