@@ -103,75 +103,92 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     try {
       setIsDataLoading(true);
-      const [ordersData, tasksData, productsData, staffResponse, notificationsData, statsData, suppliersData] =
-        await Promise.all([
-          api.orders.list(),
-          api.tasks.list(),
-          api.inventory.list(),
-          api.staff.list(),
-          api.events.list(),
-          api.analytics.getDashboardStats(),
-          api.suppliers.list(true).then(res => res.suppliers).catch(() => []),
-        ]);
+      const results = await Promise.allSettled([
+        api.orders.list(),
+        api.tasks.list(),
+        api.inventory.list(),
+        api.staff.list(),
+        api.events.list(),
+        api.analytics.getDashboardStats(),
+        api.suppliers.list(true).then(res => res.suppliers).catch(() => []),
+      ]);
 
-      // Transform orders from backend format
-      const ordersFormatted: Order[] = (ordersData || []).map((order: any) => ({
-        id: String(order.id),
-        client: order.customerName || 'Без имени',
-        email: order.customerEmail,
-        phone: order.customerPhone,
-        desc: order.notes || (order.items?.map((i: any) => i.productName).join(', ') || ''),
-        amount: order.totalAmount || 0,
-        status: order.status || 'Ожидание',
-        date: order.createdAt || new Date().toISOString(),
-        source: order.source || 'Магазин',
-        img: order.items?.[0]?.productImage || 'https://cdn-icons-png.flaticon.com/512/1006/1006771.png',
-        items: order.items,
-      }));
+      const [ordersResult, tasksResult, productsResult, staffResult, notificationsResult, statsResult, suppliersResult] = results;
 
-      setOrders(ordersFormatted);
+      // Transform and set orders
+      if (ordersResult.status === 'fulfilled') {
+        const ordersFormatted: Order[] = (ordersResult.value || []).map((order: any) => ({
+          id: String(order.id),
+          client: order.customerName || 'Без имени',
+          email: order.customerEmail,
+          phone: order.customerPhone,
+          desc: order.notes || (order.items?.map((i: any) => i.productName).join(', ') || ''),
+          amount: order.totalAmount || 0,
+          status: order.status || 'Ожидание',
+          date: order.createdAt || new Date().toISOString(),
+          source: order.source || 'Магазин',
+          img: order.items?.[0]?.productImage || 'https://cdn-icons-png.flaticon.com/512/1006/1006771.png',
+          items: order.items,
+        }));
+        setOrders(ordersFormatted);
+      }
 
-      // Transform tasks from backend format
-      const tasksFormatted = tasksData.map((task: any) => ({
-        id: String(task.id),
-        title: task.title,
-        description: task.description,
-        priority: task.priority,
-        status: task.status,
-        assignee: task.assigneeName,
-        assigneeId: task.assigneeId ? String(task.assigneeId) : undefined,
-        assignees: task.assignees,
-        deadline: task.deadline,
-        comments: task.comments || [],
-        checklist: task.checklist || [],
-        createdAt: task.createdAt,
-        updatedAt: task.updatedAt,
-      }));
+      // Transform and set tasks
+      if (tasksResult.status === 'fulfilled') {
+        const tasksFormatted = tasksResult.value.map((task: any) => ({
+          id: String(task.id),
+          title: task.title,
+          description: task.description,
+          priority: task.priority,
+          status: task.status,
+          assignee: task.assigneeName,
+          assigneeId: task.assigneeId ? String(task.assigneeId) : undefined,
+          assignees: task.assignees,
+          deadline: task.deadline,
+          comments: task.comments || [],
+          checklist: task.checklist || [],
+          createdAt: task.createdAt,
+          updatedAt: task.updatedAt,
+        }));
+        setTasks(tasksFormatted);
+      }
 
-      setTasks(tasksFormatted);
-      setProducts(productsData || []);
+      if (productsResult.status === 'fulfilled') {
+        setProducts(productsResult.value || []);
+      }
 
-      // Transform employees response
-      const employeesData: Employee[] = Array.isArray(staffResponse)
-        ? staffResponse
-        : ((staffResponse as any)?.employees || []).map((emp: any) => ({
-            id: String(emp.id),
-            userId: emp.userId ? String(emp.userId) : undefined,
-            name: emp.name,
-            role: emp.role || emp.position || 'Сотрудник',
-            department: emp.department,
-            position: emp.position,
-            phone: emp.phone,
-            email: emp.email,
-            avatar: emp.avatar,
-            activeTasks: emp.activeTasksCount || 0,
-            isActive: emp.isActive,
-          }));
+      // Transform and set employees
+      if (staffResult.status === 'fulfilled') {
+        const staffResponse = staffResult.value;
+        const employeesData: Employee[] = Array.isArray(staffResponse)
+          ? staffResponse
+          : ((staffResponse as any)?.employees || []).map((emp: any) => ({
+              id: String(emp.id),
+              userId: emp.userId ? String(emp.userId) : undefined,
+              name: emp.name,
+              role: emp.role || emp.position || 'Сотрудник',
+              department: emp.department,
+              position: emp.position,
+              phone: emp.phone,
+              email: emp.email,
+              avatar: emp.avatar,
+              activeTasks: emp.activeTasksCount || 0,
+              isActive: emp.isActive,
+            }));
+        setEmployees(employeesData);
+      }
 
-      setEmployees(employeesData);
-      setNotifications(notificationsData);
-      setStats(statsData);
-      setSuppliers(suppliersData);
+      if (notificationsResult.status === 'fulfilled') {
+        setNotifications(notificationsResult.value);
+      }
+
+      if (statsResult.status === 'fulfilled') {
+        setStats(statsResult.value);
+      }
+
+      if (suppliersResult.status === 'fulfilled') {
+        setSuppliers(suppliersResult.value);
+      }
     } catch (e) {
       console.error('Data refresh failed', e);
     } finally {
