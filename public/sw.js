@@ -1,8 +1,8 @@
 // ALASHED Business Service Worker
 // Handles Push Notifications and Auto-Updates
 
-// Version changes with each build - forces SW update
-const SW_VERSION = Date.now().toString();
+// Version — bump manually on significant changes only
+const SW_VERSION = '2.1.0';
 const CACHE_NAME = `alashed-cache-${SW_VERSION}`;
 
 console.log('[SW] Service Worker version:', SW_VERSION);
@@ -156,8 +156,9 @@ self.addEventListener('message', (event) => {
 });
 
 // Push subscription change event
+// SW has no access to JWT token — delegate re-subscription to main thread
 self.addEventListener('pushsubscriptionchange', (event) => {
-  console.log('[SW] Push subscription changed');
+  console.log('[SW] Push subscription changed, notifying main thread');
   event.waitUntil(
     self.registration.pushManager
       .subscribe({
@@ -165,11 +166,14 @@ self.addEventListener('pushsubscriptionchange', (event) => {
         applicationServerKey: event.oldSubscription?.options?.applicationServerKey,
       })
       .then((subscription) => {
-        return fetch('/api/push/subscribe', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ subscription }),
-          credentials: 'include',
+        // Send new subscription to main thread for re-registration with auth token
+        return self.clients.matchAll({ type: 'window' }).then((clients) => {
+          clients.forEach((client) => {
+            client.postMessage({
+              type: 'PUSH_RESUBSCRIBE',
+              subscription: subscription.toJSON(),
+            });
+          });
         });
       })
       .catch((error) => {

@@ -282,6 +282,20 @@ export async function initializePush(): Promise<void> {
         window.location.hash = path;
       }
     }
+
+    // SW asks main thread to re-register subscription (pushsubscriptionchange)
+    if (event.data?.type === 'PUSH_RESUBSCRIBE' && event.data.subscription) {
+      const token = getToken();
+      if (!token) return; // user not logged in, skip
+      fetch(`${API_BASE}/push/subscribe`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ subscription: event.data.subscription }),
+      }).catch((err) => console.error('[Push] Failed to re-register subscription:', err));
+    }
   });
 
   console.log('Push notifications initialized');
